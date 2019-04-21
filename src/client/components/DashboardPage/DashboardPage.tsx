@@ -1,11 +1,12 @@
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
+import { IDiaryEntry } from "../../../commons/models/IDiaryEntry";
 import { IRootState } from "../../redux/root";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 
 interface IDashboardPageProps {
-	// TODO
+	readonly loadedDiaryEntriesForToday?: IDiaryEntry[];
 }
 
 function mapStateToProps(state: IRootState, props: IDashboardPageProps): IDashboardPageProps {

@@ -12,17 +12,17 @@ $border-color: $gray-500;
 	.btn {
 		cursor: pointer;
 		flex-grow: 0;
-		padding: $spacer * 0.5;
+		padding: $spacer * .5;
 
 		&.disabled {
 			cursor: not-allowed !important;
-			opacity: 0.4;
+			opacity: .4;
 		}
 	}
 
 	.display {
 		flex-grow: 1;
-		padding: $spacer * 0.5;
+		padding: $spacer * .5;
 		text-align: center;
 	}
 }

@@ -5,7 +5,7 @@
 
 $bg-colour: #1976d2;
 $border-colour: #004ba0;
-$icon-colour: #ffffff;
+$icon-colour: #fff;
 
 .nav {
 	background-color: $bg-colour;
@@ -17,11 +17,11 @@ $icon-colour: #ffffff;
 		display: block;
 		flex-basis: 0;
 		flex-grow: 1;
+		padding: $spacer * .5;
 		text-align: center;
-		padding: $spacer * 0.5;
 
 		&:last-of-type {
-			border-right: none;
+			border-right: 0;
 		}
 
 		svg {
