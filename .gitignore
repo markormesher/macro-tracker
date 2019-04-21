@@ -1,0 +1,27 @@
+# Generated code
+build/
+node_modules/
+
+# Test outputs
+coverage/
+.nyc_output/
+
+# Logs
+yarn-*.log*
+logs/**
+!logs/.gitkeep
+
+# Helper scripts
+.scripts/pull-data-from-prod.sh
+
+# IntelliJ
+*.iml
+.idea/
+
+# Linux
+*~
+.Trash-*
+
+# OSX
+.DS_Store
+._*

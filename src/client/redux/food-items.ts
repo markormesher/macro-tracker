@@ -1,0 +1,263 @@
+import axios, { AxiosError } from "axios";
+import { all, call, put, takeEvery } from "redux-saga/effects";
+import { IFoodItem, mapFoodItemFromApi } from "../../commons/models/IFoodItem";
+import { setError } from "./global";
+import { ActionResult } from "./helpers/ActionResult";
+import { KeyCache } from "./helpers/KeyCache";
+import { PayloadAction } from "./helpers/PayloadAction";
+
+interface IFoodItemsState {
+	readonly editorBusy: boolean;
+	readonly editorResult: ActionResult;
+	readonly allFoodItems: IFoodItem[];
+	readonly loadedFoodItems: { readonly [key: string]: IFoodItem };
+}
+
+const initialState: IFoodItemsState = {
+	editorBusy: false,
+	editorResult: undefined,
+	allFoodItems: [],
+	loadedFoodItems: {},
+};
+
+enum FoodItemsActions {
+	SET_EDITOR_BUSY = "FoodItemsActions.SET_EDITOR_BUSY",
+	SET_EDITOR_RESULT = "FoodItemsActions.SET_EDITOR_RESULT",
+	SET_FOOD_ITEM = "FoodItemsActions.SET_FOOD_ITEM",
+	SET_ALL_FOOD_ITEMS = "FoodItemsActions.SET_ALL_FOOD_ITEMS",
+
+	START_LOAD_FOOD_ITEM = "FoodItemsActions.START_LOAD_FOOD_ITEM",
+	START_LOAD_ALL_FOOD_ITEMS = "FoodItemsActions.START_LOAD_ALL_FOOD_ITEMS",
+	START_SAVE_FOOD_ITEM = "FoodItemsActions.START_SAVE_FOOD_ITEM",
+	START_DELETE_FOOD_ITEM = "FoodItemsActions.START_DELETE_FOOD_ITEM",
+}
+
+enum FoodItemsCacheKeys {
+	LATEST_CACHE_TIME = "FoodItemsCacheKeys.LATEST_CACHE_TIME",
+	ALL_FOOD_ITEMS = "FoodItemsCacheKeys.ALL_FOOD_ITEMS",
+	LOADED_FOOD_ITEM = "FoodItemsCacheKeys.LOADED_FOOD_ITEM",
+}
+
+function getCacheKeyForLoadedFoodItem(id: string): string {
+	return `${FoodItemsCacheKeys.LOADED_FOOD_ITEM}_${id}`;
+}
+
+function setEditorBusy(editorBusy: boolean): PayloadAction {
+	return {
+		type: FoodItemsActions.SET_EDITOR_BUSY,
+		payload: { editorBusy },
+	};
+}
+
+function setEditorResult(editorResult: ActionResult): PayloadAction {
+	return {
+		type: FoodItemsActions.SET_EDITOR_RESULT,
+		payload: { editorResult },
+	};
+}
+
+function setFoodItem(foodItem: IFoodItem): PayloadAction {
+	return {
+		type: FoodItemsActions.SET_FOOD_ITEM,
+		payload: { foodItem },
+	};
+}
+
+function setAllFoodItems(foodItems: IFoodItem[]): PayloadAction {
+	return {
+		type: FoodItemsActions.SET_ALL_FOOD_ITEMS,
+		payload: { foodItems },
+	};
+}
+
+function startLoadFoodItem(foodItemId: string): PayloadAction {
+	return {
+		type: FoodItemsActions.START_LOAD_FOOD_ITEM,
+		payload: { foodItemId },
+	};
+}
+
+function startLoadAllFoodItems(): PayloadAction {
+	return {
+		type: FoodItemsActions.START_LOAD_ALL_FOOD_ITEMS,
+	};
+}
+
+function startSaveFoodItem(foodItem: Partial<IFoodItem>): PayloadAction {
+	return {
+		type: FoodItemsActions.START_SAVE_FOOD_ITEM,
+		payload: { foodItem },
+	};
+}
+
+function startDeleteFoodItem(foodItem: IFoodItem): PayloadAction {
+	return {
+		type: FoodItemsActions.START_DELETE_FOOD_ITEM,
+		payload: { foodItem },
+	};
+}
+
+function*loadFoodItemSaga(): Generator {
+	yield takeEvery(FoodItemsActions.START_LOAD_FOOD_ITEM, function*(action: PayloadAction): Generator {
+		const foodItemId: string = action.payload.foodItemId;
+
+		if (KeyCache.keyIsValid(getCacheKeyForLoadedFoodItem(foodItemId))) {
+			return;
+		}
+
+		try {
+			const foodItem = yield call(() => axios.get(`/api/food-items/${foodItemId}`)
+					.then((res) => {
+						const raw: IFoodItem = res.data;
+						return mapFoodItemFromApi(raw);
+					}));
+
+			yield all([
+				put(setFoodItem(foodItem)),
+				put(KeyCache.updateKey(getCacheKeyForLoadedFoodItem(foodItemId))),
+			]);
+		} catch (err) {
+			yield put(setError(err));
+		}
+	});
+}
+
+function*loadAllFoodItemsSaga(): Generator {
+	yield takeEvery(FoodItemsActions.START_LOAD_ALL_FOOD_ITEMS, function*(): Generator {
+		if (KeyCache.keyIsValid(FoodItemsCacheKeys.ALL_FOOD_ITEMS)) {
+			return;
+		}
+
+		try {
+			const foodItems: IFoodItem[] = yield call(() => axios.get("/api/food-items/all")
+					.then((res) => {
+						const raw: IFoodItem[] = res.data;
+						return raw.map(mapFoodItemFromApi);
+					}));
+
+			yield all([
+				put(setAllFoodItems(foodItems)),
+				KeyCache.updateKey(FoodItemsCacheKeys.ALL_FOOD_ITEMS),
+			]);
+		} catch (err) {
+			yield put(setError(err));
+		}
+	});
+}
+
+function*saveFoodItemsSaga(): Generator {
+	yield takeEvery(FoodItemsActions.START_SAVE_FOOD_ITEM, function*(action: PayloadAction): Generator {
+		try {
+			const foodItem: Partial<IFoodItem> = action.payload.foodItem;
+			const foodItemId = foodItem.id || "";
+			yield all([
+				put(setEditorBusy(true)),
+				call(() => axios.post(`/api/food-items/edit/${foodItemId}`, foodItem)),
+			]);
+
+			yield all([
+				put(setEditorBusy(false)),
+				put(setEditorResult("success")),
+				put(KeyCache.updateKey(FoodItemsCacheKeys.LATEST_CACHE_TIME)),
+				put(KeyCache.invalidateKey(FoodItemsCacheKeys.ALL_FOOD_ITEMS)),
+				foodItem.id && put(KeyCache.invalidateKey(getCacheKeyForLoadedFoodItem(foodItem.id))),
+			]);
+		} catch (rawError) {
+			const error = rawError as AxiosError;
+			yield all([
+				put(setEditorBusy(false)),
+				put(setEditorResult(error.response.data)),
+			]);
+		}
+	});
+}
+
+function*deleteFoodItemsSaga(): Generator {
+	yield takeEvery(FoodItemsActions.START_DELETE_FOOD_ITEM, function*(action: PayloadAction): Generator {
+		try {
+			const foodItem: IFoodItem = action.payload.foodItem;
+			yield call(() => axios.post(`/api/food-items/delete/${foodItem.id}`));
+
+			yield all([
+				put(KeyCache.updateKey(FoodItemsCacheKeys.LATEST_CACHE_TIME)),
+				put(KeyCache.invalidateKey(FoodItemsCacheKeys.ALL_FOOD_ITEMS)),
+				put(KeyCache.invalidateKey(getCacheKeyForLoadedFoodItem(foodItem.id))),
+			]);
+		} catch (err) {
+			yield put(setError(err));
+		}
+	});
+}
+
+function*foodItemsSagas(): Generator {
+	yield all([
+		saveFoodItemsSaga(),
+		loadAllFoodItemsSaga(),
+		deleteFoodItemsSaga(),
+		loadFoodItemSaga(),
+	]);
+}
+
+function foodItemsReducer(state = initialState, action: PayloadAction): IFoodItemsState {
+	switch (action.type) {
+
+		case FoodItemsActions.SET_EDITOR_BUSY:
+			return {
+				...state,
+				editorBusy: action.payload.editorBusy,
+			};
+
+		case FoodItemsActions.SET_EDITOR_RESULT:
+			return {
+				...state,
+				editorResult: action.payload.editorResult,
+			};
+
+		case FoodItemsActions.SET_ALL_FOOD_ITEMS:
+			return (() => {
+				let newState = state;
+				const foodItems: IFoodItem[] = action.payload.foodItems;
+
+				// replace the list of all items
+				newState = {
+					...newState,
+					allFoodItems: foodItems,
+				};
+
+				return newState;
+			})();
+
+		case FoodItemsActions.SET_FOOD_ITEM:
+			return (() => {
+				let newState = state;
+				const foodItem: IFoodItem = action.payload.foodItem;
+
+				// replace individual item
+				newState = {
+					...newState,
+					loadedFoodItems: {
+						...newState.loadedFoodItems,
+						[foodItem.id]: foodItem,
+					},
+				};
+
+				return newState;
+			})();
+
+		default:
+			return state;
+	}
+}
+
+export {
+	IFoodItemsState,
+	FoodItemsCacheKeys,
+	foodItemsReducer,
+	foodItemsSagas,
+	setEditorBusy,
+	setEditorResult,
+	startSaveFoodItem,
+	startLoadAllFoodItems,
+	startDeleteFoodItem,
+	startLoadFoodItem,
+};

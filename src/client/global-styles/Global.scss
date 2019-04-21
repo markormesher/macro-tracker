@@ -1,0 +1,58 @@
+// sass-lint:disable no-url-domains,no-url-protocols
+@import url("https://fonts.googleapis.com/css?family=Open+Sans");
+@import "~bootstrap-scss/functions";
+@import "~bootstrap-scss/variables";
+
+body {
+	font-family: "Open Sans", sans-serif;
+}
+
+h1,
+h2,
+h3 {
+	margin-bottom: $spacer * .5; // Bootstrap override
+
+	svg {
+		margin-right: $spacer;
+	}
+}
+
+h6 {
+	font-weight: bold;
+}
+
+button {
+	&:focus {
+		box-shadow: none !important; // Bootstrap override
+	}
+}
+
+select {
+	padding-bottom: 0 !important; // Bootstrap override
+	padding-top: 0 !important; // Bootstrap override
+}
+
+.btn-mini {
+	// Same as .badge in Bootstrap
+	font-size: 75% !important;
+	line-height: 1 !important;
+	padding: .25em .4em !important;
+}
+
+.loading {
+	opacity: .4;
+}
+
+tr {
+	&.bottom-border {
+		td {
+			border-bottom: 1px solid $gray-700;
+		}
+	}
+
+	&.bottom-top {
+		td {
+			border-top: 1px solid $gray-700;
+		}
+	}
+}

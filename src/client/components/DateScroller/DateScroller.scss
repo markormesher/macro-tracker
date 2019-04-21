@@ -1,0 +1,28 @@
+@import "~bootstrap-scss/functions";
+@import "~bootstrap-scss/variables";
+@import "~bootstrap-scss/mixins/breakpoints";
+@import "../../global-styles/Constants";
+
+$border-color: $gray-500;
+
+.wrapper {
+	border-bottom: 1px solid $border-color;
+	display: flex;
+
+	.btn {
+		cursor: pointer;
+		flex-grow: 0;
+		padding: $spacer * 0.5;
+
+		&.disabled {
+			cursor: not-allowed !important;
+			opacity: 0.4;
+		}
+	}
+
+	.display {
+		flex-grow: 1;
+		padding: $spacer * 0.5;
+		text-align: center;
+	}
+}

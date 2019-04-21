@@ -1,0 +1,21 @@
+.spinner-wrapper {
+	align-items: center;
+	display: flex;
+	height: 100%;
+	justify-content: center;
+	padding: 100px;
+	width: 100%;
+}
+
+.debug-notes {
+	bottom: 10px;
+	margin: 0;
+	opacity: .3;
+	padding: 0;
+	position: absolute;
+	right: 10px;
+
+	:hover {
+		opacity: 1;
+	}
+}
