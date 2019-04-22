@@ -7,15 +7,17 @@ import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
 import { Meal } from "../../../commons/enums";
 import { IDiaryEntry } from "../../../commons/models/IDiaryEntry";
+import { ITarget } from "../../../commons/models/ITarget";
 import { momentToDateKey, momentToString } from "../../../commons/utils/dates";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
-import { formatLargeNumber, formatMeasurement, getMealTitle } from "../../helpers/formatters";
+import { formatDate, formatLargeNumber, formatMeasurement, getMealTitle } from "../../helpers/formatters";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
 import { startDeleteDiaryEntry, startLoadDiaryEntriesForDate } from "../../redux/diary-entries";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { IRootState } from "../../redux/root";
+import { startLoadAllTargets } from "../../redux/targets";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
@@ -24,9 +26,11 @@ import { DateScroller } from "../DateScroller/DateScroller";
 
 interface IDiaryPageProps {
 	readonly loadedDiaryEntriesByDate?: { readonly [key: string]: IDiaryEntry[] };
+	readonly allTargets?: ITarget[];
 	readonly actions?: {
 		readonly loadDiaryEntriesForDate: (date: Moment.Moment) => PayloadAction;
 		readonly deleteDiaryEntry: (diaryEntry: IDiaryEntry) => PayloadAction;
+		readonly loadAllTargets: () => PayloadAction;
 	};
 }
 
@@ -38,6 +42,7 @@ function mapStateToProps(state: IRootState, props: IDiaryPageProps): IDiaryPageP
 	return {
 		...props,
 		loadedDiaryEntriesByDate: state.diaryEntries.loadedDiaryEntriesByDate,
+		allTargets: state.targets.allTargets,
 	};
 }
 
@@ -47,6 +52,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDiaryPageProps): IDiaryP
 		actions: {
 			loadDiaryEntriesForDate: (date: Moment.Moment) => dispatch(startLoadDiaryEntriesForDate(date)),
 			deleteDiaryEntry: (diaryEntry: IDiaryEntry) => dispatch(startDeleteDiaryEntry(diaryEntry)),
+			loadAllTargets: () => dispatch(startLoadAllTargets()),
 		},
 	};
 }
@@ -68,10 +74,12 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps, IDiaryPageState> {
 		this.renderMeal = this.renderMeal.bind(this);
 		this.renderEntry = this.renderEntry.bind(this);
 		this.handleDateChange = this.handleDateChange.bind(this);
+		this.getCurrentTarget = this.getCurrentTarget.bind(this);
 	}
 
 	public componentDidMount(): void {
 		this.props.actions.loadDiaryEntriesForDate(this.state.currentDate);
+		this.props.actions.loadAllTargets();
 	}
 
 	public componentDidUpdate(
@@ -127,6 +135,13 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps, IDiaryPageState> {
 	}
 
 	private renderSummary(allEntries: IDiaryEntry[]): ReactNode {
+		const { currentDate } = this.state;
+		const currentTarget = this.getCurrentTarget();
+
+		if (!currentTarget) {
+			return <p>No target set for {formatDate(currentDate, "user")}.</p>;
+		}
+
 		const totalCalories = allEntries
 				.map((e) => e.foodItem.caloriesPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
 				.reduce((a, b) => a + b, 0);
@@ -306,6 +321,25 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps, IDiaryPageState> {
 
 	private handleDateChange(date: Moment.Moment): void {
 		this.setState({ currentDate: date });
+	}
+
+	private getCurrentTarget(): ITarget {
+		const { allTargets } = this.props;
+		const { currentDate } = this.state;
+		if (!allTargets || !allTargets.length) {
+			return null;
+		}
+
+		const sortedTargets = allTargets.sort((a, b) => -1 * a.startDate.diff(b.startDate));
+
+		// go through targets latest-first and pick the first one that is before today
+		for (const target of sortedTargets) {
+			if (target.startDate.clone().startOf("day").isSameOrBefore(currentDate)) {
+				return target;
+			}
+		}
+
+		return null;
 	}
 }
 

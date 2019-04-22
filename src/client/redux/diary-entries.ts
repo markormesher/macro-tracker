@@ -113,7 +113,7 @@ function*loadDiaryEntrySaga(): Generator {
 		}
 
 		try {
-			const diaryEntry = yield call(() => axios.get(`/api/diary-entries/${diaryEntryId}`)
+			const diaryEntry: IDiaryEntry = yield call(() => axios.get(`/api/diary-entries/${diaryEntryId}`)
 					.then((res) => {
 						const raw: IDiaryEntry = res.data;
 						return mapDiaryEntryFromApi(raw);
@@ -138,14 +138,14 @@ function*loadDiaryEntriesForDateSaga(): Generator {
 		}
 
 		try {
-			const diaryEntry = yield call(() => axios.get(`/api/diary-entries/for-date/${momentToString(date)}`)
+			const diaryEntries: IDiaryEntry[] = yield call(() => axios.get(`/api/diary-entries/for-date/${momentToString(date)}`)
 					.then((res) => {
 						const raw: IDiaryEntry[] = res.data;
 						return mapEntitiesFromApi(mapDiaryEntryFromApi, raw);
 					}));
 
 			yield all([
-				put(setDiaryEntriesForDate(date, diaryEntry)),
+				put(setDiaryEntriesForDate(date, diaryEntries)),
 				put(KeyCache.updateKey(getCacheKeyForLoadedDiaryEntriesByDate(date))),
 			]);
 		} catch (err) {
@@ -154,7 +154,7 @@ function*loadDiaryEntriesForDateSaga(): Generator {
 	});
 }
 
-function*saveDiaryEntriesSaga(): Generator {
+function*saveDiaryEntrySaga(): Generator {
 	yield takeEvery(DiaryEntriesActions.START_SAVE_DIARY_ENTRY, function*(action: PayloadAction): Generator {
 		const diaryEntry: Partial<IDiaryEntry> = action.payload.diaryEntry;
 		const diaryEntryId = diaryEntry.id || "";
@@ -180,7 +180,7 @@ function*saveDiaryEntriesSaga(): Generator {
 	});
 }
 
-function*deleteDiaryEntriesSaga(): Generator {
+function*deleteDiaryEntrySaga(): Generator {
 	yield takeEvery(DiaryEntriesActions.START_DELETE_DIARY_ENTRY, function*(action: PayloadAction): Generator {
 		try {
 			const diaryEntry: IDiaryEntry = action.payload.diaryEntry;
@@ -198,8 +198,8 @@ function*deleteDiaryEntriesSaga(): Generator {
 
 function*diaryEntriesSagas(): Generator {
 	yield all([
-		saveDiaryEntriesSaga(),
-		deleteDiaryEntriesSaga(),
+		saveDiaryEntrySaga(),
+		deleteDiaryEntrySaga(),
 		loadDiaryEntrySaga(),
 		loadDiaryEntriesForDateSaga(),
 	]);

@@ -105,8 +105,12 @@ function*loadFoodItemSaga(): Generator {
 			return;
 		}
 
+		if (KeyCache.keyIsValid(FoodItemsCacheKeys.ALL_FOOD_ITEMS)) {
+			return;
+		}
+
 		try {
-			const foodItem = yield call(() => axios.get(`/api/food-items/${foodItemId}`)
+			const foodItem: IFoodItem = yield call(() => axios.get(`/api/food-items/${foodItemId}`)
 					.then((res) => {
 						const raw: IFoodItem = res.data;
 						return mapFoodItemFromApi(raw);
@@ -145,7 +149,7 @@ function*loadAllFoodItemsSaga(): Generator {
 	});
 }
 
-function*saveFoodItemsSaga(): Generator {
+function*saveFoodItemSaga(): Generator {
 	yield takeEvery(FoodItemsActions.START_SAVE_FOOD_ITEM, function*(action: PayloadAction): Generator {
 		try {
 			const foodItem: Partial<IFoodItem> = action.payload.foodItem;
@@ -160,7 +164,7 @@ function*saveFoodItemsSaga(): Generator {
 				put(setEditorResult("success")),
 				put(KeyCache.updateKey(FoodItemsCacheKeys.LATEST_CACHE_TIME)),
 				put(KeyCache.invalidateKey(FoodItemsCacheKeys.ALL_FOOD_ITEMS)),
-				foodItem.id && put(KeyCache.invalidateKey(getCacheKeyForLoadedFoodItem(foodItem.id))),
+				put(KeyCache.invalidateKey(getCacheKeyForLoadedFoodItem(foodItem.id))),
 			]);
 		} catch (rawError) {
 			const error = rawError as AxiosError;
@@ -172,7 +176,7 @@ function*saveFoodItemsSaga(): Generator {
 	});
 }
 
-function*deleteFoodItemsSaga(): Generator {
+function*deleteFoodItemSaga(): Generator {
 	yield takeEvery(FoodItemsActions.START_DELETE_FOOD_ITEM, function*(action: PayloadAction): Generator {
 		try {
 			const foodItem: IFoodItem = action.payload.foodItem;
@@ -191,9 +195,9 @@ function*deleteFoodItemsSaga(): Generator {
 
 function*foodItemsSagas(): Generator {
 	yield all([
-		saveFoodItemsSaga(),
+		saveFoodItemSaga(),
 		loadAllFoodItemsSaga(),
-		deleteFoodItemsSaga(),
+		deleteFoodItemSaga(),
 		loadFoodItemSaga(),
 	]);
 }

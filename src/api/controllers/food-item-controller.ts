@@ -15,9 +15,9 @@ import {
 	saveFoodItem,
 } from "../managers/food-item-manager";
 
-const foodItemRouter = Express.Router();
+const foodItemsRouter = Express.Router();
 
-foodItemRouter.get("/table", (req: Request, res: Response, next: NextFunction) => {
+foodItemsRouter.get("/table", (req: Request, res: Response, next: NextFunction) => {
 	const searchTerm = req.query.searchTerm || "";
 
 	const totalQuery = getFoodItemQueryBuilder()
@@ -33,27 +33,27 @@ foodItemRouter.get("/table", (req: Request, res: Response, next: NextFunction) =
 				searchTerm: `%${searchTerm}%`,
 			});
 
-	const preOrder: OrderStatement = [["food_item.brand", "ASC"]];
+	const postOrder: OrderStatement = [["food_item.brand", "ASC"]];
 
-	getDataForTable(DbFoodItem, req, totalQuery, filteredQuery, preOrder)
+	getDataForTable(DbFoodItem, req, totalQuery, filteredQuery, [], postOrder)
 			.then((response) => res.json(response))
 			.catch(next);
 });
 
-foodItemRouter.get("/all", (req: Request, res: Response, next: NextFunction) => {
+foodItemsRouter.get("/all", (req: Request, res: Response, next: NextFunction) => {
 	getAllFoodItems()
 			.then((foodItems) => res.json(foodItems))
 			.catch(next);
 });
 
-foodItemRouter.get("/:foodItemId", (req: Request, res: Response, next: NextFunction) => {
+foodItemsRouter.get("/:foodItemId", (req: Request, res: Response, next: NextFunction) => {
 	const foodItemId: string = cleanUuid(req.params.foodItemId);
 	getFoodItem(foodItemId, { includeServingSizes: true })
 			.then((foodItem) => res.json(foodItem))
 			.catch(next);
 });
 
-foodItemRouter.post("/edit/:foodItemId?", (req: Request, res: Response, next: NextFunction) => {
+foodItemsRouter.post("/edit/:foodItemId?", (req: Request, res: Response, next: NextFunction) => {
 	const foodItemId: string = cleanUuid(req.params.foodItemId, null);
 	const properties: Partial<IFoodItem> = {
 		brand: cleanString(req.body.brand),
@@ -75,7 +75,7 @@ foodItemRouter.post("/edit/:foodItemId?", (req: Request, res: Response, next: Ne
 			.catch(next);
 });
 
-foodItemRouter.post("/delete/:foodItemId", (req: Request, res: Response, next: NextFunction) => {
+foodItemsRouter.post("/delete/:foodItemId", (req: Request, res: Response, next: NextFunction) => {
 	const foodItemId: string = cleanUuid(req.params.foodItemId);
 
 	deleteFoodItem(foodItemId)
@@ -84,5 +84,5 @@ foodItemRouter.post("/delete/:foodItemId", (req: Request, res: Response, next: N
 });
 
 export {
-	foodItemRouter,
+	foodItemsRouter,
 };

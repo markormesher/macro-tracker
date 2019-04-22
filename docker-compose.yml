@@ -48,6 +48,7 @@ services:
       - npm_execpath=yarn
       - RUNNING_IN=docker
       - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
+      - IS_PRIMARY_SERVER=yes
     volumes:
       - ./logs:/app/logs
 
