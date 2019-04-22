@@ -1,4 +1,4 @@
-import { faCircleNotch, faSave } from "@fortawesome/pro-light-svg-icons";
+import { faArrowLeft, faCalendarDay, faCircleNotch, faSave } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -33,6 +33,7 @@ interface IEditFoodItemPageProps {
 	readonly editorBusy?: boolean;
 	readonly editorResult?: ActionResult;
 	readonly loadedFoodItem?: IFoodItem;
+	readonly lastFoodItemSaved?: IFoodItem;
 	readonly allBrands?: string[];
 	readonly actions?: {
 		readonly resetEditorResult: () => PayloadAction;
@@ -57,6 +58,7 @@ function mapStateToProps(state: IRootState, props: IEditFoodItemPageProps): IEdi
 		editorBusy: state.foodItems.editorBusy,
 		editorResult: state.foodItems.editorResult,
 		loadedFoodItem: state.foodItems.loadedFoodItems[foodItemId],
+		lastFoodItemSaved: state.foodItems.lastFoodItemSaved,
 		allBrands: state.foodItems.allFoodItems
 				.map((fi) => fi.brand)
 				.sort((a, b) => a.localeCompare(b))
@@ -145,14 +147,44 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 
 		let statusMsg: ReactNode = null;
 		if (editorResult === "success") {
-			// TODO: do something better here
+			const { lastFoodItemSaved } = this.props;
 			return (
 					<ContentWrapper>
-						<div className={combine(bs.alert, bs.alertSuccess)}>
-							<h5>Done!</h5>
-							<p className={bs.mb0}>
-								<Link to={`/food-items`}>View all food items</Link>.
-							</p>
+						<div className={bs.row}>
+							<div className={bs.col}>
+								<h1>Done!</h1>
+								<p>{lastFoodItemSaved.name} has been saved.</p>
+							</div>
+						</div>
+						<div className={bs.row}>
+							<div className={bs.col6}>
+								<Link to={"/food-items"}>
+									<IconBtn
+											icon={faArrowLeft}
+											text={"All Food Items"}
+											btnProps={{
+												className: bs.btnOutlineDark,
+												style: {
+													width: "100%",
+												},
+											}}
+									/>
+								</Link>
+							</div>
+							<div className={bs.col6}>
+								<Link to={`/diary-entries/edit?initFood=${lastFoodItemSaved.id}`}>
+									<IconBtn
+											icon={faCalendarDay}
+											text={"Add to Diary Entry"}
+											btnProps={{
+												className: bs.btnOutlineDark,
+												style: {
+													width: "100%",
+												},
+											}}
+									/>
+								</Link>
+							</div>
 						</div>
 					</ContentWrapper>
 			);

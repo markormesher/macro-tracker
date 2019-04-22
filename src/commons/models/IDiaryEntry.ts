@@ -68,7 +68,7 @@ function getDefaultDiaryEntry(): IDiaryEntry {
 		date: undefined,
 		lastEdit: undefined,
 		meal: undefined,
-		servingQty: 0,
+		servingQty: 1,
 
 		foodItem: undefined,
 		servingSize: undefined,

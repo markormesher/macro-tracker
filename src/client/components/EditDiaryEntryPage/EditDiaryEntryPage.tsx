@@ -1,4 +1,4 @@
-import { faCircleNotch, faSave } from "@fortawesome/pro-light-svg-icons";
+import { faCalendarDay, faCircleNotch, faRedoAlt, faSave } from "@fortawesome/pro-light-svg-icons";
 import * as Moment from "moment";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
@@ -15,7 +15,7 @@ import {
 } from "../../../commons/models/IDiaryEntry";
 import { IFoodItem } from "../../../commons/models/IFoodItem";
 import { IServingSize, servingSizeComparator } from "../../../commons/models/IServingSize";
-import { stringToMoment } from "../../../commons/utils/dates";
+import { momentToUrlString, urlStringToMoment } from "../../../commons/utils/dates";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { getMealTitle } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
@@ -42,8 +42,9 @@ interface IEditDiaryEntryPageProps {
 	};
 
 	// derived from query string
-	readonly preFillDate?: Moment.Moment;
-	readonly preFillMeal?: Meal;
+	readonly initialDate?: Moment.Moment;
+	readonly initialMeal?: Meal;
+	readonly initialFoodItemId?: string;
 
 	// added by connected react router
 	readonly match?: Match<{ readonly diaryEntryId: string }>;
@@ -63,8 +64,9 @@ function mapStateToProps(state: IRootState, props: IEditDiaryEntryPageProps): IE
 		editorResult: state.diaryEntries.editorResult,
 		loadedDiaryEntry: state.diaryEntries.loadedDiaryEntries[diaryEntryId],
 
-		preFillDate: urlParams.has("date") ? stringToMoment(urlParams.get("date")) : undefined,
-		preFillMeal: urlParams.has("meal") ? urlParams.get("meal") as Meal : undefined,
+		initialDate: urlParams.has("initDate") ? urlStringToMoment(urlParams.get("initDate")) : undefined,
+		initialMeal: urlParams.has("initMeal") ? urlParams.get("initMeal") as Meal : undefined,
+		initialFoodItemId: urlParams.has("initFood") ? urlParams.get("initFood") : undefined,
 	};
 }
 
@@ -85,18 +87,9 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 	constructor(props: IEditDiaryEntryPageProps, context: any) {
 		super(props, context);
 
-		const defaultDiaryEntry = {
-			...(getDefaultDiaryEntry()),
-			date: props.preFillDate,
-			meal: props.preFillMeal,
-			servingQty: 1,
-		};
+		this.resetEditor(true);
 
-		this.state = {
-			currentValue: defaultDiaryEntry,
-			validationResult: validateDiaryEntry(defaultDiaryEntry),
-		};
-
+		this.resetEditor = this.resetEditor.bind(this);
 		this.handleDateChange = this.handleDateChange.bind(this);
 		this.handleMealChange = this.handleMealChange.bind(this);
 		this.handleFoodItemChange = this.handleFoodItemChange.bind(this);
@@ -144,11 +137,40 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 			// TODO: do something better here
 			return (
 					<ContentWrapper>
-						<div className={combine(bs.alert, bs.alertSuccess)}>
-							<h5>Done!</h5>
-							<p className={bs.mb0}>
-								<Link to={`/diary-entries`}>Back to the diary</Link>.
-							</p>
+						<div className={bs.row}>
+							<div className={bs.col}>
+								<h1>Done!</h1>
+								<p>The entry has been saved.</p>
+							</div>
+						</div>
+						<div className={bs.row}>
+							<div className={bs.col6}>
+								<Link to={`/diary-entries/${momentToUrlString(currentValue.date)}`}>
+									<IconBtn
+											icon={faCalendarDay}
+											text={"Back to the Diary"}
+											btnProps={{
+												className: bs.btnOutlineDark,
+												style: {
+													width: "100%",
+												},
+											}}
+									/>
+								</Link>
+							</div>
+							<div className={bs.col6}>
+								<IconBtn
+										icon={faRedoAlt}
+										text={"Add Another"}
+										onClick={this.resetEditor}
+										btnProps={{
+											className: bs.btnOutlineDark,
+											style: {
+												width: "100%",
+											},
+										}}
+								/>
+							</div>
 						</div>
 					</ContentWrapper>
 			);
@@ -235,6 +257,29 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 					</div>
 				</ContentWrapper>
 		);
+	}
+
+	private resetEditor(init: boolean = false): void {
+		this.props.actions.resetEditorResult();
+
+		const defaultDiaryEntry = {
+			...(getDefaultDiaryEntry()),
+			date: init ? this.props.initialDate : this.state.currentValue.date,
+			meal: init ? this.props.initialMeal : this.state.currentValue.meal,
+			// TODO: use initialFoodItemId
+		};
+
+		if (init) {
+			this.state = {
+				currentValue: defaultDiaryEntry,
+				validationResult: validateDiaryEntry(defaultDiaryEntry),
+			};
+		} else {
+			this.setState({
+				currentValue: defaultDiaryEntry,
+				validationResult: validateDiaryEntry(defaultDiaryEntry),
+			});
+		}
 	}
 
 	private handleDateChange(date: Moment.Moment): void {

@@ -3,13 +3,13 @@ import * as Moment from "moment";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, match as Match } from "react-router-dom";
 import { Dispatch } from "redux";
 import { CALORIES_PER_G_CARBOHYDRATES, CALORIES_PER_G_FAT, CALORIES_PER_G_PROTEIN } from "../../../commons/constants";
 import { Meal } from "../../../commons/enums";
 import { IDiaryEntry } from "../../../commons/models/IDiaryEntry";
 import { ITarget } from "../../../commons/models/ITarget";
-import { momentToDateKey, momentToString } from "../../../commons/utils/dates";
+import { momentToDateKey, momentToUrlString, urlStringToMoment } from "../../../commons/utils/dates";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatDate, formatLargeNumber, formatMeasurement, getMealTitle } from "../../helpers/formatters";
@@ -27,6 +27,7 @@ import { ProgressBar } from "../_ui/ProgressBar/ProgressBar";
 import { DateScroller } from "../DateScroller/DateScroller";
 
 interface IDiaryPageProps {
+	readonly currentDate: Moment.Moment;
 	readonly loadedDiaryEntriesByDate?: { readonly [key: string]: IDiaryEntry[] };
 	readonly allTargets?: ITarget[];
 	readonly actions?: {
@@ -34,15 +35,17 @@ interface IDiaryPageProps {
 		readonly deleteDiaryEntry: (diaryEntry: IDiaryEntry) => PayloadAction;
 		readonly loadAllTargets: () => PayloadAction;
 	};
-}
 
-interface IDiaryPageState {
-	readonly currentDate: Moment.Moment;
+	// added by connected react router
+	readonly match?: Match<{ readonly date: string }>;
 }
 
 function mapStateToProps(state: IRootState, props: IDiaryPageProps): IDiaryPageProps {
+	const date = props.match.params.date ? urlStringToMoment(props.match.params.date) : Moment();
+
 	return {
 		...props,
+		currentDate: date,
 		loadedDiaryEntriesByDate: state.diaryEntries.loadedDiaryEntriesByDate,
 		allTargets: state.targets.allTargets,
 	};
@@ -59,49 +62,49 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDiaryPageProps): IDiaryP
 	};
 }
 
-class UCDiaryPage extends PureComponent<IDiaryPageProps, IDiaryPageState> {
+class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 
 	private static startEditDiaryEntry(diaryEntry: IDiaryEntry): void {
 		history.push(`/diary-entries/edit/${diaryEntry.id}`);
 	}
 
+	private static handleDateChange(date: Moment.Moment): void {
+		history.push(`/diary-entries/${momentToUrlString(date)}`);
+	}
+
 	constructor(props: IDiaryPageProps, context: any) {
 		super(props, context);
-
-		this.state = {
-			currentDate: Moment(),
-		};
 
 		this.renderInner = this.renderInner.bind(this);
 		this.renderMeal = this.renderMeal.bind(this);
 		this.renderEntry = this.renderEntry.bind(this);
-		this.handleDateChange = this.handleDateChange.bind(this);
+		UCDiaryPage.handleDateChange = UCDiaryPage.handleDateChange.bind(this);
 		this.getCurrentTarget = this.getCurrentTarget.bind(this);
 	}
 
 	public componentDidMount(): void {
-		this.props.actions.loadDiaryEntriesForDate(this.state.currentDate);
+		this.props.actions.loadDiaryEntriesForDate(this.props.currentDate);
 		this.props.actions.loadAllTargets();
 	}
 
 	public componentDidUpdate(
 			prevProps: Readonly<IDiaryPageProps>,
-			prevState: Readonly<IDiaryPageState>,
+			prevState: Readonly<{}>,
 			snapshot?: any,
 	): void {
-		if (this.state.currentDate !== prevState.currentDate) {
-			this.props.actions.loadDiaryEntriesForDate(this.state.currentDate);
+		if (this.props.currentDate !== prevProps.currentDate) {
+			this.props.actions.loadDiaryEntriesForDate(this.props.currentDate);
 		}
 	}
 
 	public render(): ReactNode {
-		const { currentDate } = this.state;
+		const { currentDate } = this.props;
 
 		return (
 				<>
 					<DateScroller
 							currentDate={currentDate}
-							onDateChange={this.handleDateChange}
+							onDateChange={UCDiaryPage.handleDateChange}
 					/>
 					{this.renderInner()}
 				</>
@@ -109,8 +112,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps, IDiaryPageState> {
 	}
 
 	private renderInner(): ReactNode {
-		const { loadedDiaryEntriesByDate } = this.props;
-		const { currentDate } = this.state;
+		const { currentDate, loadedDiaryEntriesByDate } = this.props;
 
 		const entries = loadedDiaryEntriesByDate[momentToDateKey(currentDate)];
 
@@ -137,7 +139,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps, IDiaryPageState> {
 	}
 
 	private renderSummary(allEntries: IDiaryEntry[]): ReactNode {
-		const { currentDate } = this.state;
+		const { currentDate } = this.props;
 		const target = this.getCurrentTarget();
 
 		if (!target) {
@@ -197,8 +199,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps, IDiaryPageState> {
 	}
 
 	private renderMeal(meal: Meal): ReactNode {
-		const { loadedDiaryEntriesByDate } = this.props;
-		const { currentDate } = this.state;
+		const { currentDate, loadedDiaryEntriesByDate } = this.props;
 
 		const allEntries = loadedDiaryEntriesByDate[momentToDateKey(currentDate)];
 
@@ -225,7 +226,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps, IDiaryPageState> {
 							{getMealTitle(meal)}
 						</h5>
 						<Link
-								to={`/diary-entries/edit?meal=${meal}&date=${momentToString(currentDate)}`}
+								to={`/diary-entries/edit?initMeal=${meal}&initDate=${momentToUrlString(currentDate)}`}
 								className={combine(bs.dInlineBlock, bs.flexGrow0)}
 						>
 							<IconBtn
@@ -321,13 +322,8 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps, IDiaryPageState> {
 		);
 	}
 
-	private handleDateChange(date: Moment.Moment): void {
-		this.setState({ currentDate: date });
-	}
-
 	private getCurrentTarget(): ITarget {
-		const { allTargets } = this.props;
-		const { currentDate } = this.state;
+		const { currentDate, allTargets } = this.props;
 		if (!allTargets || !allTargets.length) {
 			return null;
 		}

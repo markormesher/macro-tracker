@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import * as Moment from "moment";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { IDiaryEntry, mapDiaryEntryFromApi } from "../../commons/models/IDiaryEntry";
-import { momentToDateKey, momentToString } from "../../commons/utils/dates";
+import { momentToDateKey, momentToUrlString } from "../../commons/utils/dates";
 import { mapEntitiesFromApi } from "../../commons/utils/entities";
 import { setError } from "./global";
 import { ActionResult } from "./helpers/ActionResult";
@@ -138,7 +138,7 @@ function*loadDiaryEntriesForDateSaga(): Generator {
 		}
 
 		try {
-			const diaryEntries: IDiaryEntry[] = yield call(() => axios.get(`/api/diary-entries/for-date/${momentToString(date)}`)
+			const diaryEntries: IDiaryEntry[] = yield call(() => axios.get(`/api/diary-entries/for-date/${momentToUrlString(date)}`)
 					.then((res) => {
 						const raw: IDiaryEntry[] = res.data;
 						return mapEntitiesFromApi(mapDiaryEntryFromApi, raw);

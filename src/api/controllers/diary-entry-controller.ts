@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import * as Moment from "moment";
 import { Meal } from "../../commons/enums";
 import { IDiaryEntry } from "../../commons/models/IDiaryEntry";
-import { stringToMoment } from "../../commons/utils/dates";
+import { urlStringToMoment } from "../../commons/utils/dates";
 import { cleanUuid } from "../../commons/utils/entities";
 import { cleanString } from "../../commons/utils/strings";
 import {
@@ -23,7 +23,7 @@ diaryEntriesRouter.get("/:diaryEntryId", (req: Request, res: Response, next: Nex
 });
 
 diaryEntriesRouter.get("/for-date/:dateStr", (req: Request, res: Response, next: NextFunction) => {
-	const date = stringToMoment(cleanString(req.params.dateStr));
+	const date = urlStringToMoment(cleanString(req.params.dateStr));
 	getDiaryEntriesForDate(date)
 			.then((diaryEntries) => res.json(diaryEntries))
 			.catch(next);

@@ -48,6 +48,7 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
 						<Route exact={true} path="/" component={DashboardPage}/>
 
 						<Route path={"/diary-entries/edit/:diaryEntryId?"} component={EditDiaryEntryPage}/>
+						<Route path={"/diary-entries/:date?"} component={DiaryPage}/>
 						<Route path={"/diary-entries"} component={DiaryPage}/>
 
 						<Route path={"/food-items/edit/:foodItemId?"} component={EditFoodItemPage}/>

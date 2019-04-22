@@ -71,7 +71,7 @@ foodItemsRouter.post("/edit/:foodItemId?", (req: Request, res: Response, next: N
 	};
 
 	saveFoodItem(foodItemId, properties)
-			.then(() => res.sendStatus(200))
+			.then((foodItem) => res.json(foodItem))
 			.catch(next);
 });
 

@@ -87,6 +87,9 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
 											text={"Create Food Item"}
 											btnProps={{
 												className: bs.btnOutlineSuccess,
+												style: {
+													width: "100%",
+												},
 											}}
 									/>
 								</Link>

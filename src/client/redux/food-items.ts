@@ -11,6 +11,7 @@ interface IFoodItemsState {
 	readonly editorResult: ActionResult;
 	readonly allFoodItems: IFoodItem[];
 	readonly loadedFoodItems: { readonly [key: string]: IFoodItem };
+	readonly lastFoodItemSaved?: IFoodItem;
 }
 
 const initialState: IFoodItemsState = {
@@ -18,6 +19,7 @@ const initialState: IFoodItemsState = {
 	editorResult: undefined,
 	allFoodItems: [],
 	loadedFoodItems: {},
+	lastFoodItemSaved: undefined,
 };
 
 enum FoodItemsActions {
@@ -25,6 +27,7 @@ enum FoodItemsActions {
 	SET_EDITOR_RESULT = "FoodItemsActions.SET_EDITOR_RESULT",
 	SET_FOOD_ITEM = "FoodItemsActions.SET_FOOD_ITEM",
 	SET_ALL_FOOD_ITEMS = "FoodItemsActions.SET_ALL_FOOD_ITEMS",
+	SET_LAST_FOOD_ITEM_SAVED = "FoodItemsActions.SET_LAST_FOOD_ITEM_SAVED",
 
 	START_LOAD_FOOD_ITEM = "FoodItemsActions.START_LOAD_FOOD_ITEM",
 	START_LOAD_ALL_FOOD_ITEMS = "FoodItemsActions.START_LOAD_ALL_FOOD_ITEMS",
@@ -67,6 +70,13 @@ function setAllFoodItems(foodItems: IFoodItem[]): PayloadAction {
 	return {
 		type: FoodItemsActions.SET_ALL_FOOD_ITEMS,
 		payload: { foodItems },
+	};
+}
+
+function setLastFoodItemSaved(foodItem: IFoodItem): PayloadAction {
+	return {
+		type: FoodItemsActions.SET_LAST_FOOD_ITEM_SAVED,
+		payload: { foodItem },
 	};
 }
 
@@ -154,10 +164,15 @@ function*saveFoodItemSaga(): Generator {
 		try {
 			const foodItem: Partial<IFoodItem> = action.payload.foodItem;
 			const foodItemId = foodItem.id || "";
-			yield all([
-				put(setEditorBusy(true)),
-				call(() => axios.post(`/api/food-items/edit/${foodItemId}`, foodItem)),
-			]);
+			yield put(setEditorBusy(true));
+			const savedFoodItem: IFoodItem = yield call(() => axios.post(`/api/food-items/edit/${foodItemId}`, foodItem)
+					.then((res) => {
+						const raw: IFoodItem = res.data;
+						return mapFoodItemFromApi(raw);
+					}));
+
+			// note: this should happen before the group below
+			yield put(setLastFoodItemSaved(savedFoodItem));
 
 			yield all([
 				put(setEditorBusy(false)),
@@ -217,6 +232,23 @@ function foodItemsReducer(state = initialState, action: PayloadAction): IFoodIte
 				editorResult: action.payload.editorResult,
 			};
 
+		case FoodItemsActions.SET_FOOD_ITEM:
+			return (() => {
+				let newState = state;
+				const foodItem: IFoodItem = action.payload.foodItem;
+
+				// replace individual item
+				newState = {
+					...newState,
+					loadedFoodItems: {
+						...newState.loadedFoodItems,
+						[foodItem.id]: foodItem,
+					},
+				};
+
+				return newState;
+			})();
+
 		case FoodItemsActions.SET_ALL_FOOD_ITEMS:
 			return (() => {
 				let newState = state;
@@ -231,7 +263,7 @@ function foodItemsReducer(state = initialState, action: PayloadAction): IFoodIte
 				return newState;
 			})();
 
-		case FoodItemsActions.SET_FOOD_ITEM:
+		case FoodItemsActions.SET_LAST_FOOD_ITEM_SAVED:
 			return (() => {
 				let newState = state;
 				const foodItem: IFoodItem = action.payload.foodItem;
@@ -239,10 +271,7 @@ function foodItemsReducer(state = initialState, action: PayloadAction): IFoodIte
 				// replace individual item
 				newState = {
 					...newState,
-					loadedFoodItems: {
-						...newState.loadedFoodItems,
-						[foodItem.id]: foodItem,
-					},
+					lastFoodItemSaved: foodItem,
 				};
 
 				return newState;
