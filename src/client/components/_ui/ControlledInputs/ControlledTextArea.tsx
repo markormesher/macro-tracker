@@ -43,7 +43,7 @@ class ControlledTextArea extends PureComponent<IControlledTextAreaProps, IContro
 							disabled={disabled !== false}
 							className={combine(bs.formControl, hasBeenTouched && error && bs.isInvalid)}
 							placeholder={placeholder || ""}
-							value={value || ""}
+							value={value}
 							onBlur={this.handleBlur}
 							{...inputProps}
 					/>

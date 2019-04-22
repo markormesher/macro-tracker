@@ -180,7 +180,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 												id={"brand"}
 												label={"Brand"}
 												placeholder={"Brand"}
-												value={currentValue.brand}
+												value={currentValue.brand || ""}
 												disabled={editorBusy}
 												error={errors.brand}
 												onValueChange={this.handleBrandChange}
@@ -192,7 +192,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 												id={"name"}
 												label={"Name"}
 												placeholder={"Name"}
-												value={currentValue.name}
+												value={currentValue.name || ""}
 												onValueChange={this.handleNameChange}
 												disabled={editorBusy}
 												error={errors.name}
@@ -230,7 +230,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 												id={"caloriesPer100"}
 												label={`Calories per ${formatMeasurement(100, currentValue.measurementUnit)}`}
 												placeholder={"Calories"}
-												value={!isNaN(currentValue.caloriesPer100) && currentValue.caloriesPer100}
+												value={ControlledTextInput.safeNumericValue(currentValue.caloriesPer100)}
 												onValueChange={this.handleCaloriesPer100Change}
 												disabled={editorBusy}
 												error={errors.caloriesPer100}
@@ -244,7 +244,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 												id={"carbohydratesPer100"}
 												label={`Carbohydrates per ${formatMeasurement(100, currentValue.measurementUnit)}`}
 												placeholder={"Carbohydrates"}
-												value={!isNaN(currentValue.carbohydratePer100) && currentValue.carbohydratePer100}
+												value={ControlledTextInput.safeNumericValue(currentValue.carbohydratePer100)}
 												onValueChange={this.handleCarbohydratePer100Change}
 												disabled={editorBusy}
 												error={errors.carbohydratePer100}
@@ -258,7 +258,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 												id={"sugarPer100"}
 												label={`Sugar per ${formatMeasurement(100, currentValue.measurementUnit)}`}
 												placeholder={"Sugar"}
-												value={!isNaN(currentValue.sugarPer100) && currentValue.sugarPer100}
+												value={ControlledTextInput.safeNumericValue(currentValue.sugarPer100)}
 												onValueChange={this.handleSugarPer100Change}
 												disabled={editorBusy}
 												error={errors.sugarPer100}
@@ -272,7 +272,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 												id={"fatPer100"}
 												label={`Fat per ${formatMeasurement(100, currentValue.measurementUnit)}`}
 												placeholder={"Fat"}
-												value={!isNaN(currentValue.fatPer100) && currentValue.fatPer100}
+												value={ControlledTextInput.safeNumericValue(currentValue.fatPer100)}
 												onValueChange={this.handleFatPer100Change}
 												disabled={editorBusy}
 												error={errors.fatPer100}
@@ -286,7 +286,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 												id={"satFatPer100"}
 												label={`Sat. Fat per ${formatMeasurement(100, currentValue.measurementUnit)}`}
 												placeholder={"Sat. Fat"}
-												value={!isNaN(currentValue.satFatPer100) && currentValue.satFatPer100}
+												value={ControlledTextInput.safeNumericValue(currentValue.satFatPer100)}
 												onValueChange={this.handleSatFatPer100Change}
 												disabled={editorBusy}
 												error={errors.satFatPer100}
@@ -300,7 +300,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 												id={"proteinPer100"}
 												label={`Protein per ${formatMeasurement(100, currentValue.measurementUnit)}`}
 												placeholder={"Protein"}
-												value={!isNaN(currentValue.proteinPer100) && currentValue.proteinPer100}
+												value={ControlledTextInput.safeNumericValue(currentValue.proteinPer100)}
 												onValueChange={this.handleProteinPer100Change}
 												disabled={editorBusy}
 												error={errors.proteinPer100}
@@ -314,7 +314,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 												id={"fibrePer100"}
 												label={`Fibre per ${formatMeasurement(100, currentValue.measurementUnit)}`}
 												placeholder={"Fibre"}
-												value={!isNaN(currentValue.fibrePer100) && currentValue.fibrePer100}
+												value={ControlledTextInput.safeNumericValue(currentValue.fibrePer100)}
 												onValueChange={this.handleFibrePer100Change}
 												disabled={editorBusy}
 												error={errors.fibrePer100}
@@ -328,7 +328,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 												id={"saltPer100"}
 												label={`Salt per ${formatMeasurement(100, currentValue.measurementUnit)}`}
 												placeholder={"Salt"}
-												value={!isNaN(currentValue.saltPer100) && currentValue.saltPer100}
+												value={ControlledTextInput.safeNumericValue(currentValue.saltPer100)}
 												onValueChange={this.handleSaltPer100Change}
 												disabled={editorBusy}
 												error={errors.saltPer100}
@@ -384,7 +384,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 						<ControlledTextInput
 								id={`serving_size_label_${ss.id}`}
 								label={null}
-								value={ss.label}
+								value={ss.label || ""}
 								disabled={editorBusy}
 								onValueChange={this.handleServingSizeLabelChange}
 						/>
@@ -396,7 +396,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 						<ControlledTextInput
 								id={`serving_size_measurement_${ss.id}`}
 								label={null}
-								value={!isNaN(ss.measurement) && ss.measurement}
+								value={isNaN(ss.measurement) || ss.measurement === null ? "" : ss.measurement}
 								disabled={editorBusy}
 								onValueChange={this.handleServingSizeMeasurementChange}
 						/>

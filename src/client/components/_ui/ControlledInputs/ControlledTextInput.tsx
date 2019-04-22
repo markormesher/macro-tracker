@@ -20,6 +20,14 @@ interface IControlledTextInputState {
 
 class ControlledTextInput extends PureComponent<IControlledTextInputProps, IControlledTextInputState> {
 
+	public static safeNumericValue(value: number): string | number {
+		if (isNaN(value) || value === null) { // isNaN(null) === false for some reason
+			return "";[]
+		} else {
+			return value;
+		}
+	}
+
 	public constructor(props: IControlledTextInputProps) {
 		super(props);
 		this.state = {
@@ -44,7 +52,7 @@ class ControlledTextInput extends PureComponent<IControlledTextInputProps, ICont
 							disabled={disabled !== false}
 							className={combine(bs.formControl, hasBeenTouched && error && bs.isInvalid)}
 							placeholder={placeholder || ""}
-							value={value || ""}
+							value={value}
 							onBlur={this.handleBlur}
 							{...inputProps}
 					/>

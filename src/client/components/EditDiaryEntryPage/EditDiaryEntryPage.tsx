@@ -175,7 +175,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 										<ControlledSelectInput
 												id={"meal"}
 												label={"Meal"}
-												value={currentValue.meal}
+												value={currentValue.meal || ""}
 												onValueChange={this.handleMealChange}
 												disabled={editorBusy}
 												error={errors.meal}

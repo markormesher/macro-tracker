@@ -41,7 +41,7 @@ class ControlledSelectInput extends PureComponent<IControlledSelectInputProps, I
 							onChange={this.handleChange}
 							disabled={disabled !== false}
 							className={combine(bs.formControl, hasBeenTouched && error && bs.isInvalid)}
-							value={value || ""}
+							value={value}
 							onBlur={this.handleBlur}
 							{...selectProps}
 					>

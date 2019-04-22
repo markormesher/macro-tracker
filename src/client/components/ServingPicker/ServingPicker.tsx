@@ -34,9 +34,14 @@ class ServingPicker extends PureComponent<IServingPickerProps> {
 						<ControlledTextInput
 								id={"servingQty"}
 								label={null}
-								value={servingQty}
+								value={isNaN(servingQty) || servingQty === null ? "" : servingQty}
 								disabled={disabled || !foodItem}
 								onValueChange={this.handleServingQtyChange}
+								inputProps={{
+									type: "number",
+									step: "0.01",
+									min: "0",
+								}}
 						/>
 					</div>
 					<div className={bs.col6}>

@@ -43,7 +43,7 @@ class ControlledDateInput extends PureComponent<IControlledDateInputProps, ICont
 							onChange={this.handleChange}
 							disabled={disabled !== false}
 							className={combine(bs.formControl, hasBeenTouched && error && bs.isInvalid)}
-							value={value || ""}
+							value={value}
 							onBlur={this.handleBlur}
 							{...inputProps}
 					/>
