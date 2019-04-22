@@ -1,7 +1,7 @@
 version: 2
 
 defaults: &defaults
-  working_directory: ~/money-dashboard
+  working_directory: ~/macro-tracker
   docker:
     - image: circleci/node:9.11.2
 
