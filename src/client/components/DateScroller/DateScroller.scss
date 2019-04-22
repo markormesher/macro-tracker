@@ -12,7 +12,7 @@ $border-color: $gray-500;
 	.btn {
 		cursor: pointer;
 		flex-grow: 0;
-		padding: $spacer * .5;
+		padding: $spacer;
 
 		&.disabled {
 			cursor: not-allowed !important;
@@ -22,7 +22,7 @@ $border-color: $gray-500;
 
 	.display {
 		flex-grow: 1;
-		padding: $spacer * .5;
+		padding: $spacer;
 		text-align: center;
 	}
 }
