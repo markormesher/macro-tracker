@@ -36,6 +36,7 @@ enum DiaryEntriesActions {
 }
 
 enum DiaryEntriesCacheKeys {
+	LATEST_UPDATE_TIME = "DiaryEntriesCacheKeys.LATEST_UPDATE_TIME",
 	LOADED_DIARY_ENTRY = "DiaryEntriesCacheKeys.LOADED_DIARY_ENTRY",
 	LOADED_DIARY_ENTRIES_BY_DATE = "DiaryEntriesCacheKeys.LOADED_DIARY_ENTRIES_BY_DATE",
 }
@@ -169,6 +170,7 @@ function*saveDiaryEntrySaga(): Generator {
 			yield all([
 				put(setEditorBusy(false)),
 				put(setEditorResult("success")),
+				put(KeyCache.updateKey(DiaryEntriesCacheKeys.LATEST_UPDATE_TIME)),
 				put(KeyCache.invalidateKey(getCacheKeyForLoadedDiaryEntry(diaryEntry.id))),
 				put(KeyCache.invalidateKey(getCacheKeyForLoadedDiaryEntriesByDate(diaryEntry.date))),
 			]);
@@ -189,6 +191,7 @@ function*deleteDiaryEntrySaga(): Generator {
 			yield call(() => axios.post(`/api/diary-entries/delete/${diaryEntry.id}`));
 
 			yield all([
+				put(KeyCache.updateKey(DiaryEntriesCacheKeys.LATEST_UPDATE_TIME)),
 				put(KeyCache.invalidateKey(getCacheKeyForLoadedDiaryEntry(diaryEntry.id))),
 				put(KeyCache.invalidateKey(getCacheKeyForLoadedDiaryEntriesByDate(diaryEntry.date))),
 			]);

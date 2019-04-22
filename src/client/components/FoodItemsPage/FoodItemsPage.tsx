@@ -20,7 +20,7 @@ import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 
 interface IFoodItemsPageProps {
-	readonly cacheTime?: number;
+	readonly updateTime?: number;
 	readonly actions?: {
 		readonly deleteFoodItem: (foodItem: IFoodItem) => PayloadAction;
 	};
@@ -29,7 +29,7 @@ interface IFoodItemsPageProps {
 function mapStateToProps(state: IRootState, props: IFoodItemsPageProps): IFoodItemsPageProps {
 	return {
 		...props,
-		cacheTime: KeyCache.getKeyTime(FoodItemsCacheKeys.LATEST_CACHE_TIME),
+		updateTime: KeyCache.getKeyTime(FoodItemsCacheKeys.LATEST_UPDATE_TIME),
 	};
 }
 
@@ -62,7 +62,7 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
 
 	private dataProvider = new ApiDataTableDataProvider<IFoodItem>(
 			"/api/food-items/table",
-			() => ({ cacheTime: this.props.cacheTime }),
+			() => ({ updateTime: this.props.updateTime }),
 			mapFoodItemFromApi,
 	);
 
@@ -74,7 +74,7 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
 	}
 
 	public render(): ReactNode {
-		const { cacheTime } = this.props;
+		const { updateTime } = this.props;
 
 		return (
 				<ContentWrapper>
@@ -102,7 +102,7 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
 							<DataTable<IFoodItem>
 									dataProvider={this.dataProvider}
 									columns={this.tableColumns}
-									watchedProps={{ cacheTime }}
+									watchedProps={{ updateTime }}
 									rowRenderer={this.tableRowRenderer}
 							/>
 						</div>

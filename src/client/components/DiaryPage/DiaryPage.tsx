@@ -15,7 +15,8 @@ import * as gs from "../../global-styles/Global.scss";
 import { formatDate, formatLargeNumber, formatMeasurement, getMealTitle } from "../../helpers/formatters";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
-import { startDeleteDiaryEntry, startLoadDiaryEntriesForDate } from "../../redux/diary-entries";
+import { DiaryEntriesCacheKeys, startDeleteDiaryEntry, startLoadDiaryEntriesForDate } from "../../redux/diary-entries";
+import { KeyCache } from "../../redux/helpers/KeyCache";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { IRootState } from "../../redux/root";
 import { startLoadAllTargets } from "../../redux/targets";
@@ -27,6 +28,7 @@ import { ProgressBar } from "../_ui/ProgressBar/ProgressBar";
 import { DateScroller } from "../DateScroller/DateScroller";
 
 interface IDiaryPageProps {
+	readonly updateTime?: number;
 	readonly currentDate: Moment.Moment;
 	readonly loadedDiaryEntriesByDate?: { readonly [key: string]: IDiaryEntry[] };
 	readonly allTargets?: ITarget[];
@@ -45,6 +47,7 @@ function mapStateToProps(state: IRootState, props: IDiaryPageProps): IDiaryPageP
 
 	return {
 		...props,
+		updateTime: KeyCache.getKeyTime(DiaryEntriesCacheKeys.LATEST_UPDATE_TIME),
 		currentDate: date,
 		loadedDiaryEntriesByDate: state.diaryEntries.loadedDiaryEntriesByDate,
 		allTargets: state.targets.allTargets,
@@ -92,8 +95,9 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 			prevState: Readonly<{}>,
 			snapshot?: any,
 	): void {
-		if (this.props.currentDate !== prevProps.currentDate) {
-			this.props.actions.loadDiaryEntriesForDate(this.props.currentDate);
+		const props = this.props;
+		if (props.currentDate !== prevProps.currentDate || props.updateTime !== prevProps.updateTime) {
+			props.actions.loadDiaryEntriesForDate(props.currentDate);
 		}
 	}
 
@@ -316,7 +320,6 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 									className: combine(bs.btnOutlineDark, gs.btnMini),
 								}}
 						/>
-						{/*	TODO: trigger reload on delete */}
 					</div>
 				</div>
 		);

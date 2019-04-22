@@ -134,7 +134,6 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 
 		let statusMsg: ReactNode = null;
 		if (editorResult === "success") {
-			// TODO: do something better here
 			return (
 					<ContentWrapper>
 						<div className={bs.row}>

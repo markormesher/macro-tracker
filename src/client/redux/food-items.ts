@@ -36,7 +36,7 @@ enum FoodItemsActions {
 }
 
 enum FoodItemsCacheKeys {
-	LATEST_CACHE_TIME = "FoodItemsCacheKeys.LATEST_CACHE_TIME",
+	LATEST_UPDATE_TIME = "FoodItemsCacheKeys.LATEST_UPDATE_TIME",
 	ALL_FOOD_ITEMS = "FoodItemsCacheKeys.ALL_FOOD_ITEMS",
 	LOADED_FOOD_ITEM = "FoodItemsCacheKeys.LOADED_FOOD_ITEM",
 }
@@ -177,7 +177,7 @@ function*saveFoodItemSaga(): Generator {
 			yield all([
 				put(setEditorBusy(false)),
 				put(setEditorResult("success")),
-				put(KeyCache.updateKey(FoodItemsCacheKeys.LATEST_CACHE_TIME)),
+				put(KeyCache.updateKey(FoodItemsCacheKeys.LATEST_UPDATE_TIME)),
 				put(KeyCache.invalidateKey(FoodItemsCacheKeys.ALL_FOOD_ITEMS)),
 				put(KeyCache.invalidateKey(getCacheKeyForLoadedFoodItem(foodItem.id))),
 			]);
@@ -198,7 +198,7 @@ function*deleteFoodItemSaga(): Generator {
 			yield call(() => axios.post(`/api/food-items/delete/${foodItem.id}`));
 
 			yield all([
-				put(KeyCache.updateKey(FoodItemsCacheKeys.LATEST_CACHE_TIME)),
+				put(KeyCache.updateKey(FoodItemsCacheKeys.LATEST_UPDATE_TIME)),
 				put(KeyCache.invalidateKey(FoodItemsCacheKeys.ALL_FOOD_ITEMS)),
 				put(KeyCache.invalidateKey(getCacheKeyForLoadedFoodItem(foodItem.id))),
 			]);
