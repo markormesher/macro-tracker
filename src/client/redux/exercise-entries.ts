@@ -297,7 +297,7 @@ function exerciseEntriesReducer(state = initialState, action: PayloadAction): IE
 
 				return {
 					...state,
-					allExerciseLabels: labels
+					allExerciseLabels: labels,
 				};
 			})();
 

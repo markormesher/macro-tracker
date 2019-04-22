@@ -20,12 +20,11 @@ import {
 	setEditorResult,
 	startLoadAllExerciseLabels,
 	startLoadExerciseEntry,
-	startSaveExerciseEntry
+	startSaveExerciseEntry,
 } from "../../redux/exercise-entries";
 import { ActionResult } from "../../redux/helpers/ActionResult";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { IRootState } from "../../redux/root";
-import { startLoadAllTargets } from "../../redux/targets";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
