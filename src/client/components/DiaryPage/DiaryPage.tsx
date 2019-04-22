@@ -258,29 +258,36 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps, IDiaryPageState> {
 		}
 
 		const infoChunks: ReactNode[] = [];
+
+		infoChunks.push((
+				<span key={`info-chunk-brand`} className={combine(bs.textMuted, bs.small)}>
+					{foodItem.brand}
+				</span>
+		));
+
 		if (servingSize) {
 			infoChunks.push((
 					<span key={`info-chunk-serving-size`} className={combine(bs.textMuted, bs.small)}>
 						{entry.servingQty} {servingSize.label}
 					</span>
 			));
+		} else {
+			infoChunks.push((
+					<span key={`info-chunk-serving-measurement`} className={combine(bs.textMuted, bs.small)}>
+					{formatMeasurement(totalMeasurement, foodItem.measurementUnit)}
+				</span>
+			));
 		}
 
 		infoChunks.push((
-				<span key={`info-chunk-serving-measurement`} className={combine(bs.textMuted, bs.small)}>
-					{formatMeasurement(totalMeasurement, foodItem.measurementUnit)}
-				</span>
-		));
-
-		infoChunks.push((
-				<span key={`info-chunk-calries`} className={combine(bs.textMuted, bs.small)}>
+				<span key={`info-chunk-calories`} className={combine(bs.textMuted, bs.small)}>
 					{formatLargeNumber(totalMeasurement * foodItem.caloriesPer100 / 100)} kcal
 				</span>
 		));
 
 		for (let i = 1; i < infoChunks.length; i += 2) {
 			infoChunks.splice(i, 0, (
-					<span key={`spacer-${i}`} className={combine(bs.textMuted, bs.small, bs.mx2)}>
+					<span key={`spacer-${i}`} className={combine(bs.textMuted, bs.small, bs.mx1)}>
 						&bull;
 					</span>
 			));
@@ -289,7 +296,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps, IDiaryPageState> {
 		return (
 				<div className={bs.dFlex} key={entry.id}>
 					<p className={combine(bs.flexGrow1, bs.mb1)}>
-						{foodItem.brand} {foodItem.name}
+						{foodItem.name}
 						<br/>
 						{infoChunks}
 					</p>
