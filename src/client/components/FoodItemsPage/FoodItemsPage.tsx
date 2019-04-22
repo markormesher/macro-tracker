@@ -111,8 +111,14 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
 	private tableRowRenderer(foodItem: IFoodItem): ReactElement<void> {
 		return (
 				<tr key={foodItem.id}>
-					<td><span className={bs.textMuted}>{foodItem.brand}</span> {foodItem.name}</td>
-					<td>{this.generateActionButtons(foodItem)}</td>
+					<td>
+						{foodItem.name}
+						<br/>
+						<span className={combine(bs.small, bs.textMuted)}>{foodItem.brand}</span>
+					</td>
+					<td style={{ verticalAlign: "middle" }}>
+						{this.generateActionButtons(foodItem)}
+					</td>
 				</tr>
 		);
 	}
