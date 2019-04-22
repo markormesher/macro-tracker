@@ -36,13 +36,22 @@ function validateServingSize(servingSize?: Partial<IServingSize>): IServingSizeV
 
 	let result: IServingSizeValidationResult = { isValid: true, errors: {} };
 
-	// TODO: actually validate
-	if (!servingSize.label) {
+	if (!servingSize.label || servingSize.label.trim() === "") {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				label: "No label entered",
+				label: "A valid label must be entered",
+			},
+		};
+	}
+
+	if (!servingSize.measurement || isNaN(servingSize.measurement) || servingSize.measurement < 0) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				measurement: "The measurement must be a positive number",
 			},
 		};
 	}

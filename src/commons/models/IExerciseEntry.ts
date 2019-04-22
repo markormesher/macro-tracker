@@ -1,8 +1,5 @@
 import * as Moment from "moment";
-import { Meal } from "../enums";
 import { IBaseModel } from "./IBaseModel";
-import { IFoodItem, mapFoodItemFromApi } from "./IFoodItem";
-import { IServingSize, mapServingSizeFromApi } from "./IServingSize";
 import { IValidationResult } from "./validation";
 
 interface IExerciseEntry extends IBaseModel {
@@ -39,13 +36,22 @@ function validateExerciseEntry(exerciseEntry?: Partial<IExerciseEntry>): IExerci
 
 	let result: IExerciseEntryValidationResult = { isValid: true, errors: {} };
 
-	// TODO: actually validate
-	if (!exerciseEntry.label) {
+	if (!exerciseEntry.label || exerciseEntry.label.trim() === "") {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				label: "Invalid label",
+				label: "A label must be entered",
+			},
+		};
+	}
+
+	if (!exerciseEntry.caloriesBurned || isNaN(exerciseEntry.caloriesBurned) || exerciseEntry.caloriesBurned < 0) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				caloriesBurned: "The calories burned must be a positive number",
 			},
 		};
 	}
