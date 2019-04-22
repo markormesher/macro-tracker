@@ -138,11 +138,13 @@ function*loadDiaryEntriesForDateSaga(): Generator {
 		}
 
 		try {
-			const diaryEntries: IDiaryEntry[] = yield call(() => axios.get(`/api/diary-entries/for-date/${momentToUrlString(date)}`)
-					.then((res) => {
-						const raw: IDiaryEntry[] = res.data;
-						return mapEntitiesFromApi(mapDiaryEntryFromApi, raw);
-					}));
+			const diaryEntries: IDiaryEntry[] = yield call(() => {
+				return axios.get(`/api/diary-entries/for-date/${momentToUrlString(date)}`)
+						.then((res) => {
+							const raw: IDiaryEntry[] = res.data;
+							return mapEntitiesFromApi(mapDiaryEntryFromApi, raw);
+						});
+			});
 
 			yield all([
 				put(setDiaryEntriesForDate(date, diaryEntries)),

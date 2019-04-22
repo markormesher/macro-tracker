@@ -22,7 +22,7 @@ class ControlledTextInput extends PureComponent<IControlledTextInputProps, ICont
 
 	public static safeNumericValue(value: number): string | number {
 		if (isNaN(value) || value === null) { // isNaN(null) === false for some reason
-			return "";[]
+			return "";
 		} else {
 			return value;
 		}
