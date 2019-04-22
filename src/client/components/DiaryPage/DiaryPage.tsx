@@ -194,6 +194,11 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 				.map((e) => e.foodItem.fatPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
 				.reduce((a, b) => a + b, 0);
 
+		const percentCalories = totalCalories / targetCalories;
+		const percentCarbohydrates = totalCarbohydrates / targetCarbohydrates;
+		const percentProtein = totalProtein / targetProtein;
+		const percentFat = totalFat / targetFat;
+
 		return (
 				<div className={bs.row}>
 					<div className={bs.col}>
@@ -201,31 +206,51 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 								label={"Calories"}
 								value={totalCalories}
 								total={targetCalories}
+								showPercent={percentCalories > 1}
 								wrapperClasses={bs.mb1}
+								barClasses={this.getProgressBarClasses(percentCalories)}
 						/>
 						<ProgressBar
 								label={"Carbohydrates"}
 								value={totalCarbohydrates}
 								total={targetCarbohydrates}
 								unit={"g"}
+								showPercent={percentCarbohydrates > 1}
 								wrapperClasses={bs.mb1}
+								barClasses={this.getProgressBarClasses(percentCarbohydrates)}
 						/>
 						<ProgressBar
 								label={"Protein"}
 								value={totalProtein}
 								total={targetProtein}
 								unit={"g"}
+								showPercent={percentProtein > 1}
 								wrapperClasses={bs.mb1}
+								barClasses={this.getProgressBarClasses(percentProtein)}
 						/>
 						<ProgressBar
 								label={"Fat"}
 								value={totalFat}
 								total={targetFat}
+								showPercent={percentFat > 1}
 								unit={"g"}
+								barClasses={this.getProgressBarClasses(percentFat)}
 						/>
 					</div>
 				</div>
 		);
+	}
+
+	private getProgressBarClasses(percent: number): string {
+		if (percent < 0.6) {
+			return bs.bgWarning;
+		} else if (percent < 1) {
+			return bs.bgSuccess;
+		} else if (percent < 1.1) {
+			return bs.bgWarning;
+		} else {
+			return bs.bgDanger;
+		}
 	}
 
 	private renderExercise(): ReactNode {
