@@ -7,6 +7,7 @@ import { IRootState } from "../../redux/root";
 import { DashboardPage } from "../DashboardPage/DashboardPage";
 import { DiaryPage } from "../DiaryPage/DiaryPage";
 import { EditDiaryEntryPage } from "../EditDiaryEntryPage/EditDiaryEntryPage";
+import { EditExerciseEntryPage } from "../EditExerciseEntryPage/EditExerciseEntryPage";
 import { EditFoodItemPage } from "../EditFoodItemPage/EditFoodItemPage";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { FoodItemsPage } from "../FoodItemsPage/FoodItemsPage";
@@ -50,6 +51,8 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
 						<Route path={"/diary-entries/edit/:diaryEntryId?"} component={EditDiaryEntryPage}/>
 						<Route path={"/diary-entries/:date?"} component={DiaryPage}/>
 						<Route path={"/diary-entries"} component={DiaryPage}/>
+
+						<Route path={"/exercise-entries/edit/:exerciseEntryId?"} component={EditExerciseEntryPage}/>
 
 						<Route path={"/food-items/edit/:foodItemId?"} component={EditFoodItemPage}/>
 						<Route path={"/food-items"} component={FoodItemsPage}/>

@@ -105,6 +105,9 @@ const allMigrations: IDbMigration[] = [
                     start_date                integer                            NOT NULL
                 );
 
+                ALTER TABLE ONLY db_target
+                    ADD CONSTRAINT ${ns.primaryKeyName("db_target", ["id"])} PRIMARY KEY (id);
+
                 ALTER TABLE db_target
                     OWNER TO macro_tracker;
 			`);
@@ -112,6 +115,35 @@ const allMigrations: IDbMigration[] = [
 		down: (qr: QueryRunner) => {
 			return qr.query(`
                 DROP TABLE IF EXISTS db_target;
+			`);
+		},
+	},
+
+	// add exercise entry table
+	{
+		migrationNumber: 3,
+		up: (qr: QueryRunner) => {
+			return qr.query(`
+                CREATE TABLE IF NOT EXISTS db_exercise_entry
+                (
+					id              uuid    DEFAULT uuid_generate_v4() NOT NULL,
+					deleted         boolean DEFAULT false              NOT NULL,
+					date            integer                            NOT NULL,
+					last_edit       integer                            NOT NULL,
+					label           character varying                  NOT NULL,
+					calories_burned double precision                   NOT NULL
+                );
+
+                ALTER TABLE ONLY db_exercise_entry
+                    ADD CONSTRAINT ${ns.primaryKeyName("db_exercise_entry", ["id"])} PRIMARY KEY (id);
+
+                ALTER TABLE db_exercise_entry
+                    OWNER TO macro_tracker;
+			`);
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query(`
+                DROP TABLE IF EXISTS db_exercise_entry;
 			`);
 		},
 	},

@@ -8,6 +8,7 @@ import { Dispatch } from "redux";
 import { CALORIES_PER_G_CARBOHYDRATES, CALORIES_PER_G_FAT, CALORIES_PER_G_PROTEIN } from "../../../commons/constants";
 import { Meal } from "../../../commons/enums";
 import { IDiaryEntry } from "../../../commons/models/IDiaryEntry";
+import { IExerciseEntry } from "../../../commons/models/IExerciseEntry";
 import { ITarget } from "../../../commons/models/ITarget";
 import { momentToDateKey, momentToUrlString, urlStringToMoment } from "../../../commons/utils/dates";
 import * as bs from "../../global-styles/Bootstrap.scss";
@@ -16,6 +17,11 @@ import { formatDate, formatLargeNumber, formatMeasurement, getMealTitle } from "
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
 import { DiaryEntriesCacheKeys, startDeleteDiaryEntry, startLoadDiaryEntriesForDate } from "../../redux/diary-entries";
+import {
+	ExerciseEntriesCacheKeys,
+	startDeleteExerciseEntry,
+	startLoadExerciseEntriesForDate,
+} from "../../redux/exercise-entries";
 import { KeyCache } from "../../redux/helpers/KeyCache";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { IRootState } from "../../redux/root";
@@ -30,10 +36,13 @@ import { DateScroller } from "../DateScroller/DateScroller";
 interface IDiaryPageProps {
 	readonly updateTime?: number;
 	readonly currentDate: Moment.Moment;
+	readonly loadedExerciseEntriesByDate?: { readonly [key: string]: IExerciseEntry[] };
 	readonly loadedDiaryEntriesByDate?: { readonly [key: string]: IDiaryEntry[] };
 	readonly allTargets?: ITarget[];
 	readonly actions?: {
+		readonly loadExerciseEntriesForDate: (date: Moment.Moment) => PayloadAction;
 		readonly loadDiaryEntriesForDate: (date: Moment.Moment) => PayloadAction;
+		readonly deleteExerciseEntry: (exerciseEntry: IExerciseEntry) => PayloadAction;
 		readonly deleteDiaryEntry: (diaryEntry: IDiaryEntry) => PayloadAction;
 		readonly loadAllTargets: () => PayloadAction;
 	};
@@ -47,8 +56,12 @@ function mapStateToProps(state: IRootState, props: IDiaryPageProps): IDiaryPageP
 
 	return {
 		...props,
-		updateTime: KeyCache.getKeyTime(DiaryEntriesCacheKeys.LATEST_UPDATE_TIME),
+		updateTime: Math.max(
+				KeyCache.getKeyTime(DiaryEntriesCacheKeys.LATEST_UPDATE_TIME),
+				KeyCache.getKeyTime(ExerciseEntriesCacheKeys.LATEST_UPDATE_TIME),
+		),
 		currentDate: date,
+		loadedExerciseEntriesByDate: state.exerciseEntries.loadedExerciseEntriesByDate,
 		loadedDiaryEntriesByDate: state.diaryEntries.loadedDiaryEntriesByDate,
 		allTargets: state.targets.allTargets,
 	};
@@ -58,7 +71,9 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDiaryPageProps): IDiaryP
 	return {
 		...props,
 		actions: {
+			loadExerciseEntriesForDate: (date: Moment.Moment) => dispatch(startLoadExerciseEntriesForDate(date)),
 			loadDiaryEntriesForDate: (date: Moment.Moment) => dispatch(startLoadDiaryEntriesForDate(date)),
+			deleteExerciseEntry: (exerciseEntry: IExerciseEntry) => dispatch(startDeleteExerciseEntry(exerciseEntry)),
 			deleteDiaryEntry: (diaryEntry: IDiaryEntry) => dispatch(startDeleteDiaryEntry(diaryEntry)),
 			loadAllTargets: () => dispatch(startLoadAllTargets()),
 		},
@@ -66,6 +81,10 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDiaryPageProps): IDiaryP
 }
 
 class UCDiaryPage extends PureComponent<IDiaryPageProps> {
+
+	private static startEditExerciseEntry(exerciseEntry: IExerciseEntry): void {
+		history.push(`/exercise-entries/edit/${exerciseEntry.id}`);
+	}
 
 	private static startEditDiaryEntry(diaryEntry: IDiaryEntry): void {
 		history.push(`/diary-entries/edit/${diaryEntry.id}`);
@@ -79,13 +98,15 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 		super(props, context);
 
 		this.renderInner = this.renderInner.bind(this);
+		this.renderExercise = this.renderExercise.bind(this);
 		this.renderMeal = this.renderMeal.bind(this);
-		this.renderEntry = this.renderEntry.bind(this);
-		UCDiaryPage.handleDateChange = UCDiaryPage.handleDateChange.bind(this);
+		this.renderExerciseEntry = this.renderExerciseEntry.bind(this);
+		this.renderDiaryEntry = this.renderDiaryEntry.bind(this);
 		this.getCurrentTarget = this.getCurrentTarget.bind(this);
 	}
 
 	public componentDidMount(): void {
+		this.props.actions.loadExerciseEntriesForDate(this.props.currentDate);
 		this.props.actions.loadDiaryEntriesForDate(this.props.currentDate);
 		this.props.actions.loadAllTargets();
 	}
@@ -97,6 +118,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 	): void {
 		const props = this.props;
 		if (props.currentDate !== prevProps.currentDate || props.updateTime !== prevProps.updateTime) {
+			props.actions.loadExerciseEntriesForDate(props.currentDate);
 			props.actions.loadDiaryEntriesForDate(props.currentDate);
 		}
 	}
@@ -116,11 +138,12 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 	}
 
 	private renderInner(): ReactNode {
-		const { currentDate, loadedDiaryEntriesByDate } = this.props;
+		const { currentDate, loadedDiaryEntriesByDate, loadedExerciseEntriesByDate } = this.props;
 
-		const entries = loadedDiaryEntriesByDate[momentToDateKey(currentDate)];
+		const diaryEntries = loadedDiaryEntriesByDate[momentToDateKey(currentDate)];
+		const exerciseEntries = loadedExerciseEntriesByDate[momentToDateKey(currentDate)];
 
-		if (!entries) {
+		if (!diaryEntries || !exerciseEntries) {
 			return (
 					<ContentWrapper>
 						<LoadingSpinner centre={true}/>
@@ -130,7 +153,8 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 
 		return (
 				<ContentWrapper>
-					{this.renderSummary(entries)}
+					{this.renderSummary(diaryEntries, exerciseEntries)}
+					{this.renderExercise()}
 					{this.renderMeal("snacks_1")}
 					{this.renderMeal("breakfast")}
 					{this.renderMeal("snacks_2")}
@@ -142,7 +166,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 		);
 	}
 
-	private renderSummary(allEntries: IDiaryEntry[]): ReactNode {
+	private renderSummary(diaryEntries: IDiaryEntry[], exerciseEntries: IExerciseEntry[]): ReactNode {
 		const { currentDate } = this.props;
 		const target = this.getCurrentTarget();
 
@@ -150,21 +174,23 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 			return <p>No target set for {formatDate(currentDate, "user")}.</p>;
 		}
 
-		const targetCalories = target.baselineCaloriesPerDay; // TODO: plus exercise
+		const totalCaloriesBurned = exerciseEntries.map((ee) => ee.caloriesBurned).reduce((a, b) => a + b, 0);
+
+		const targetCalories = target.baselineCaloriesPerDay + totalCaloriesBurned;
 		const targetCarbohydrates = targetCalories * target.proportionCarbohydrates / CALORIES_PER_G_CARBOHYDRATES;
 		const targetProtein = targetCalories * target.proportionProtein / CALORIES_PER_G_PROTEIN;
 		const targetFat = targetCalories * target.proportionFat / CALORIES_PER_G_FAT;
 
-		const totalCalories = allEntries
+		const totalCalories = diaryEntries
 				.map((e) => e.foodItem.caloriesPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
 				.reduce((a, b) => a + b, 0);
-		const totalCarbohydrates = allEntries
+		const totalCarbohydrates = diaryEntries
 				.map((e) => e.foodItem.carbohydratePer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
 				.reduce((a, b) => a + b, 0);
-		const totalProtein = allEntries
+		const totalProtein = diaryEntries
 				.map((e) => e.foodItem.proteinPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
 				.reduce((a, b) => a + b, 0);
-		const totalFat = allEntries
+		const totalFat = diaryEntries
 				.map((e) => e.foodItem.fatPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
 				.reduce((a, b) => a + b, 0);
 
@@ -202,6 +228,47 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 		);
 	}
 
+	private renderExercise(): ReactNode {
+		const { currentDate, loadedExerciseEntriesByDate } = this.props;
+
+		const entries = loadedExerciseEntriesByDate[momentToDateKey(currentDate)];
+
+		if (!entries) {
+			return null;
+		}
+
+		let renderedEntries: ReactNode;
+		if (!entries.length) {
+			renderedEntries = <p><em className={bs.textMuted}>No entries yet.</em></p>;
+		} else {
+			renderedEntries = entries.map((e) => this.renderExerciseEntry(e));
+		}
+
+		return (
+				<>
+					<hr/>
+					<div className={bs.dFlex}>
+						<h5 className={bs.flexGrow1}>
+							Exercise
+						</h5>
+						<Link
+								to={`/exercise-entries/edit?initDate=${momentToUrlString(currentDate)}`}
+								className={combine(bs.dInlineBlock, bs.flexGrow0)}
+						>
+							<IconBtn
+									icon={faPlus}
+									text={"Add"}
+									btnProps={{
+										className: combine(bs.btnOutlineDark, gs.btnMini),
+									}}
+							/>
+						</Link>
+					</div>
+					{renderedEntries}
+				</>
+		);
+	}
+
 	private renderMeal(meal: Meal): ReactNode {
 		const { currentDate, loadedDiaryEntriesByDate } = this.props;
 
@@ -219,7 +286,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 		if (!entries.length) {
 			renderedEntries = <p><em className={bs.textMuted}>No entries yet.</em></p>;
 		} else {
-			renderedEntries = entries.map((e) => this.renderEntry(e));
+			renderedEntries = entries.map((e) => this.renderDiaryEntry(e));
 		}
 
 		return (
@@ -247,7 +314,44 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 		);
 	}
 
-	private renderEntry(entry: IDiaryEntry): ReactNode {
+	private renderExerciseEntry(entry: IExerciseEntry): ReactNode {
+		const { label, caloriesBurned } = entry;
+
+		return (
+				<div className={bs.dFlex} key={entry.id}>
+					<p className={combine(bs.flexGrow1, bs.mb1)}>
+						{label}
+						<br/>
+						<span className={combine(bs.textMuted, bs.small)}>
+							{formatLargeNumber(caloriesBurned)} kcal
+						</span>
+					</p>
+					<div
+							className={combine(bs.dInlineBlock, bs.btnGroup, bs.btnGroupSm, bs.flexGrow0)}
+							style={{ whiteSpace: "nowrap" }}
+					>
+						<IconBtn
+								icon={faPencil}
+								text={"Edit"}
+								payload={entry}
+								onClick={UCDiaryPage.startEditExerciseEntry}
+								btnProps={{
+									className: combine(bs.btnOutlineDark, gs.btnMini),
+								}}
+						/>
+						<DeleteBtn
+								payload={entry}
+								onConfirmedClick={this.props.actions.deleteExerciseEntry}
+								btnProps={{
+									className: combine(bs.btnOutlineDark, gs.btnMini),
+								}}
+						/>
+					</div>
+				</div>
+		);
+	}
+
+	private renderDiaryEntry(entry: IDiaryEntry): ReactNode {
 		const { foodItem, servingSize } = entry;
 
 		let totalMeasurement: number;
