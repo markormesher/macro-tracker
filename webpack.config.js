@@ -1,6 +1,8 @@
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const glob = require("glob");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const md5 = require("md5");
+const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ReplaceInFileWebpackPlugin = require("replace-in-file-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
@@ -9,23 +11,27 @@ const {resolve, join} = require("path");
 
 const notFalse = (val) => val !== false;
 const nodeEnv = process.env.NODE_ENV.toLowerCase();
+const IS_TEST = nodeEnv === "test";
 const IS_PROD = nodeEnv === "production";
 const IS_DEV = nodeEnv === "development";
 
-if (!IS_PROD && !IS_DEV) {
-	throw new Error("NODE_ENV was not set to one of production or development (it was '" + nodeEnv + "'")
+if (!IS_TEST && !IS_PROD && !IS_DEV) {
+	throw new Error("NODE_ENV was not set to one of test, production or development (it was '" + nodeEnv + "'");
 }
 
 const outputDir = resolve(__dirname, "build", "client");
-const entryPoints = resolve(__dirname, "src", "client", "index.tsx");
+const entryPoints = IS_TEST
+		? glob.sync("./src/client/**/*.tests.{ts,tsx}")
+		: resolve(__dirname, "src", "client", "index.tsx");
 
 const babelLoader = {
 	loader: "babel-loader",
 	options: {
 		cacheDirectory: true,
 		plugins: [
+			IS_TEST && "istanbul",
 			"@babel/plugin-syntax-dynamic-import",
-		],
+		].filter(notFalse),
 		presets: [
 			[
 				"@babel/preset-env",
@@ -46,7 +52,7 @@ const tsLoader = {
 	loader: "ts-loader",
 	options: {
 		transpileOnly: true,
-		configFile: "tsconfig.client.json",
+		configFile: IS_TEST ? "tsconfig.client-test.json" : "tsconfig.client.json",
 		compilerOptions: {
 			module: "esnext",
 		},
@@ -103,6 +109,9 @@ const config = {
 		__dirname: true,
 	},
 	module: {
+		// in test mode, disable this warning
+		exprContextCritical: !IS_TEST,
+
 		rules: [
 			{
 				test: /\.ts(x?)$/,
@@ -127,7 +136,7 @@ const config = {
 				test: /\.(s?)css$/,
 				include: /node_modules/,
 				use: [
-					IS_PROD ? MiniCssExtractPlugin.loader : "style-loader",
+					"style-loader",
 					"css-loader",
 					"sass-loader",
 				],
@@ -142,7 +151,7 @@ const config = {
 				],
 			},
 			{
-				test: /\.(eot|svg|ttf|woff|woff2|png|jpg)$/,
+				test: /\.(eot|svg|ttf|woff|woff2)$/,
 				loader: "file-loader",
 			},
 		],
@@ -152,7 +161,7 @@ const config = {
 		new webpack.WatchIgnorePlugin([/css\.d\.ts$/]),
 		new webpack.EnvironmentPlugin(["NODE_ENV"]),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/), // remove other locales from Moment.js
-		new HtmlWebpackPlugin({
+		!IS_TEST && new HtmlWebpackPlugin({
 			template: resolve(__dirname, "src", "client", "index.html"),
 			inject: true,
 			hash: IS_DEV,
@@ -210,7 +219,7 @@ const config = {
 		minimize: IS_PROD,
 		minimizer: IS_PROD ? [terserMinimiser] : [],
 		namedModules: IS_DEV,
-		splitChunks: {
+		splitChunks: !IS_TEST && {
 			chunks: "all",
 			maxInitialRequests: Infinity,
 			minSize: 0,
@@ -233,7 +242,11 @@ const config = {
 	performance: {
 		hints: IS_PROD ? "warning" : false,
 	},
-	stats: "minimal",
+	stats: IS_TEST ? "errors-only" : "minimal",
 };
 
-module.exports = config;
+if (IS_DEV || IS_PROD) {
+	module.exports = new SpeedMeasurePlugin().wrap(config);
+} else {
+	module.exports = config;
+}
