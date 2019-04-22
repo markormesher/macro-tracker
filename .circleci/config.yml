@@ -65,7 +65,8 @@ jobs:
       - run:
           name: Maybe Deploy
           command: |
-            if ! git describe --exact-match HEAD > /dev/null 2>&1; then echo "Not on tagged commit - nothing to do"; exit 0; fi
+            # deploy on all master commits for now, not just tagged commits
+            # if ! git describe --exact-match HEAD > /dev/null 2>&1; then echo "Not on tagged commit - nothing to do"; exit 0; fi
             ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
             ssh $DEPLOY_USER@$DEPLOY_HOST "cd $DEPLOY_DIR && git pull && ./.scripts/deploy-remote.sh"
 
