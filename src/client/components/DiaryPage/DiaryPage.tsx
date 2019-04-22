@@ -5,6 +5,7 @@ import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
+import { CALORIES_PER_G_CARBOHYDRATES, CALORIES_PER_G_FAT, CALORIES_PER_G_PROTEIN } from "../../../commons/constants";
 import { Meal } from "../../../commons/enums";
 import { IDiaryEntry } from "../../../commons/models/IDiaryEntry";
 import { ITarget } from "../../../commons/models/ITarget";
@@ -22,6 +23,7 @@ import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
+import { ProgressBar } from "../_ui/ProgressBar/ProgressBar";
 import { DateScroller } from "../DateScroller/DateScroller";
 
 interface IDiaryPageProps {
@@ -136,11 +138,16 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps, IDiaryPageState> {
 
 	private renderSummary(allEntries: IDiaryEntry[]): ReactNode {
 		const { currentDate } = this.state;
-		const currentTarget = this.getCurrentTarget();
+		const target = this.getCurrentTarget();
 
-		if (!currentTarget) {
+		if (!target) {
 			return <p>No target set for {formatDate(currentDate, "user")}.</p>;
 		}
+
+		const targetCalories = target.baselineCaloriesPerDay; // TODO: plus exercise
+		const targetCarbohydrates = targetCalories * target.proportionCarbohydrates / CALORIES_PER_G_CARBOHYDRATES;
+		const targetProtein = targetCalories * target.proportionProtein / CALORIES_PER_G_PROTEIN;
+		const targetFat = targetCalories * target.proportionFat / CALORIES_PER_G_FAT;
 
 		const totalCalories = allEntries
 				.map((e) => e.foodItem.caloriesPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
@@ -156,46 +163,34 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps, IDiaryPageState> {
 				.reduce((a, b) => a + b, 0);
 
 		return (
-				<div>
-					<div className={combine(bs.progress, bs.mb1)}>
-						<div
-								className={combine(bs.progressBar)}
-								style={{ width: `${totalCalories / 2800 * 100}%` }}
-						>
-								<span>
-									Calories: {formatLargeNumber(totalCalories)} / {formatLargeNumber(2800)}
-								</span>
-						</div>
-					</div>
-					<div className={combine(bs.progress, bs.mb1)}>
-						<div
-								className={combine(bs.progressBar)}
-								style={{ width: `${totalCarbohydrates / 280 * 100}%` }}
-						>
-								<span>
-									Carbohydrates: {formatMeasurement(totalCarbohydrates, "g")} / {formatMeasurement(280, "g")}
-								</span>
-						</div>
-					</div>
-					<div className={combine(bs.progress, bs.mb1)}>
-						<div
-								className={combine(bs.progressBar)}
-								style={{ width: `${totalProtein / 280 * 100}%` }}
-						>
-								<span>
-									Protein: {formatMeasurement(totalProtein, "g")} / {formatMeasurement(280, "g")}
-								</span>
-						</div>
-					</div>
-					<div className={bs.progress}>
-						<div
-								className={combine(bs.progressBar)}
-								style={{ width: `${totalFat / 63 * 100}%` }}
-						>
-								<span>
-									Fat: {formatMeasurement(totalFat, "g")} / {formatMeasurement(63, "g")}
-								</span>
-						</div>
+				<div className={bs.row}>
+					<div className={bs.col}>
+						<ProgressBar
+								label={"Calories"}
+								value={totalCalories}
+								total={targetCalories}
+								wrapperClasses={bs.mb1}
+						/>
+						<ProgressBar
+								label={"Carbohydrates"}
+								value={totalCarbohydrates}
+								total={targetCarbohydrates}
+								unit={"g"}
+								wrapperClasses={bs.mb1}
+						/>
+						<ProgressBar
+								label={"Protein"}
+								value={totalProtein}
+								total={targetProtein}
+								unit={"g"}
+								wrapperClasses={bs.mb1}
+						/>
+						<ProgressBar
+								label={"Fat"}
+								value={totalFat}
+								total={targetFat}
+								unit={"g"}
+						/>
 					</div>
 				</div>
 		);
