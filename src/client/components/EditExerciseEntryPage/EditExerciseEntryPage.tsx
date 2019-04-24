@@ -229,6 +229,9 @@ class UCEditExerciseEntryPage extends PureComponent<IEditExerciseEntryPageProps,
 												btnProps={{
 													className: bs.btnOutlinePrimary,
 													disabled: editorBusy || !validationResult.isValid,
+													style: {
+														width: "100%",
+													},
 												}}
 												iconProps={{
 													spin: editorBusy,

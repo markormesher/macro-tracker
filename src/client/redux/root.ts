@@ -5,6 +5,7 @@ import { exerciseEntriesReducer, exerciseEntriesSagas, IExerciseEntriesState } f
 import { foodItemsReducer, foodItemsSagas, IFoodItemsState } from "./food-items";
 import { globalReducer, IGlobalState } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
+import { INutritionixState, nutritionixReducer, nutritionixSagas } from "./nutritionix";
 import { ITargetsState, targetsReducer, targetsSagas } from "./targets";
 
 interface IRootState {
@@ -12,6 +13,7 @@ interface IRootState {
 	readonly exerciseEntries: IExerciseEntriesState;
 	readonly foodItems: IFoodItemsState;
 	readonly global: IGlobalState;
+	readonly nutritionix: INutritionixState;
 	readonly targets: ITargetsState;
 
 	// from connected-react-router
@@ -24,6 +26,7 @@ const rootReducers = {
 	exerciseEntries: exerciseEntriesReducer,
 	foodItems: foodItemsReducer,
 	global: globalReducer,
+	nutritionix: nutritionixReducer,
 	targets: targetsReducer,
 };
 
@@ -32,6 +35,7 @@ function*rootSaga(): Generator {
 		diaryEntriesSagas(),
 		exerciseEntriesSagas(),
 		foodItemsSagas(),
+		nutritionixSagas(),
 		targetsSagas(),
 	]);
 }

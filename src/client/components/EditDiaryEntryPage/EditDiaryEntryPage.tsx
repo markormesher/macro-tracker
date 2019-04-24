@@ -244,6 +244,9 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 												btnProps={{
 													className: bs.btnOutlinePrimary,
 													disabled: editorBusy || !validationResult.isValid,
+													style: {
+														width: "100%",
+													},
 												}}
 												iconProps={{
 													spin: editorBusy,

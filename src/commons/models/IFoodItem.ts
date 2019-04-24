@@ -1,7 +1,11 @@
 import { FoodMeasurementUnit } from "../enums";
 import { mapEntitiesFromApi } from "../utils/entities";
+import { isDev } from "../utils/env";
+import { logger } from "../utils/logging";
+import { roundToDp } from "../utils/utils";
 import { IBaseModel } from "./IBaseModel";
 import { IDiaryEntry } from "./IDiaryEntry";
+import { INutritionixFoodItem } from "./INutritionixFoodItem";
 import { IServingSize, mapServingSizeFromApi } from "./IServingSize";
 import { IValidationResult } from "./validation";
 
@@ -46,6 +50,42 @@ function mapFoodItemFromApi(foodItem?: IFoodItem): IFoodItem {
 	return {
 		...foodItem,
 		servingSizes: mapEntitiesFromApi(mapServingSizeFromApi, foodItem.servingSizes),
+	};
+}
+
+function mapFoodItemFromNutritionixApi(foodItem?: INutritionixFoodItem): IFoodItem {
+	if (!foodItem) {
+		return null;
+	}
+
+	// work out what to multiply the per-serving nutrition values by
+	let measurementUnit: FoodMeasurementUnit = null;
+	let conversionFactor = 0;
+	if (foodItem.serving_unit === "ml") {
+		measurementUnit = "ml";
+		conversionFactor = 100 / foodItem.serving_qty;
+	} else if (foodItem.serving_unit === "g") {
+		measurementUnit = "g";
+		conversionFactor = 100 / foodItem.serving_qty;
+	} else {
+		// TODO: handle other measurement units
+	}
+
+	return {
+		...(getDefaultFoodItem()),
+		brand: foodItem.brand_name,
+		name: foodItem.food_name,
+		measurementUnit,
+		caloriesPer100: roundToDp(foodItem.nf_calories * conversionFactor, 1),
+		carbohydratePer100: roundToDp(foodItem.nf_total_carbohydrate * conversionFactor, 1),
+		sugarPer100: roundToDp(foodItem.nf_sugars * conversionFactor, 1),
+		fatPer100: roundToDp(foodItem.nf_total_fat * conversionFactor, 1),
+		satFatPer100: roundToDp(foodItem.nf_saturated_fat * conversionFactor, 1),
+		proteinPer100: roundToDp(foodItem.nf_protein * conversionFactor, 1),
+		fibrePer100: roundToDp(foodItem.nf_dietary_fiber * conversionFactor, 1),
+		saltPer100: roundToDp(foodItem.nf_sodium * conversionFactor / 400, 1), // 1g salt ~= 400mg sodium
+		servingSizes: [],
+		diaryEntries: [],
 	};
 }
 
@@ -113,6 +153,7 @@ export {
 	IFoodItem,
 	IFoodItemValidationResult,
 	mapFoodItemFromApi,
+	mapFoodItemFromNutritionixApi,
 	validateFoodItem,
 	getDefaultFoodItem,
 	foodItemComparator,

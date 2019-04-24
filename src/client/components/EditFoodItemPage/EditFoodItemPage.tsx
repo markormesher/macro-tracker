@@ -383,6 +383,9 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 												btnProps={{
 													className: bs.btnOutlinePrimary,
 													disabled: editorBusy || !validationResult.isValid,
+													style: {
+														width: "100%",
+													},
 												}}
 												iconProps={{
 													spin: editorBusy,

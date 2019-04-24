@@ -10,8 +10,10 @@ import { EditDiaryEntryPage } from "../EditDiaryEntryPage/EditDiaryEntryPage";
 import { EditExerciseEntryPage } from "../EditExerciseEntryPage/EditExerciseEntryPage";
 import { EditFoodItemPage } from "../EditFoodItemPage/EditFoodItemPage";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
+import { FoodItemEntryChooser } from "../FoodItemEntryChooser/FoodItemEntryChooser";
 import { FoodItemsPage } from "../FoodItemsPage/FoodItemsPage";
 import { Nav } from "../Nav/Nav";
+import { UpcFoodItemSearchPage } from "../UpcFoodItemSearchPage/UpcFoodItemSearchPage";
 
 interface IAppProps {
 	readonly waitingFor?: string[];
@@ -54,6 +56,9 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
 
 						<Route path={"/exercise-entries/edit/:exerciseEntryId?"} component={EditExerciseEntryPage}/>
 
+						<Route path={"/food-items/entry-chooser"} component={FoodItemEntryChooser}/>
+						<Route path={"/food-items/from-upc"} component={UpcFoodItemSearchPage}/>
+						{/*<Route path={"/food-items/from-search"} component={FoodItemEntryChooser}/>*/}
 						<Route path={"/food-items/edit/:foodItemId?"} component={EditFoodItemPage}/>
 						<Route path={"/food-items"} component={FoodItemsPage}/>
 

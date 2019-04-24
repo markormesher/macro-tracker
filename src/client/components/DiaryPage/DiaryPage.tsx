@@ -430,7 +430,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 						{infoChunks}
 					</p>
 					<div
-							className={combine(bs.dInlineBlock, bs.btnGroup, bs.btnGroupSm, bs.flexGrow0)}
+							className={combine(bs.dInlineBlock, bs.btnGroup, bs.btnGroupSm, bs.flexGrow0, bs.myAuto)}
 							style={{ whiteSpace: "nowrap" }}
 					>
 						<IconBtn

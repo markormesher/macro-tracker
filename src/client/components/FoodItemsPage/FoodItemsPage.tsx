@@ -81,7 +81,7 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
 					<div className={bs.row}>
 						<div className={bs.col}>
 							<p>
-								<Link to={"/food-items/edit"}>
+								<Link to={"/food-items/entry-chooser"}>
 									<IconBtn
 											icon={faPlus}
 											text={"Create Food Item"}
