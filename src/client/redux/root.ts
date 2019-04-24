@@ -1,5 +1,6 @@
 import { RouterState } from "connected-react-router";
 import { all } from "redux-saga/effects";
+import { authReducer, authSagas, IAuthState } from "./auth";
 import { diaryEntriesReducer, diaryEntriesSagas, IDiaryEntriesState } from "./diary-entries";
 import { exerciseEntriesReducer, exerciseEntriesSagas, IExerciseEntriesState } from "./exercise-entries";
 import { foodItemsReducer, foodItemsSagas, IFoodItemsState } from "./food-items";
@@ -9,6 +10,7 @@ import { INutritionixState, nutritionixReducer, nutritionixSagas } from "./nutri
 import { ITargetsState, targetsReducer, targetsSagas } from "./targets";
 
 interface IRootState {
+	readonly auth: IAuthState;
 	readonly diaryEntries: IDiaryEntriesState;
 	readonly exerciseEntries: IExerciseEntriesState;
 	readonly foodItems: IFoodItemsState;
@@ -22,6 +24,7 @@ interface IRootState {
 
 const rootReducers = {
 	[KeyCache.STATE_KEY]: KeyCache.reducer,
+	auth: authReducer,
 	diaryEntries: diaryEntriesReducer,
 	exerciseEntries: exerciseEntriesReducer,
 	foodItems: foodItemsReducer,
@@ -32,6 +35,7 @@ const rootReducers = {
 
 function*rootSaga(): Generator {
 	yield all([
+		authSagas(),
 		diaryEntriesSagas(),
 		exerciseEntriesSagas(),
 		foodItemsSagas(),

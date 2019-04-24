@@ -7,6 +7,7 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import createSagaMiddleware from "redux-saga";
 import { App } from "./components/App/App";
 import { history } from "./helpers/single-history";
+import { startLoadCurrentUser } from "./redux/auth";
 import { KeyCache } from "./redux/helpers/KeyCache";
 import { rootReducers, rootSaga } from "./redux/root";
 
@@ -32,7 +33,7 @@ KeyCache.setStore(store);
 
 sagaMiddleware.run(rootSaga);
 
-// TODO store.dispatch(startLoadCurrentUser());
+store.dispatch(startLoadCurrentUser());
 
 ReactDOM.render(
 		<Provider store={store}>

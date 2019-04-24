@@ -1,0 +1,36 @@
+$bar-colour: #c0c0c0;
+
+.login-wrapper {
+	margin: 10% 0 0;
+	text-align: center;
+}
+
+.title-wrapper {
+	margin: 0 auto;
+	max-width: 95%;
+	position: relative;
+	width: 400px;
+
+	h1 {
+		display: inline-block;
+		margin: 0;
+
+		&::before,
+		&::after {
+			background-color: $bar-colour;
+			content: "";
+			height: 1px;
+			position: absolute;
+			top: 50%;
+			width: 20%;
+		}
+
+		&::before {
+			left: 0;
+		}
+
+		&::after {
+			right: 0;
+		}
+	}
+}

@@ -1,9 +1,12 @@
 import * as React from "react";
 import { ErrorInfo, PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
-import { Route, Switch } from "react-router";
+import { Redirect, Route, Switch } from "react-router";
+import { IUser } from "../../../commons/models/IUser";
+import { DetailedError } from "../../helpers/errors/DetailedError";
 import { Http404Error } from "../../helpers/errors/Http404Error";
 import { IRootState } from "../../redux/root";
+import { FullPageSpinner } from "../_ui/FullPageSpinner/FullPageSpinner";
 import { DashboardPage } from "../DashboardPage/DashboardPage";
 import { DiaryPage } from "../DiaryPage/DiaryPage";
 import { EditDiaryEntryPage } from "../EditDiaryEntryPage/EditDiaryEntryPage";
@@ -12,12 +15,14 @@ import { EditFoodItemPage } from "../EditFoodItemPage/EditFoodItemPage";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { FoodItemEntryChooser } from "../FoodItemEntryChooser/FoodItemEntryChooser";
 import { FoodItemsPage } from "../FoodItemsPage/FoodItemsPage";
+import { LoginPage } from "../Login/LoginPage";
 import { Nav } from "../Nav/Nav";
 import { UpcFoodItemSearchPage } from "../UpcFoodItemSearchPage/UpcFoodItemSearchPage";
 
 interface IAppProps {
 	readonly waitingFor?: string[];
 	readonly globalError?: Error;
+	readonly activeUser?: IUser;
 	readonly currentPath?: string;
 }
 
@@ -31,19 +36,64 @@ function mapStateToProps(state: IRootState, props: IAppProps): IAppProps {
 		...props,
 		waitingFor: state.global.waitingFor,
 		globalError: state.global.error,
+		activeUser: state.auth.activeUser,
 		currentPath: state.router.location.pathname,
 	};
 }
 
 class UCApp extends PureComponent<IAppProps, IAppState> {
 
-	constructor(props: IAppProps, context: any) {
-		super(props, context);
-
+	constructor(props: IAppProps) {
+		super(props);
+		this.state = {};
 		this.render404Error = this.render404Error.bind(this);
 	}
 
+	public componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+		this.setState({
+			caughtError: error,
+			caughtErrorInfo: errorInfo,
+		});
+	}
+
 	public render(): ReactNode {
+		const { waitingFor, globalError, activeUser } = this.props;
+		const { caughtError, caughtErrorInfo } = this.state;
+
+		if (globalError) {
+			return (
+					<ErrorPage error={globalError} fullPage={true}/>
+			);
+		}
+
+		if (caughtError) {
+			return (
+					<ErrorPage
+							error={new DetailedError(caughtError.name, caughtError.message)}
+							fullPage={true}
+							stacks={[
+								caughtError.stack,
+								`Component stack:${caughtErrorInfo.componentStack}`,
+							]}
+					/>
+			);
+		}
+
+		if (waitingFor.length > 0) {
+			return (
+					<FullPageSpinner/>
+			);
+		}
+
+		if (!activeUser) {
+			return (
+					<Switch>
+						<Route exact={true} path="/auth/login" component={LoginPage}/>
+						<Redirect to="/auth/login"/>
+					</Switch>
+			);
+		}
+
 		return (
 				<>
 					<Nav/>

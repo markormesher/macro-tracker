@@ -147,6 +147,33 @@ const allMigrations: IDbMigration[] = [
 			`);
 		},
 	},
+
+	// add user table
+	{
+		migrationNumber: 4,
+		up: (qr: QueryRunner) => {
+			return qr.query(`
+                CREATE TABLE IF NOT EXISTS db_user
+                (
+					id           uuid    DEFAULT uuid_generate_v4() NOT NULL,
+					deleted      boolean DEFAULT false              NOT NULL,
+					google_id    character varying                  NOT NULL,
+					display_name character varying                  NOT NULL
+                );
+
+                ALTER TABLE ONLY db_user
+                    ADD CONSTRAINT ${ns.primaryKeyName("db_user", ["id"])} PRIMARY KEY (id);
+
+                ALTER TABLE db_user
+                    OWNER TO macro_tracker;
+			`);
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query(`
+                DROP TABLE IF EXISTS db_user;
+			`);
+		},
+	},
 ];
 
 export {

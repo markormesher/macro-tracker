@@ -3,6 +3,7 @@ import * as ConnectRedis from "connect-redis";
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import * as ExpressSession from "express-session";
+import * as Passport from "passport";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { StatusError } from "../commons/StatusError";
@@ -12,6 +13,7 @@ import { delayPromise } from "../commons/utils/utils";
 import { getSecret } from "./config/config-loader";
 import { typeormConf } from "./db/db-config";
 import { MigrationRunner } from "./db/migrations/MigrationRunner";
+import * as PassportConfig from "./helpers/passport-config";
 import { setupApiRoutes } from "./middleware/api-routes";
 
 const app = Express();
@@ -26,9 +28,9 @@ app.use(ExpressSession({
 }));
 
 // auth
-// PassportConfig.init(Passport);
-// app.use(Passport.initialize());
-// app.use(Passport.session());
+PassportConfig.init(Passport);
+app.use(Passport.initialize());
+app.use(Passport.session());
 
 // middleware
 app.use(BodyParser.json());
