@@ -58,6 +58,7 @@ foodItemsRouter.post("/edit/:foodItemId?", (req: Request, res: Response, next: N
 	const properties: Partial<IFoodItem> = {
 		brand: cleanString(req.body.brand),
 		name: cleanString(req.body.name),
+		upc: cleanString(req.body.upc),
 		measurementUnit: cleanString(req.body.measurementUnit) as FoodMeasurementUnit,
 		caloriesPer100: req.body.caloriesPer100 ? parseFloat(req.body.caloriesPer100) : 0,
 		carbohydratePer100: req.body.carbohydratePer100 ? parseFloat(req.body.carbohydratePer100) : 0,

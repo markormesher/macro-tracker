@@ -2,12 +2,15 @@ import { faCircleNotch, faPlus, faSearch } from "@fortawesome/pro-light-svg-icon
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 import { Dispatch } from "redux";
 import { IFoodItem } from "../../../commons/models/IFoodItem";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatLargeNumber, formatMeasurement } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
+import { startSaveFoodItem } from "../../redux/food-items";
+import { ActionResult } from "../../redux/helpers/ActionResult";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { startSearchFoodItemByUpc } from "../../redux/nutritionix";
 import { IRootState } from "../../redux/root";
@@ -19,8 +22,11 @@ import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 interface IUpcFoodItemSearchPageProps {
 	readonly upcSearchBusy?: boolean;
 	readonly searchedFoodItemsByUpc?: { readonly [key: string]: IFoodItem[] };
+	readonly editorResult?: ActionResult;
+	readonly lastFoodItemSaved?: IFoodItem;
 	readonly actions?: {
 		readonly searchFoodItemByUpc: (upc: string) => PayloadAction;
+		readonly startSaveFoodItem: (foodItem: IFoodItem) => PayloadAction;
 	};
 }
 
@@ -34,6 +40,8 @@ function mapStateToProps(state: IRootState, props: IUpcFoodItemSearchPageProps):
 		...props,
 		upcSearchBusy: state.nutritionix.upcSearchBusy,
 		searchedFoodItemsByUpc: state.nutritionix.searchedFoodItemsByUpc,
+		editorResult: state.foodItems.editorResult,
+		lastFoodItemSaved: state.foodItems.lastFoodItemSaved,
 	};
 }
 
@@ -42,6 +50,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IUpcFoodItemSearchPagePro
 		...props,
 		actions: {
 			searchFoodItemByUpc: (upc: string) => dispatch(startSearchFoodItemByUpc(upc)),
+			startSaveFoodItem: (foodItem) => dispatch(startSaveFoodItem(foodItem)),
 		},
 	};
 }
@@ -63,11 +72,25 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 	}
 
 	public render(): ReactNode {
-		const { upcSearchBusy } = this.props;
+		const { upcSearchBusy, editorResult } = this.props;
 		const { upcEntered } = this.state;
+
+		let statusMsg: ReactNode = null;
+		if (editorResult === "success") {
+			const { lastFoodItemSaved } = this.props;
+			return <Redirect to={`/food-items/edit/${lastFoodItemSaved.id}`}/>;
+		} else if (editorResult) {
+			statusMsg = (
+					<div className={combine(bs.alert, bs.alertDanger)}>
+						<h5>Failed!</h5>
+						<p>{editorResult.message}</p>
+					</div>
+			);
+		}
 
 		return (
 				<ContentWrapper>
+					{statusMsg}
 					<div className={bs.row}>
 						<div className={bs.col}>
 							<h1>Food Item UPC Search</h1>
@@ -211,8 +234,7 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 	}
 
 	private createFoodItem(foodItem: IFoodItem): void {
-		console.log("Creating item...");
-		console.log(foodItem);
+		this.props.actions.startSaveFoodItem(foodItem);
 	}
 }
 

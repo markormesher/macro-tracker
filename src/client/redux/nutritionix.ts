@@ -1,6 +1,7 @@
-import { all, put, select, takeEvery } from "redux-saga/effects";
-import { IFoodItem } from "../../commons/models/IFoodItem";
-import { delayPromise } from "../../commons/utils/utils";
+import axios from "axios";
+import { all, call, put, select, takeEvery } from "redux-saga/effects";
+import { IFoodItem, mapFoodItemFromApi } from "../../commons/models/IFoodItem";
+import { mapEntitiesFromApi } from "../../commons/utils/entities";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { IRootState } from "./root";
@@ -57,6 +58,8 @@ function*searchFoodItemByUpcSaga(): Generator {
 	yield takeEvery(NutritionixActions.START_SEARCH_FOOD_ITEMS_BY_UPC, function*(action: PayloadAction): Generator {
 		const upc: string = action.payload.upc;
 
+		// TODO: check whether we have the UPC in the DB already!
+
 		const existingResults: IFoodItem[] = yield select((state: IRootState) => {
 			return state.nutritionix.searchedFoodItemsByUpc[upc];
 		});
@@ -67,49 +70,11 @@ function*searchFoodItemByUpcSaga(): Generator {
 		yield put(setUpcSearchBusy(true));
 
 		try {
-			// temp for dev...
-			// const foodItems: IFoodItem[] = yield call(() => axios.get(`/api/nutritionix/search-upc/${upc}`)
-			// 		.then((res) => {
-			// 			const raw: IFoodItem[] = res.data;
-			// 			return mapEntitiesFromApi(mapFoodItemFromApi, raw);
-			// 		}));
-
-			const foodItems: IFoodItem[] = yield delayPromise(1500).then(() => {
-				return [
-					{
-						deleted: false,
-						brand: "Grenade",
-						name: "High Protein Shake, Carb Killa, Peanut Nutter",
-						measurementUnit: "ml",
-						caloriesPer100: 59.6,
-						carbohydratePer100: 2.8,
-						sugarPer100: 1.7,
-						fatPer100: 2.1,
-						satFatPer100: 1.4,
-						proteinPer100: 7.3,
-						fibrePer100: 0.1,
-						saltPer100: 0.2,
-						servingSizes: [],
-						diaryEntries: [],
-					},
-					{
-						deleted: false,
-						brand: "Grenade",
-						name: "High Protein Shake, Carb Killa, Peanut Nutter",
-						measurementUnit: "ml",
-						caloriesPer100: 59.6,
-						carbohydratePer100: 2.8,
-						sugarPer100: 1.7,
-						fatPer100: 2.1,
-						satFatPer100: 1.4,
-						proteinPer100: 7.3,
-						fibrePer100: 0.1,
-						saltPer100: 0.2,
-						servingSizes: [],
-						diaryEntries: [],
-					},
-				];
-			});
+			const foodItems: IFoodItem[] = yield call(() => axios.get(`/api/nutritionix/search-upc/${upc}`)
+					.then((res) => {
+						const raw: IFoodItem[] = res.data;
+						return mapEntitiesFromApi(mapFoodItemFromApi, raw);
+					}));
 
 			yield all([
 				put(setFoodItemsByUpc(upc, foodItems)),

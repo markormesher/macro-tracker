@@ -174,6 +174,21 @@ const allMigrations: IDbMigration[] = [
 			`);
 		},
 	},
+
+	// add food item UPC
+	{
+		migrationNumber: 5,
+		up: (qr: QueryRunner) => {
+			return qr.query(`
+				ALTER TABLE db_food_item ADD COLUMN upc CHARACTER VARYING;
+			`);
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query(`
+				ALTER TABLE db_food_item DROP COLUMN upc;
+			`);
+		},
+	},
 ];
 
 export {

@@ -96,6 +96,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 		this.renderServingSizeInputs = this.renderServingSizeInputs.bind(this);
 		this.handleBrandChange = this.handleBrandChange.bind(this);
 		this.handleNameChange = this.handleNameChange.bind(this);
+		this.handleUpcChange = this.handleUpcChange.bind(this);
 		this.handleMeasurementUnitChange = this.handleMeasurementUnitChange.bind(this);
 		this.handleCaloriesPer100Change = this.handleCaloriesPer100Change.bind(this);
 		this.handleCarbohydratePer100Change = this.handleCarbohydratePer100Change.bind(this);
@@ -228,6 +229,17 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 												onValueChange={this.handleNameChange}
 												disabled={editorBusy}
 												error={errors.name}
+										/>
+									</div>
+									<div className={combine(bs.col12, bs.formGroup)}>
+										<ControlledTextInput
+												id={"upc"}
+												label={"UPC"}
+												placeholder={"UPC"}
+												value={currentValue.upc || ""}
+												onValueChange={this.handleUpcChange}
+												disabled={editorBusy}
+												error={errors.upc}
 										/>
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
@@ -449,6 +461,10 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 
 	private handleNameChange(name: string): void {
 		this.updateModel({ name });
+	}
+
+	private handleUpcChange(upc: string): void {
+		this.updateModel({ upc });
 	}
 
 	private handleMeasurementUnitChange(measurementUnit: FoodMeasurementUnit): void {

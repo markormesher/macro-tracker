@@ -15,6 +15,9 @@ class DbFoodItem extends BaseModel implements IFoodItem {
 	@Column()
 	public name: string;
 
+	@Column({ nullable: true })
+	public upc: string;
+
 	@Column({ type: "character varying" })
 	public measurementUnit: FoodMeasurementUnit;
 

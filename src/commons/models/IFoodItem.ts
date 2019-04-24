@@ -1,7 +1,5 @@
 import { FoodMeasurementUnit } from "../enums";
 import { mapEntitiesFromApi } from "../utils/entities";
-import { isDev } from "../utils/env";
-import { logger } from "../utils/logging";
 import { roundToDp } from "../utils/utils";
 import { IBaseModel } from "./IBaseModel";
 import { IDiaryEntry } from "./IDiaryEntry";
@@ -12,6 +10,7 @@ import { IValidationResult } from "./validation";
 interface IFoodItem extends IBaseModel {
 	readonly brand: string;
 	readonly name: string;
+	readonly upc: string;
 	readonly measurementUnit: FoodMeasurementUnit;
 	readonly caloriesPer100: number;
 	readonly carbohydratePer100: number;
@@ -30,6 +29,7 @@ interface IFoodItemValidationResult extends IValidationResult {
 	readonly errors: {
 		readonly brand?: string;
 		readonly name?: string;
+		readonly upc?: string;
 		readonly measurementUnit?: string;
 		readonly caloriesPer100?: string;
 		readonly carbohydratePer100?: string;
@@ -53,7 +53,7 @@ function mapFoodItemFromApi(foodItem?: IFoodItem): IFoodItem {
 	};
 }
 
-function mapFoodItemFromNutritionixApi(foodItem?: INutritionixFoodItem): IFoodItem {
+function mapFoodItemFromNutritionixApi(foodItem?: INutritionixFoodItem, upc?: string): IFoodItem {
 	if (!foodItem) {
 		return null;
 	}
@@ -75,6 +75,7 @@ function mapFoodItemFromNutritionixApi(foodItem?: INutritionixFoodItem): IFoodIt
 		...(getDefaultFoodItem()),
 		brand: foodItem.brand_name,
 		name: foodItem.food_name,
+		upc,
 		measurementUnit,
 		caloriesPer100: roundToDp(foodItem.nf_calories * conversionFactor, 1),
 		carbohydratePer100: roundToDp(foodItem.nf_total_carbohydrate * conversionFactor, 1),
@@ -115,8 +116,9 @@ function getDefaultFoodItem(): IFoodItem {
 		id: undefined,
 		deleted: false,
 
-		brand: "",
-		name: "",
+		brand: null,
+		name: null,
+		upc: null,
 		measurementUnit: "g",
 		caloriesPer100: 0,
 		carbohydratePer100: 0,

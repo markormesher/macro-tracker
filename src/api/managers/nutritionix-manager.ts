@@ -22,7 +22,7 @@ async function getFoodItemsFromNutritionixByUpc(upc: string): Promise<IFoodItem[
 				.get(`https://trackapi.nutritionix.com/v2/search/item?upc=${upc}`, { headers, httpsAgent: agent })
 				.then((res: AxiosResponse<INutritionixItemSearchResponse>) => res.data.foods);
 
-		return foods.map((f) => mapFoodItemFromNutritionixApi(f));
+		return foods.map((f) => mapFoodItemFromNutritionixApi(f, upc));
 	} catch (e) {
 		if (isDev()) {
 			logger.warn("Nutritionix UPC search failed", { error: e });

@@ -4,7 +4,7 @@ import { IOAuth2StrategyOptionWithRequest, OAuth2Strategy, Profile } from "passp
 import { IUser } from "../../commons/models/IUser";
 import { StatusError } from "../../commons/StatusError";
 import { getConstants, getSecret } from "../config/config-loader";
-import { getUserWithGoogleProfile, getUser } from "../managers/user-manager";
+import { getUser, getUserWithGoogleProfile } from "../managers/user-manager";
 
 function init(passport: Passport): void {
 	const googleConfig: IOAuth2StrategyOptionWithRequest = {
