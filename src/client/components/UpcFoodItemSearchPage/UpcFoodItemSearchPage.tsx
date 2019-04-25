@@ -1,15 +1,15 @@
-import { faCircleNotch, faPlus, faSearch } from "@fortawesome/pro-light-svg-icons";
+import { faCalendarDay, faCircleNotch, faPencil, faPlus, faSearch } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
 import { IFoodItem } from "../../../commons/models/IFoodItem";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatLargeNumber, formatMeasurement } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
-import { startSaveFoodItem } from "../../redux/food-items";
+import { setEditorResult, startSaveFoodItem } from "../../redux/food-items";
 import { ActionResult } from "../../redux/helpers/ActionResult";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { startSearchFoodItemByUpc } from "../../redux/nutritionix";
@@ -25,6 +25,7 @@ interface IUpcFoodItemSearchPageProps {
 	readonly editorResult?: ActionResult;
 	readonly lastFoodItemSaved?: IFoodItem;
 	readonly actions?: {
+		readonly resetEditorResult: () => PayloadAction;
 		readonly searchFoodItemByUpc: (upc: string) => PayloadAction;
 		readonly startSaveFoodItem: (foodItem: IFoodItem) => PayloadAction;
 	};
@@ -49,6 +50,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IUpcFoodItemSearchPagePro
 	return {
 		...props,
 		actions: {
+			resetEditorResult: () => dispatch(setEditorResult(undefined)),
 			searchFoodItemByUpc: (upc: string) => dispatch(startSearchFoodItemByUpc(upc)),
 			startSaveFoodItem: (foodItem) => dispatch(startSaveFoodItem(foodItem)),
 		},
@@ -71,6 +73,10 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 		this.createFoodItem = this.createFoodItem.bind(this);
 	}
 
+	public componentDidMount(): void {
+		this.props.actions.resetEditorResult();
+	}
+
 	public render(): ReactNode {
 		const { upcSearchBusy, editorResult } = this.props;
 		const { upcEntered } = this.state;
@@ -78,7 +84,46 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 		let statusMsg: ReactNode = null;
 		if (editorResult === "success") {
 			const { lastFoodItemSaved } = this.props;
-			return <Redirect to={`/food-items/edit/${lastFoodItemSaved.id}`}/>;
+			return (
+					<ContentWrapper>
+						<div className={bs.row}>
+							<div className={bs.col}>
+								<h1>Done!</h1>
+								<p>{lastFoodItemSaved.name} has been saved.</p>
+							</div>
+						</div>
+						<div className={bs.row}>
+							<div className={bs.col6}>
+								<Link to={`/food-items/edit/${lastFoodItemSaved.id}`}>
+									<IconBtn
+											icon={faPencil}
+											text={"Edit Details"}
+											btnProps={{
+												className: bs.btnOutlineDark,
+												style: {
+													width: "100%",
+												},
+											}}
+									/>
+								</Link>
+							</div>
+							<div className={bs.col6}>
+								<Link to={`/diary-entries/edit?initFood=${lastFoodItemSaved.id}`}>
+									<IconBtn
+											icon={faCalendarDay}
+											text={"Add to Diary Entry"}
+											btnProps={{
+												className: bs.btnOutlineDark,
+												style: {
+													width: "100%",
+												},
+											}}
+									/>
+								</Link>
+							</div>
+						</div>
+					</ContentWrapper>
+			);
 		} else if (editorResult) {
 			statusMsg = (
 					<div className={combine(bs.alert, bs.alertDanger)}>
@@ -187,11 +232,40 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 					));
 				}
 
+				let btn: ReactNode;
+				if (fi.id) {
+					// item came from our database
+					btn = (
+							<Link to={`/diary-entries/edit?initFood=${fi.id}`}>
+								<IconBtn
+										icon={faCalendarDay}
+										text={"Add to Diary"}
+										btnProps={{
+											className: combine(bs.btnOutlineDark, gs.btnMini),
+										}}
+								/>
+							</Link>
+					);
+				} else {
+					// item came from remote API
+					btn = (
+							<IconBtn
+									icon={faPlus}
+									text={"Add"}
+									payload={fi}
+									onClick={this.createFoodItem}
+									btnProps={{
+										className: combine(bs.btnOutlineDark, gs.btnMini),
+									}}
+							/>
+					);
+				}
+
 				return (
 						<div className={bs.row} key={idx}>
 							<div className={combine(bs.col, bs.dFlex)}>
 								<p className={combine(bs.flexGrow1, bs.mb1)}>
-									{fi.name}
+									{fi.name} {fi.id && " (already added)"}
 									<br/>
 									<span className={combine(bs.textMuted, bs.small)}>
 										{fi.brand}
@@ -205,15 +279,7 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 										className={combine(bs.dInlineBlock, bs.btnGroup, bs.btnGroupSm, bs.flexGrow0, bs.myAuto)}
 										style={{ whiteSpace: "nowrap" }}
 								>
-									<IconBtn
-											icon={faPlus}
-											text={"Add"}
-											payload={fi}
-											onClick={this.createFoodItem}
-											btnProps={{
-												className: combine(bs.btnOutlineDark, gs.btnMini),
-											}}
-									/>
+									{btn}
 								</div>
 							</div>
 						</div>

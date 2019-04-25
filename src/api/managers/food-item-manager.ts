@@ -27,6 +27,14 @@ async function getFoodItem(id: string, options: IFoodItemQueryBuilderOptions = {
 			.getOne();
 }
 
+async function getFoodItemByUpc(upc: string, options: IFoodItemQueryBuilderOptions = {}): Promise<DbFoodItem> {
+	return getFoodItemQueryBuilder(options)
+			.where("food_item.deleted = FALSE")
+			.andWhere("food_item.upc = :upc")
+			.setParameter("upc", upc)
+			.getOne();
+}
+
 async function getAllFoodItems(): Promise<DbFoodItem[]> {
 	return getFoodItemQueryBuilder({ includeServingSizes: true })
 			.where("food_item.deleted = FALSE")
@@ -86,6 +94,7 @@ async function deleteFoodItem(foodItemId: string): Promise<void> {
 export {
 	getFoodItemQueryBuilder,
 	getFoodItem,
+	getFoodItemByUpc,
 	getAllFoodItems,
 	saveFoodItem,
 	deleteFoodItem,

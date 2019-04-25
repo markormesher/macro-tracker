@@ -58,8 +58,6 @@ function*searchFoodItemByUpcSaga(): Generator {
 	yield takeEvery(NutritionixActions.START_SEARCH_FOOD_ITEMS_BY_UPC, function*(action: PayloadAction): Generator {
 		const upc: string = action.payload.upc;
 
-		// TODO: check whether we have the UPC in the DB already!
-
 		const existingResults: IFoodItem[] = yield select((state: IRootState) => {
 			return state.nutritionix.searchedFoodItemsByUpc[upc];
 		});
@@ -70,16 +68,30 @@ function*searchFoodItemByUpcSaga(): Generator {
 		yield put(setUpcSearchBusy(true));
 
 		try {
-			const foodItems: IFoodItem[] = yield call(() => axios.get(`/api/nutritionix/search-upc/${upc}`)
+			// check our own DB first
+			const existingFoodItem: IFoodItem = yield call(() => axios.get(`/api/food-items/by-upc/${upc}`)
 					.then((res) => {
-						const raw: IFoodItem[] = res.data;
-						return mapEntitiesFromApi(mapFoodItemFromApi, raw);
+						const raw: IFoodItem = res.data;
+						return mapFoodItemFromApi(raw);
 					}));
 
-			yield all([
-				put(setFoodItemsByUpc(upc, foodItems)),
-				put(setUpcSearchBusy(false)),
-			]);
+			if (existingFoodItem) {
+				yield all([
+					put(setFoodItemsByUpc(upc, [existingFoodItem])),
+					put(setUpcSearchBusy(false)),
+				]);
+			} else {
+				const foodItems: IFoodItem[] = yield call(() => axios.get(`/api/nutritionix/search-upc/${upc}`)
+						.then((res) => {
+							const raw: IFoodItem[] = res.data;
+							return mapEntitiesFromApi(mapFoodItemFromApi, raw);
+						}));
+
+				yield all([
+					put(setFoodItemsByUpc(upc, foodItems)),
+					put(setUpcSearchBusy(false)),
+				]);
+			}
 		} catch (err) {
 			yield put(setError(err));
 		}

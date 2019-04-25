@@ -56,9 +56,7 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps> {
 			snapshot?: any,
 	): void {
 		const props = this.props;
-		const foodItems = props.allFoodItems;
-		const prevFoodItems = prevProps.allFoodItems;
-		if (foodItems && foodItems.length > 0 && (!prevFoodItems || prevFoodItems.length === 0)) {
+		if (props.allFoodItems !== prevProps.allFoodItems) {
 			// loaded food items for the first time
 
 			if (props.preSelectedId) {
@@ -90,7 +88,7 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps> {
 
 	private handleFoodItemChange(foodItemId: string): void {
 		const { allFoodItems, onValueChange } = this.props;
-		const foodItem = allFoodItems.find((fi) => fi.id === foodItemId) || undefined;
+		const foodItem = (allFoodItems || []).find((fi) => fi.id === foodItemId) || undefined;
 		if (onValueChange) {
 			onValueChange(foodItem);
 		}

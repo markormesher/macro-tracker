@@ -11,6 +11,7 @@ import {
 	deleteFoodItem,
 	getAllFoodItems,
 	getFoodItem,
+	getFoodItemByUpc,
 	getFoodItemQueryBuilder,
 	saveFoodItem,
 } from "../managers/food-item-manager";
@@ -43,6 +44,13 @@ foodItemsRouter.get("/table", (req: Request, res: Response, next: NextFunction) 
 foodItemsRouter.get("/all", (req: Request, res: Response, next: NextFunction) => {
 	getAllFoodItems()
 			.then((foodItems) => res.json(foodItems))
+			.catch(next);
+});
+
+foodItemsRouter.get("/by-upc/:upc", (req: Request, res: Response, next: NextFunction) => {
+	const upc: string = cleanString(req.params.upc);
+	getFoodItemByUpc(upc, { includeServingSizes: true })
+			.then((foodItem) => res.json(foodItem))
 			.catch(next);
 });
 

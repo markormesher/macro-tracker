@@ -199,11 +199,6 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 							>
 								<div className={bs.row}>
 									<div className={combine(bs.col12, bs.formGroup)}>
-										<pre>{JSON.stringify(currentValue)}</pre>
-									</div>
-								</div>
-								<div className={bs.row}>
-									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledSelectInput
 												id={"meal"}
 												label={"Meal"}
@@ -264,6 +259,11 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 													spin: editorBusy,
 												}}
 										/>
+									</div>
+								</div>
+								<div className={bs.row}>
+									<div className={combine(bs.col12, bs.formGroup)}>
+										<pre>{JSON.stringify(currentValue, null, 2)}</pre>
 									</div>
 								</div>
 							</ControlledForm>
