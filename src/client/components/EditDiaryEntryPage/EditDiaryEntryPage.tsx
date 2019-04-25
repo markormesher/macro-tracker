@@ -20,6 +20,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import { getMealTitle } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { setEditorResult, startLoadDiaryEntry, startSaveDiaryEntry } from "../../redux/diary-entries";
+import { startLoadAllFoodItems } from "../../redux/food-items";
 import { ActionResult } from "../../redux/helpers/ActionResult";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { IRootState } from "../../redux/root";
@@ -35,10 +36,12 @@ interface IEditDiaryEntryPageProps {
 	readonly editorBusy?: boolean;
 	readonly editorResult?: ActionResult;
 	readonly loadedDiaryEntry?: IDiaryEntry;
+	readonly allFoodItems?: IFoodItem[];
 	readonly actions?: {
 		readonly resetEditorResult: () => PayloadAction;
 		readonly startLoadDiaryEntry: () => PayloadAction;
 		readonly startSaveDiaryEntry: (diaryEntry: IDiaryEntry) => PayloadAction;
+		readonly startLoadAllFoodItems: () => PayloadAction;
 	};
 
 	// derived from query string
@@ -63,6 +66,7 @@ function mapStateToProps(state: IRootState, props: IEditDiaryEntryPageProps): IE
 		editorBusy: state.diaryEntries.editorBusy,
 		editorResult: state.diaryEntries.editorResult,
 		loadedDiaryEntry: state.diaryEntries.loadedDiaryEntries[diaryEntryId],
+		allFoodItems: state.foodItems.allFoodItems,
 
 		initialDate: urlParams.has("initDate") ? urlStringToMoment(urlParams.get("initDate")) : undefined,
 		initialMeal: urlParams.has("initMeal") ? urlParams.get("initMeal") as Meal : undefined,
@@ -78,6 +82,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IEditDiaryEntryPageProps)
 			resetEditorResult: () => dispatch(setEditorResult(undefined)),
 			startLoadDiaryEntry: () => dispatch(startLoadDiaryEntry(diaryEntryId)),
 			startSaveDiaryEntry: (diaryEntry) => dispatch(startSaveDiaryEntry(diaryEntry)),
+			startLoadAllFoodItems: () => dispatch(startLoadAllFoodItems()),
 		},
 	};
 }
@@ -101,6 +106,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 
 	public componentDidMount(): void {
 		this.props.actions.resetEditorResult();
+		this.props.actions.startLoadAllFoodItems();
 
 		const diaryEntryId = this.props.match.params.diaryEntryId;
 		if (diaryEntryId) {
@@ -120,7 +126,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 	}
 
 	public render(): ReactNode {
-		const { match, editorBusy, editorResult } = this.props;
+		const { match, editorBusy, editorResult, initialFoodItemId } = this.props;
 		const { currentValue, validationResult } = this.state;
 		const errors = validationResult.errors || {};
 
@@ -193,6 +199,11 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 							>
 								<div className={bs.row}>
 									<div className={combine(bs.col12, bs.formGroup)}>
+										<pre>{JSON.stringify(currentValue)}</pre>
+									</div>
+								</div>
+								<div className={bs.row}>
+									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledSelectInput
 												id={"meal"}
 												label={"Meal"}
@@ -213,6 +224,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<FoodItemPicker
 												value={currentValue.foodItem}
+												preSelectedId={initialFoodItemId}
 												onValueChange={this.handleFoodItemChange}
 												inputProps={{
 													label: "Food",
@@ -262,24 +274,26 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 	}
 
 	private resetEditor(init: boolean = false): void {
-		this.props.actions.resetEditorResult();
+		const { initialDate, initialMeal, actions } = this.props;
 
-		const defaultDiaryEntry = {
+		actions.resetEditorResult();
+
+		const defaultDiaryEntry = getDefaultDiaryEntry();
+		const diaryEntry = {
 			...(getDefaultDiaryEntry()),
-			date: init ? this.props.initialDate : this.state.currentValue.date,
-			meal: init ? this.props.initialMeal : this.state.currentValue.meal,
-			// TODO: use initialFoodItemId
+			date: init && initialDate ? initialDate : defaultDiaryEntry.date,
+			meal: init && initialMeal ? initialMeal : defaultDiaryEntry.meal,
 		};
 
 		if (init) {
 			this.state = {
-				currentValue: defaultDiaryEntry,
-				validationResult: validateDiaryEntry(defaultDiaryEntry),
+				currentValue: diaryEntry,
+				validationResult: validateDiaryEntry(diaryEntry),
 			};
 		} else {
 			this.setState({
-				currentValue: defaultDiaryEntry,
-				validationResult: validateDiaryEntry(defaultDiaryEntry),
+				currentValue: diaryEntry,
+				validationResult: validateDiaryEntry(diaryEntry),
 			});
 		}
 	}

@@ -44,16 +44,19 @@ function mapFoodItemFromNutritionixApi(foodItem?: INutritionixFoodItem, upc?: st
 	let measurementUnit: FoodMeasurementUnit = "g";
 	let conversionFactor = 0;
 	if ((/ml( .*)?/i).test(foodItem.serving_unit)) {
-		// captures "ml", "ml bottle", "ml serving", erc.
 		measurementUnit = "ml";
 		conversionFactor = 100 / foodItem.serving_qty;
+	} else if ((/fl\.? oz( .*)?/i).test(foodItem.serving_unit)) {
+		measurementUnit = "ml";
+		conversionFactor = 100 / (foodItem.serving_qty * 29.57); // 1 fl oz = 29.57 g
 	} else if ((/g( .*)?/i).test(foodItem.serving_unit)) {
-		// captures "g", "g pack", "g serving", erc.
 		measurementUnit = "g";
 		conversionFactor = 100 / foodItem.serving_qty;
+	} else if ((/oz( .*)?/i).test(foodItem.serving_unit)) {
+		measurementUnit = "g";
+		conversionFactor = 100 / (foodItem.serving_qty * 28.35); // 1 oz = 28.35 g
 	} else {
 		logger.debug(`Could not handle serving size: ${foodItem.serving_unit}`, { foodItem });
-		// TODO: handle other measurement units
 	}
 
 	return {

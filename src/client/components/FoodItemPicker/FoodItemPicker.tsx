@@ -11,6 +11,7 @@ import { ControlledSelectInput, IControlledSelectInputProps } from "../_ui/Contr
 interface IFoodItemPickerProps {
 	// from props
 	readonly value?: IFoodItem;
+	readonly preSelectedId?: string;
 	readonly inputProps?: Partial<IControlledSelectInputProps>;
 	readonly onValueChange?: (foodItem?: IFoodItem) => void;
 
@@ -47,6 +48,23 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps> {
 
 	public componentDidMount(): void {
 		this.props.actions.startLoadAllFoodItems();
+	}
+
+	public componentDidUpdate(
+			prevProps: Readonly<IFoodItemPickerProps>,
+			prevState: Readonly<{}>,
+			snapshot?: any,
+	): void {
+		const props = this.props;
+		const foodItems = props.allFoodItems;
+		const prevFoodItems = prevProps.allFoodItems;
+		if (foodItems && foodItems.length > 0 && (!prevFoodItems || prevFoodItems.length === 0)) {
+			// loaded food items for the first time
+
+			if (props.preSelectedId) {
+				this.handleFoodItemChange(props.preSelectedId);
+			}
+		}
 	}
 
 	public render(): ReactNode {
