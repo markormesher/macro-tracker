@@ -8,7 +8,7 @@ import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { StatusError } from "../commons/StatusError";
 import { isPrimaryServer } from "../commons/utils/env";
-import { logger } from "../commons/utils/logging";
+import { ensureLogFilesAreCreated, logger } from "../commons/utils/logging";
 import { delayPromise } from "../commons/utils/utils";
 import { getSecret } from "./config/config-loader";
 import { typeormConf } from "./db/db-config";
@@ -17,6 +17,9 @@ import * as PassportConfig from "./helpers/passport-config";
 import { setupApiRoutes } from "./middleware/api-routes";
 
 const app = Express();
+
+// logging
+ensureLogFilesAreCreated();
 
 // cookies and sessions
 const RedisSessionStore = ConnectRedis(ExpressSession);

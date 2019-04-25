@@ -1,3 +1,4 @@
+import { existsSync, mkdirSync } from "fs";
 import { format } from "logform";
 import * as Winston from "winston";
 import { isDev, isTest } from "./env";
@@ -27,8 +28,8 @@ const fileLogFormat = format.combine(
 const logger = Winston.createLogger({
 	format: fileLogFormat,
 	transports: [
-		new Winston.transports.File({ filename: "logs/error.log", level: "error" }),
-		new Winston.transports.File({ filename: "logs/all.log", level: "silly" }),
+		new Winston.transports.File({ filename: "/logs/error.log", level: "error" }),
+		new Winston.transports.File({ filename: "/logs/all.log", level: "silly" }),
 	],
 });
 
@@ -40,6 +41,15 @@ if (isDev() || isTest()) {
 	}));
 }
 
+function ensureLogFilesAreCreated(): void {
+	if (!existsSync("/logs")) {
+		mkdirSync("/logs");
+
+		logger.debug("Created /logs for logs");
+	}
+}
+
 export {
 	logger,
+	ensureLogFilesAreCreated,
 };

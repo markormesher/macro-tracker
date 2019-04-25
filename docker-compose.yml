@@ -24,7 +24,7 @@ services:
       - npm_execpath=yarn
       - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
     volumes:
-      - ./logs:/app/logs
+      - ./logs:/logs
 
   api:
     build:
@@ -52,7 +52,7 @@ services:
       - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
       - IS_PRIMARY_SERVER=yes
     volumes:
-      - ./logs:/app/logs
+      - ./logs:/logs
 
   postgres_master:
     build: ./docker/postgres-master
