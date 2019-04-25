@@ -1,7 +1,7 @@
 import * as Moment from "moment";
 import { NULL_UUID } from "../utils/entities";
 import { IBaseModel } from "./IBaseModel";
-import { IValidationResult } from "./validation";
+import { IValidationResult } from "./IValidationResult";
 
 interface ITarget extends IBaseModel {
 	readonly baselineCaloriesPerDay: number;
@@ -39,13 +39,116 @@ function validateTarget(target: Partial<ITarget>): ITargetValidationResult {
 
 	let result: ITargetValidationResult = { isValid: true, errors: {} };
 
-	// TODO: actually validate
-	if (isNaN(target.baselineCaloriesPerDay) || target.baselineCaloriesPerDay < 0) {
+	if (!target.baselineCaloriesPerDay && target.baselineCaloriesPerDay !== 0) {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				baselineCaloriesPerDay: "Invalid calorie target",
+				baselineCaloriesPerDay: "The baseline calories must be entered",
+			},
+		};
+	} else if (isNaN(target.baselineCaloriesPerDay)) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				baselineCaloriesPerDay: "The baseline calories must be numeric",
+			},
+		};
+	} else if (target.baselineCaloriesPerDay <= 0) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				baselineCaloriesPerDay: "The baseline calories must greater than zero",
+			},
+		};
+	}
+
+	if (!target.proportionCarbohydrates && target.proportionCarbohydrates !== 0) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				proportionCarbohydrates: "The proportion of carbohydrates must be entered",
+			},
+		};
+	} else if (isNaN(target.proportionCarbohydrates)) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				proportionCarbohydrates: "The proportion of carbohydrates must be numeric",
+			},
+		};
+	} else if (target.proportionCarbohydrates < 0 || target.proportionCarbohydrates > 1) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				proportionCarbohydrates: "The proportion of carbohydrates must be between zero and one",
+			},
+		};
+	}
+
+	if (!target.proportionProtein && target.proportionProtein !== 0) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				proportionProtein: "The proportion of protein must be entered",
+			},
+		};
+	} else if (isNaN(target.proportionProtein)) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				proportionProtein: "The proportion of protein must be numeric",
+			},
+		};
+	} else if (target.proportionProtein < 0 || target.proportionProtein > 1) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				proportionProtein: "The proportion of protein must be between zero and one",
+			},
+		};
+	}
+
+	if (!target.proportionFat && target.proportionFat !== 0) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				proportionFat: "The proportion of fat must be entered",
+			},
+		};
+	} else if (isNaN(target.proportionFat)) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				proportionFat: "The proportion of fat must be numeric",
+			},
+		};
+	} else if (target.proportionFat < 0 || target.proportionFat > 1) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				proportionFat: "The proportion of fat must be between zero and one",
+			},
+		};
+	}
+
+	if (!target.startDate) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				startDate: "A start date must be selected",
 			},
 		};
 	}

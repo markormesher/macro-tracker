@@ -1,7 +1,7 @@
 import { IBaseModel } from "./IBaseModel";
 import { IDiaryEntry } from "./IDiaryEntry";
 import { IFoodItem, mapFoodItemFromApi } from "./IFoodItem";
-import { IValidationResult } from "./validation";
+import { IValidationResult } from "./IValidationResult";
 
 interface IServingSize extends IBaseModel {
 	readonly label: string;
@@ -41,17 +41,33 @@ function validateServingSize(servingSize?: Partial<IServingSize>): IServingSizeV
 			isValid: false,
 			errors: {
 				...result.errors,
-				label: "A valid label must be entered",
+				label: "A label must be entered",
 			},
 		};
 	}
 
-	if (!servingSize.measurement || isNaN(servingSize.measurement) || servingSize.measurement < 0) {
+	if (!servingSize.measurement && servingSize.measurement !== 0) {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				measurement: "The measurement must be a positive number",
+				measurement: "The measurement must be entered",
+			},
+		};
+	} else if (isNaN(servingSize.measurement)) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				measurement: "The measurement must be numeric",
+			},
+		};
+	} else if (servingSize.measurement <= 0) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				measurement: "The measurement must greater than zero",
 			},
 		};
 	}

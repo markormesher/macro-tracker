@@ -1,6 +1,6 @@
 import * as Moment from "moment";
 import { IBaseModel } from "./IBaseModel";
-import { IValidationResult } from "./validation";
+import { IValidationResult } from "./IValidationResult";
 
 interface IExerciseEntry extends IBaseModel {
 	readonly date: Moment.Moment;
@@ -46,12 +46,28 @@ function validateExerciseEntry(exerciseEntry?: Partial<IExerciseEntry>): IExerci
 		};
 	}
 
-	if (!exerciseEntry.caloriesBurned || isNaN(exerciseEntry.caloriesBurned) || exerciseEntry.caloriesBurned < 0) {
+	if (!exerciseEntry.caloriesBurned && exerciseEntry.caloriesBurned !== 0) {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				caloriesBurned: "The calories burned must be a positive number",
+				caloriesBurned: "The calories burned must be entered",
+			},
+		};
+	} else if (isNaN(exerciseEntry.caloriesBurned)) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				caloriesBurned: "The calories burned must be numeric",
+			},
+		};
+	} else if (exerciseEntry.caloriesBurned <= 0) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				caloriesBurned: "The calories burned must greater than zero",
 			},
 		};
 	}

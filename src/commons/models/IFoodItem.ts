@@ -1,11 +1,9 @@
 import { FoodMeasurementUnit } from "../enums";
 import { mapEntitiesFromApi } from "../utils/entities";
-import { roundToDp } from "../utils/utils";
 import { IBaseModel } from "./IBaseModel";
 import { IDiaryEntry } from "./IDiaryEntry";
-import { INutritionixFoodItem } from "./INutritionixFoodItem";
 import { IServingSize, mapServingSizeFromApi } from "./IServingSize";
-import { IValidationResult } from "./validation";
+import { IValidationResult } from "./IValidationResult";
 
 interface IFoodItem extends IBaseModel {
 	readonly brand: string;
@@ -26,20 +24,23 @@ interface IFoodItem extends IBaseModel {
 }
 
 interface IFoodItemValidationResult extends IValidationResult {
-	readonly errors: {
-		readonly brand?: string;
-		readonly name?: string;
-		readonly upc?: string;
-		readonly measurementUnit?: string;
-		readonly caloriesPer100?: string;
-		readonly carbohydratePer100?: string;
-		readonly sugarPer100?: string;
-		readonly fatPer100?: string;
-		readonly satFatPer100?: string;
-		readonly proteinPer100?: string;
-		readonly fibrePer100?: string;
-		readonly saltPer100?: string;
-	};
+	readonly errors: IFoodItemValidationResultErrors;
+}
+
+// pulled into its own interface to help with validation type safety
+interface IFoodItemValidationResultErrors {
+	readonly brand?: string;
+	readonly name?: string;
+	readonly upc?: string;
+	readonly measurementUnit?: string;
+	readonly caloriesPer100?: string;
+	readonly carbohydratePer100?: string;
+	readonly sugarPer100?: string;
+	readonly fatPer100?: string;
+	readonly satFatPer100?: string;
+	readonly proteinPer100?: string;
+	readonly fibrePer100?: string;
+	readonly saltPer100?: string;
 }
 
 function mapFoodItemFromApi(foodItem?: IFoodItem): IFoodItem {
@@ -53,43 +54,6 @@ function mapFoodItemFromApi(foodItem?: IFoodItem): IFoodItem {
 	};
 }
 
-function mapFoodItemFromNutritionixApi(foodItem?: INutritionixFoodItem, upc?: string): IFoodItem {
-	if (!foodItem) {
-		return null;
-	}
-
-	// work out what to multiply the per-serving nutrition values by
-	let measurementUnit: FoodMeasurementUnit = null;
-	let conversionFactor = 0;
-	if (foodItem.serving_unit === "ml") {
-		measurementUnit = "ml";
-		conversionFactor = 100 / foodItem.serving_qty;
-	} else if (foodItem.serving_unit === "g") {
-		measurementUnit = "g";
-		conversionFactor = 100 / foodItem.serving_qty;
-	} else {
-		// TODO: handle other measurement units
-	}
-
-	return {
-		...(getDefaultFoodItem()),
-		brand: foodItem.brand_name,
-		name: foodItem.food_name,
-		upc,
-		measurementUnit,
-		caloriesPer100: roundToDp(foodItem.nf_calories * conversionFactor, 1),
-		carbohydratePer100: roundToDp(foodItem.nf_total_carbohydrate * conversionFactor, 1),
-		sugarPer100: roundToDp(foodItem.nf_sugars * conversionFactor, 1),
-		fatPer100: roundToDp(foodItem.nf_total_fat * conversionFactor, 1),
-		satFatPer100: roundToDp(foodItem.nf_saturated_fat * conversionFactor, 1),
-		proteinPer100: roundToDp(foodItem.nf_protein * conversionFactor, 1),
-		fibrePer100: roundToDp(foodItem.nf_dietary_fiber * conversionFactor, 1),
-		saltPer100: roundToDp(foodItem.nf_sodium * conversionFactor / 400, 1), // 1g salt ~= 400mg sodium
-		servingSizes: [],
-		diaryEntries: [],
-	};
-}
-
 function validateFoodItem(foodItem?: Partial<IFoodItem>): IFoodItemValidationResult {
 	if (!foodItem) {
 		return { isValid: false, errors: {} };
@@ -97,16 +61,78 @@ function validateFoodItem(foodItem?: Partial<IFoodItem>): IFoodItemValidationRes
 
 	let result: IFoodItemValidationResult = { isValid: true, errors: {} };
 
-	// TODO: actually validate
-	if (!foodItem.name) {
+	if (!foodItem.brand || foodItem.brand.trim() === "") {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				name: "Invalid name",
+				brand: "A brand must be entered",
 			},
 		};
 	}
+
+	if (!foodItem.name || foodItem.name.trim() === "") {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				name: "A name must be entered",
+			},
+		};
+	}
+
+	if (foodItem.upc && !(/[0-9]+/).test(foodItem.upc)) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				upc: "The UPC must contain numbers only",
+			},
+		};
+	}
+
+	if (!foodItem.measurementUnit) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				measurementUnit: "A measurement unit must be entered",
+			},
+		};
+	}
+
+	const nutritionProperties: Array<[string, keyof IFoodItem & keyof IFoodItemValidationResultErrors]> = [
+		["calories", "caloriesPer100"],
+		["carbohydrates", "carbohydratePer100"],
+		["sugar", "sugarPer100"],
+		["fat", "fatPer100"],
+		["sat. fat", "satFatPer100"],
+		["protein", "proteinPer100"],
+		["fibre", "fibrePer100"],
+		["salt", "saltPer100"],
+	];
+
+	nutritionProperties.forEach((property) => {
+		const propertyValue = foodItem[property[1]] as number;
+
+		if (isNaN(propertyValue) || propertyValue === null) {
+			result = {
+				isValid: false,
+				errors: {
+					...result.errors,
+					[property[1]]: `The ${property[0]} must be a valid number`,
+				},
+			};
+		} else if (propertyValue < 0) {
+			result = {
+				isValid: false,
+				errors: {
+					...result.errors,
+					[property[1]]: `The ${property[0]} must be greater than or equal to zero`,
+				},
+			};
+		}
+	});
 
 	return result;
 }
@@ -155,7 +181,6 @@ export {
 	IFoodItem,
 	IFoodItemValidationResult,
 	mapFoodItemFromApi,
-	mapFoodItemFromNutritionixApi,
 	validateFoodItem,
 	getDefaultFoodItem,
 	foodItemComparator,
