@@ -14,6 +14,7 @@ interface IDiaryEntriesState {
 	readonly editorResult?: ActionResult;
 	readonly loadedDiaryEntries: { readonly [key: string]: IDiaryEntry };
 	readonly loadedDiaryEntriesByDate: { readonly [key: string]: IDiaryEntry[] };
+	readonly lastDiaryEntrySaved: IDiaryEntry;
 }
 
 const initialState: IDiaryEntriesState = {
@@ -21,6 +22,7 @@ const initialState: IDiaryEntriesState = {
 	editorResult: undefined,
 	loadedDiaryEntries: {},
 	loadedDiaryEntriesByDate: {},
+	lastDiaryEntrySaved: undefined,
 };
 
 enum DiaryEntriesActions {
@@ -28,6 +30,7 @@ enum DiaryEntriesActions {
 	SET_EDITOR_RESULT = "DiaryEntriesActions.SET_EDITOR_RESULT",
 	SET_DIARY_ENTRY = "DiaryEntriesActions.SET_DIARY_ENTRY",
 	SET_DIARY_ENTRIES_FOR_DATE = "DiaryEntriesActions.SET_DIARY_ENTRIES_FOR_DATE",
+	SET_LAST_DIARY_ENTRY_SAVED = "DiaryEntriesActions.SET_LAST_DIARY_ENTRY_SAVED",
 
 	START_LOAD_DIARY_ENTRY = "DiaryEntriesActions.START_LOAD_DIARY_ENTRY",
 	START_LOAD_DIARY_ENTRIES_FOR_DATE = "DiaryEntriesActions.START_LOAD_DIARY_ENTRIES_FOR_DATE",
@@ -74,6 +77,13 @@ function setDiaryEntriesForDate(date: Moment.Moment, diaryEntries: IDiaryEntry[]
 	return {
 		type: DiaryEntriesActions.SET_DIARY_ENTRIES_FOR_DATE,
 		payload: { date, diaryEntries },
+	};
+}
+
+function setLastDiaryEntrySaved(diaryEntry: IDiaryEntry): PayloadAction {
+	return {
+		type: DiaryEntriesActions.SET_LAST_DIARY_ENTRY_SAVED,
+		payload: { diaryEntry },
 	};
 }
 
@@ -162,10 +172,16 @@ function*saveDiaryEntrySaga(): Generator {
 		const diaryEntry: Partial<IDiaryEntry> = action.payload.diaryEntry;
 		const diaryEntryId = diaryEntry.id || "";
 		try {
-			yield all([
-				put(setEditorBusy(true)),
-				call(() => axios.post(`/api/diary-entries/edit/${diaryEntryId}`, diaryEntry)),
-			]);
+			yield put(setEditorBusy(true));
+
+			const savedEntry: IDiaryEntry = yield call(() => axios.post(`/api/diary-entries/edit/${diaryEntryId}`, diaryEntry)
+					.then((res) => {
+						const raw: IDiaryEntry = res.data;
+						return mapDiaryEntryFromApi(raw);
+					}));
+
+			// note: this should happen before the group below
+			yield put(setLastDiaryEntrySaved(savedEntry));
 
 			yield all([
 				put(setEditorBusy(false)),

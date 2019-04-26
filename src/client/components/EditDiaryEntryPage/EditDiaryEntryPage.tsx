@@ -38,6 +38,7 @@ interface IEditDiaryEntryPageProps {
 	readonly editorResult?: ActionResult;
 	readonly loadedDiaryEntry?: IDiaryEntry;
 	readonly allFoodItems?: IFoodItem[];
+	readonly lastDiaryEntrySaved?: IDiaryEntry;
 	readonly actions?: {
 		readonly resetEditorResult: () => PayloadAction;
 		readonly startLoadDiaryEntry: () => PayloadAction;
@@ -46,9 +47,9 @@ interface IEditDiaryEntryPageProps {
 	};
 
 	// derived from query string
-	readonly initialDate?: Moment.Moment;
-	readonly initialMeal?: Meal;
-	readonly initialFoodItemId?: string;
+	readonly urlDate?: Moment.Moment;
+	readonly urlMeal?: Meal;
+	readonly urlFoodItemId?: string;
 
 	// added by connected react router
 	readonly match?: Match<{ readonly diaryEntryId: string }>;
@@ -68,10 +69,11 @@ function mapStateToProps(state: IRootState, props: IEditDiaryEntryPageProps): IE
 		editorResult: state.diaryEntries.editorResult,
 		loadedDiaryEntry: state.diaryEntries.loadedDiaryEntries[diaryEntryId],
 		allFoodItems: state.foodItems.allFoodItems,
+		lastDiaryEntrySaved: state.diaryEntries.lastDiaryEntrySaved,
 
-		initialDate: urlParams.has("initDate") ? urlStringToMoment(urlParams.get("initDate")) : undefined,
-		initialMeal: urlParams.has("initMeal") ? urlParams.get("initMeal") as Meal : undefined,
-		initialFoodItemId: urlParams.has("initFood") ? urlParams.get("initFood") : undefined,
+		urlDate: urlParams.has("initDate") ? urlStringToMoment(urlParams.get("initDate")) : undefined,
+		urlMeal: urlParams.has("initMeal") ? urlParams.get("initMeal") as Meal : undefined,
+		urlFoodItemId: urlParams.has("initFood") ? urlParams.get("initFood") : undefined,
 	};
 }
 
@@ -127,7 +129,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 	}
 
 	public render(): ReactNode {
-		const { match, editorBusy, editorResult, initialFoodItemId } = this.props;
+		const { match, editorBusy, editorResult, urlFoodItemId } = this.props;
 		const { currentValue, validationResult } = this.state;
 		const errors = validationResult.errors || {};
 
@@ -233,7 +235,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<FoodItemPicker
 												value={currentValue.foodItem}
-												preSelectedId={initialFoodItemId}
+												preSelectedId={urlFoodItemId}
 												onValueChange={this.handleFoodItemChange}
 												inputProps={{
 													label: "Food",
@@ -288,15 +290,14 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 	}
 
 	private resetEditor(init: boolean = false): void {
-		const { initialDate, initialMeal, actions } = this.props;
+		const { urlDate, urlMeal, lastDiaryEntrySaved, actions } = this.props;
 
 		actions.resetEditorResult();
 
-		const defaultDiaryEntry = getDefaultDiaryEntry();
 		const diaryEntry = {
 			...(getDefaultDiaryEntry()),
-			date: init && initialDate ? initialDate : defaultDiaryEntry.date,
-			meal: init && initialMeal ? initialMeal : defaultDiaryEntry.meal,
+			date: init ? urlDate : lastDiaryEntrySaved.date,
+			meal: init ? urlMeal : lastDiaryEntrySaved.meal,
 		};
 
 		if (init) {
