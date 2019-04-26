@@ -220,6 +220,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 												disabled={editorBusy}
 												error={errors.meal}
 										>
+											<option value={""}>Select</option>
 											{ALL_MEAL_VALUES.map((m) => (
 													<option value={m} key={m}>
 														{getMealTitle(m)}
