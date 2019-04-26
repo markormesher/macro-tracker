@@ -17,7 +17,7 @@ import { IFoodItem } from "../../../commons/models/IFoodItem";
 import { IServingSize, servingSizeComparator } from "../../../commons/models/IServingSize";
 import { momentToUrlString, urlStringToMoment } from "../../../commons/utils/dates";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { getMealTitle } from "../../helpers/formatters";
+import { formatDate, getMealTitle } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { setEditorResult, startLoadDiaryEntry, startSaveDiaryEntry } from "../../redux/diary-entries";
 import { startLoadAllFoodItems } from "../../redux/food-items";
@@ -26,6 +26,7 @@ import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { IRootState } from "../../redux/root";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
+import { ControlledDateInput } from "../_ui/ControlledInputs/ControlledDateInput";
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
@@ -197,6 +198,18 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 							<ControlledForm
 									onSubmit={this.handleSubmit}
 							>
+								<div className={bs.row}>
+									<div className={combine(bs.col12, bs.formGroup)}>
+										<ControlledDateInput
+												id={"date"}
+												label={"Date"}
+												value={formatDate(currentValue.date, "system") || ""}
+												onValueChange={this.handleDateChange}
+												disabled={editorBusy}
+												error={errors.date}
+										/>
+									</div>
+								</div>
 								<div className={bs.row}>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledSelectInput
