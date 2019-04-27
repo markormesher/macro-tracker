@@ -268,6 +268,12 @@ function diaryEntriesReducer(state = initialState, action: PayloadAction): IDiar
 				};
 			})();
 
+		case DiaryEntriesActions.SET_LAST_DIARY_ENTRY_SAVED:
+			return {
+				...state,
+				lastDiaryEntrySaved: action.payload.diaryEntry,
+			};
+
 		default:
 			return state;
 	}

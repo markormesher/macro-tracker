@@ -296,8 +296,8 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 
 		const diaryEntry = {
 			...(getDefaultDiaryEntry()),
-			date: init ? urlDate : lastDiaryEntrySaved.date,
-			meal: init ? urlMeal : lastDiaryEntrySaved.meal,
+			date: init ? urlDate : (lastDiaryEntrySaved ? lastDiaryEntrySaved.date : undefined),
+			meal: init ? urlMeal : (lastDiaryEntrySaved ? lastDiaryEntrySaved.meal : undefined),
 		};
 
 		if (init) {

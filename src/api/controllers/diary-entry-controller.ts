@@ -40,7 +40,7 @@ diaryEntriesRouter.post("/edit/:diaryEntryId?", (req: Request, res: Response, ne
 	};
 
 	saveDiaryEntry(diaryEntryId, properties)
-			.then(() => res.sendStatus(200))
+			.then((diaryEntry) => res.json(diaryEntry))
 			.catch(next);
 });
 
