@@ -570,7 +570,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 
 	private updateServingSizes(servingSizes: IServingSize[]): void {
 		const { loadedFoodItem } = this.props;
-		const originalServingSizeIds = loadedFoodItem.servingSizes.map((ss) => ss.id);
+		const originalServingSizeIds = loadedFoodItem ? loadedFoodItem.servingSizes.map((ss) => ss.id) : [];
 
 		// remove fully-blank sizes that didn't already exist
 		servingSizes = servingSizes.filter((ss) => {
