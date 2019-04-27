@@ -25,6 +25,8 @@ interface IControlledBarcodeInputState {
 
 class ControlledBarcodeInput extends PureComponent<IControlledBarcodeInputProps, IControlledBarcodeInputState> {
 
+	private barcodeReader: BrowserBarcodeReader = null;
+
 	public constructor(props: IControlledBarcodeInputProps) {
 		super(props);
 		this.state = {
@@ -95,8 +97,8 @@ class ControlledBarcodeInput extends PureComponent<IControlledBarcodeInputProps,
 			snapshot?: any,
 	): void {
 		if (this.state.scannerOpen && !prevState.scannerOpen) {
-			new BrowserBarcodeReader()
-					.decodeFromInputVideoDevice(undefined, "barcode-scanner-video")
+			this.barcodeReader = new BrowserBarcodeReader();
+			this.barcodeReader.decodeFromInputVideoDevice(undefined, "barcode-scanner-video")
 					.then((result) => {
 						this.props.onValueChange(result.getText(), this.props.id);
 						this.closeScanner();
@@ -104,6 +106,12 @@ class ControlledBarcodeInput extends PureComponent<IControlledBarcodeInputProps,
 					.catch(() => {
 						this.closeScanner();
 					});
+		}
+	}
+
+	public componentWillUnmount(): void {
+		if (this.barcodeReader) {
+			this.barcodeReader.reset();
 		}
 	}
 
@@ -123,6 +131,9 @@ class ControlledBarcodeInput extends PureComponent<IControlledBarcodeInputProps,
 
 	private closeScanner(): void {
 		this.setState({ scannerOpen: false });
+		if (this.barcodeReader) {
+			this.barcodeReader.reset();
+		}
 	}
 }
 
