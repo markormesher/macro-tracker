@@ -1,6 +1,7 @@
 import * as Moment from "moment";
 import { FindOperator, ValueTransformer } from "typeorm";
 import { StatusError } from "../../commons/StatusError";
+import { utcMoment } from "../../commons/utils/dates";
 
 class MomentDateTransformer implements ValueTransformer {
 
@@ -19,7 +20,7 @@ class MomentDateTransformer implements ValueTransformer {
 	}
 
 	public static fromDbFormat(value: number): Moment.Moment {
-		return (value || value === 0) ? Moment(value * 1000) : null;
+		return (value || value === 0) ? utcMoment(value * 1000) : null;
 	}
 
 	public to(value: Moment.Moment | FindOperator<any>): number | FindOperator<any> {

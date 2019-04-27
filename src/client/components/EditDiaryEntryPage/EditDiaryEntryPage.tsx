@@ -18,6 +18,7 @@ import { IServingSize, servingSizeComparator } from "../../../commons/models/ISe
 import { momentToUrlString, urlStringToMoment } from "../../../commons/utils/dates";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatDate, getMealTitle } from "../../helpers/formatters";
+import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
 import { setEditorResult, startLoadDiaryEntry, startSaveDiaryEntry } from "../../redux/diary-entries";
 import { startLoadAllFoodItems } from "../../redux/food-items";
@@ -294,10 +295,13 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 
 		actions.resetEditorResult();
 
+		const nextDate = init ? urlDate : (lastDiaryEntrySaved ? lastDiaryEntrySaved.date : undefined);
+		const nextMeal = init ? urlMeal : (lastDiaryEntrySaved ? lastDiaryEntrySaved.meal : undefined);
+
 		const diaryEntry = {
 			...(getDefaultDiaryEntry()),
-			date: init ? urlDate : (lastDiaryEntrySaved ? lastDiaryEntrySaved.date : undefined),
-			meal: init ? urlMeal : (lastDiaryEntrySaved ? lastDiaryEntrySaved.meal : undefined),
+			date: nextDate,
+			meal: nextMeal,
 		};
 
 		if (init) {
@@ -306,6 +310,10 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 				validationResult: validateDiaryEntry(diaryEntry),
 			};
 		} else {
+			// reset the URL as well
+			const urlProps = new URLSearchParams({ initMeal: nextMeal, initDate: momentToUrlString(nextDate) });
+			history.push(`/diary-entries/edit?${urlProps}`);
+
 			this.setState({
 				currentValue: diaryEntry,
 				validationResult: validateDiaryEntry(diaryEntry),

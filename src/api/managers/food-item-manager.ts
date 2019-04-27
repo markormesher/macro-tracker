@@ -62,8 +62,8 @@ async function saveFoodItem(foodItemId: string, values: IFoodItem): Promise<DbFo
 					const isValid = validateServingSize(ss).isValid;
 					const updatedSs = {
 						...ss,
-						label: isValid ? ss.label : "",
-						measurement: isValid ? ss.measurement : 0,
+						label: ss.label || "",
+						measurement: ss.measurement || 0,
 						foodItem: savedFoodItem,
 						deleted: ss.deleted || !isValid,
 					};

@@ -1,5 +1,6 @@
 import * as Moment from "moment";
 import { Meal } from "../enums";
+import { utcMoment } from "../utils/dates";
 import { cleanUuid } from "../utils/entities";
 import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
@@ -36,8 +37,8 @@ function mapDiaryEntryFromJson(json?: IJsonObject): IDiaryEntry {
 	return {
 		id: cleanUuid(json.id as string),
 		deleted: json.deleted as boolean,
-		date: json.date ? Moment(cleanString(json.date as string)) : null,
-		lastEdit: json.date ? Moment(cleanString(json.lastEdit as string)) : null,
+		date: json.date ? utcMoment(cleanString(json.date as string)) : null,
+		lastEdit: json.date ? utcMoment(cleanString(json.lastEdit as string)) : null,
 		meal: cleanString(json.meal as string) as Meal,
 		servingQty: parseFloat(json.servingQty as string),
 		foodItem: mapFoodItemFromJson(json.foodItem as IJsonObject),
@@ -69,7 +70,7 @@ function validateDiaryEntry(diaryEntry?: Partial<IDiaryEntry>): IDiaryEntryValid
 
 	let result: IDiaryEntryValidationResult = { isValid: true, errors: {} };
 
-	const now = Moment();
+	const now = utcMoment();
 	if (!diaryEntry.date) {
 		result = {
 			isValid: false,
@@ -144,7 +145,7 @@ function getDefaultDiaryEntry(): IDiaryEntry {
 		id: undefined,
 		deleted: false,
 
-		date: Moment(),
+		date: utcMoment(),
 		lastEdit: undefined,
 		meal: undefined,
 		servingQty: 1,

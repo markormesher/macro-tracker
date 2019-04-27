@@ -1,4 +1,5 @@
 import * as Moment from "moment";
+import { utcMoment } from "../utils/dates";
 import { cleanUuid, NULL_UUID } from "../utils/entities";
 import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
@@ -35,7 +36,7 @@ function mapTargetFromJson(json?: IJsonObject): ITarget {
 		proportionCarbohydrates: parseFloat(json.proportionCarbohydrates as string),
 		proportionFat: parseFloat(json.proportionFat as string),
 		proportionProtein: parseFloat(json.proportionProtein as string),
-		startDate: json.startDate ? Moment(cleanString(json.startDate as string)) : null,
+		startDate: json.startDate ? utcMoment(cleanString(json.startDate as string)) : null,
 	};
 }
 

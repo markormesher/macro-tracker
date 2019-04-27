@@ -1,6 +1,7 @@
 import * as Moment from "moment";
 import * as React from "react";
 import { FoodMeasurementUnit, Meal } from "../../commons/enums";
+import { utcMoment } from "../../commons/utils/dates";
 
 function formatLargeNumber(amount: number): string {
 	return amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -24,25 +25,25 @@ function formatMeasurement(amount: number, unit: FoodMeasurementUnit): string {
 	return formatLargeNumber(amount) + formatMeasurementUnit(unit);
 }
 
-function formatDate(date: Date | Moment.Moment | string, format: "user" | "title" | "system" = "user"): string {
+function formatDate(date: Moment.Moment, format: "user" | "title" | "system" = "user"): string {
 	if (!date) {
 		return undefined;
 	}
 
 	/* istanbul ignore else: protected by type system */
 	if (format === "user") {
-		return Moment(date).format("DD MMM YYYY");
+		return date.format("DD MMM YYYY");
 	} else if (format === "title") {
-		const now = Moment();
+		const now = utcMoment();
 		if (now.isSame(date, "day")) {
 			return "Today";
 		} else if (now.subtract(1, "day").isSame(date, "day")) {
 			return "Yesterday";
 		} else {
-			return Moment(date).format("YYYY-MM-DD");
+			return date.format("YYYY-MM-DD");
 		}
 	} else if (format === "system") {
-		return Moment(date).format("YYYY-MM-DD");
+		return date.format("YYYY-MM-DD");
 	}
 }
 

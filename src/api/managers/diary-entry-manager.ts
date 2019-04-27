@@ -2,6 +2,7 @@ import * as Moment from "moment";
 import { SelectQueryBuilder } from "typeorm";
 import { IDiaryEntry, validateDiaryEntry } from "../../commons/models/IDiaryEntry";
 import { StatusError } from "../../commons/StatusError";
+import { utcMoment } from "../../commons/utils/dates";
 import { DbDiaryEntry } from "../db/models/DbDiaryEntry";
 import { MomentDateTransformer } from "../db/MomentDateTransformer";
 
@@ -48,7 +49,7 @@ async function saveDiaryEntry(diaryEntryId: string, values: IDiaryEntry): Promis
 
 				values = {
 					...values,
-					lastEdit: Moment(),
+					lastEdit: utcMoment(),
 				};
 
 				diaryEntry = DbDiaryEntry.getRepository().merge(diaryEntry || new DbDiaryEntry(), values);

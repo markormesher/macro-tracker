@@ -1,4 +1,5 @@
 import * as Moment from "moment";
+import { utcMoment } from "../utils/dates";
 import { cleanUuid } from "../utils/entities";
 import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
@@ -28,8 +29,8 @@ function mapExerciseEntryFromJson(json?: IJsonObject): IExerciseEntry {
 	return {
 		id: cleanUuid(json.id as string),
 		deleted: json.deleted as boolean,
-		date: json.date ? Moment(cleanString(json.date as string)) : null,
-		lastEdit: json.lastEdit ? Moment(cleanString(json.lastEdit as string)) : null,
+		date: json.date ? utcMoment(cleanString(json.date as string)) : null,
+		lastEdit: json.lastEdit ? utcMoment(cleanString(json.lastEdit as string)) : null,
 		label: cleanString(json.label as string),
 		caloriesBurned: parseFloat(json.caloriesBurned as string),
 	};

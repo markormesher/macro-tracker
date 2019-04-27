@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as Moment from "moment";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
+import { utcMoment } from "../../../commons/utils/dates";
 import { formatDate } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import * as style from "./DateScroller.scss";
@@ -24,7 +25,7 @@ class DateScroller extends PureComponent<IDateScrollerProps> {
 	public render(): ReactNode {
 		const { currentDate } = this.props;
 
-		const now = Moment();
+		const now = utcMoment();
 		const nextBtnEnabled = currentDate.isBefore(now, "day");
 
 		return (

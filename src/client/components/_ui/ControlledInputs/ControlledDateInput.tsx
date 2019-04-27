@@ -1,6 +1,7 @@
 import * as Moment from "moment";
 import * as React from "react";
 import { FormEvent, InputHTMLAttributes, PureComponent, ReactElement, ReactNode } from "react";
+import { utcMoment } from "../../../../commons/utils/dates";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 
@@ -63,7 +64,7 @@ class ControlledDateInput extends PureComponent<IControlledDateInputProps, ICont
 		if (!newValue || newValue.trim() === "") {
 			this.props.onValueChange(undefined, this.props.id);
 		} else {
-			this.props.onValueChange(Moment(newValue), this.props.id);
+			this.props.onValueChange(utcMoment(newValue), this.props.id);
 		}
 	}
 }

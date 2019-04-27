@@ -2,6 +2,7 @@ import * as Moment from "moment";
 import { SelectQueryBuilder } from "typeorm";
 import { IExerciseEntry, validateExerciseEntry } from "../../commons/models/IExerciseEntry";
 import { StatusError } from "../../commons/StatusError";
+import { utcMoment } from "../../commons/utils/dates";
 import { DbExerciseEntry } from "../db/models/DbExerciseEntry";
 import { MomentDateTransformer } from "../db/MomentDateTransformer";
 
@@ -53,7 +54,7 @@ async function saveExerciseEntry(exerciseEntryId: string, values: IExerciseEntry
 
 				values = {
 					...values,
-					lastEdit: Moment(),
+					lastEdit: utcMoment(),
 				};
 
 				exerciseEntry = DbExerciseEntry.getRepository().merge(exerciseEntry || new DbExerciseEntry(), values);
