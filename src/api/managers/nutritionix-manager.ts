@@ -23,7 +23,10 @@ async function getFoodItemsFromNutritionixByUpc(upc: string): Promise<IFoodItem[
 	try {
 		const foods = await axios
 				.get(`https://trackapi.nutritionix.com/v2/search/item?upc=${upc}`, { headers, httpsAgent: agent })
-				.then((res: AxiosResponse<INutritionixItemSearchResponse>) => res.data.foods);
+				.then((res: AxiosResponse<INutritionixItemSearchResponse>) => {
+					logger.debug("Got Nutritionix API response", { data: res.data });
+					return res.data.foods;
+				});
 
 		return foods.map((f) => {
 			logger.debug("Got food item from Nutritionix API", { foodItem: f });
