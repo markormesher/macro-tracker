@@ -1,7 +1,9 @@
 import axios, { AxiosError } from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { ITarget, mapTargetFromApi } from "../../commons/models/ITarget";
-import { mapEntitiesFromApi } from "../../commons/utils/entities";
+import { IJsonArray } from "../../commons/models/IJsonArray";
+import { IJsonObject } from "../../commons/models/IJsonObject";
+import { ITarget, mapTargetFromJson, mapTargetToJson } from "../../commons/models/ITarget";
+import { safeMapEntities } from "../../commons/utils/entities";
 import { setError } from "./global";
 import { ActionResult } from "./helpers/ActionResult";
 import { KeyCache } from "./helpers/KeyCache";
@@ -84,7 +86,7 @@ function startLoadAllTargets(): PayloadAction {
 	};
 }
 
-function startSaveTarget(target: Partial<ITarget>): PayloadAction {
+function startSaveTarget(target: ITarget): PayloadAction {
 	return {
 		type: TargetsActions.START_SAVE_TARGET,
 		payload: { target },
@@ -107,11 +109,9 @@ function*loadTargetSaga(): Generator {
 		}
 
 		try {
-			const target: ITarget = yield call(() => axios.get(`/api/targets/${targetId}`)
-					.then((res) => {
-						const raw: ITarget = res.data;
-						return mapTargetFromApi(raw);
-					}));
+			const target: ITarget = yield call(() => axios
+					.get(`/api/targets/${targetId}`)
+					.then((res) => mapTargetFromJson(res.data as IJsonObject)));
 
 			yield all([
 				put(setTarget(target)),
@@ -130,11 +130,9 @@ function*loadAllTargetsSaga(): Generator {
 		}
 
 		try {
-			const targets: ITarget[] = yield call(() => axios.get("/api/targets/all")
-					.then((res) => {
-						const raw: ITarget[] = res.data;
-						return mapEntitiesFromApi(mapTargetFromApi, raw);
-					}));
+			const targets: ITarget[] = yield call(() => axios
+					.get("/api/targets/all")
+					.then((res) => safeMapEntities(mapTargetFromJson, res.data as IJsonArray)));
 
 			yield all([
 				put(setAllTargets(targets)),
@@ -149,12 +147,10 @@ function*loadAllTargetsSaga(): Generator {
 function*saveTargetSaga(): Generator {
 	yield takeEvery(TargetsActions.START_SAVE_TARGET, function*(action: PayloadAction): Generator {
 		try {
-			const target: Partial<ITarget> = action.payload.target;
+			const target: ITarget = action.payload.target;
 			const targetId = target.id || "";
-			yield all([
-				put(setEditorBusy(true)),
-				call(() => axios.post(`/api/targets/edit/${targetId}`, target)),
-			]);
+			yield put(setEditorBusy(true));
+			yield call(() => axios.post(`/api/targets/edit/${targetId}`, mapTargetToJson(target)));
 
 			yield all([
 				put(setEditorBusy(false)),

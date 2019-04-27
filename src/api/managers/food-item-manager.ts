@@ -41,7 +41,7 @@ async function getAllFoodItems(): Promise<DbFoodItem[]> {
 			.getMany();
 }
 
-async function saveFoodItem(foodItemId: string, values: Partial<IFoodItem>): Promise<DbFoodItem> {
+async function saveFoodItem(foodItemId: string, values: IFoodItem): Promise<DbFoodItem> {
 	if (!validateFoodItem(values).isValid) {
 		throw new StatusError(400, "The food item was not valid");
 	}

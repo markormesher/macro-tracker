@@ -1,6 +1,9 @@
 import axios, { AxiosError } from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { IFoodItem, mapFoodItemFromApi } from "../../commons/models/IFoodItem";
+import { IFoodItem, mapFoodItemFromJson, mapFoodItemToJson } from "../../commons/models/IFoodItem";
+import { IJsonArray } from "../../commons/models/IJsonArray";
+import { IJsonObject } from "../../commons/models/IJsonObject";
+import { safeMapEntities } from "../../commons/utils/entities";
 import { setError } from "./global";
 import { ActionResult } from "./helpers/ActionResult";
 import { KeyCache } from "./helpers/KeyCache";
@@ -93,7 +96,7 @@ function startLoadAllFoodItems(): PayloadAction {
 	};
 }
 
-function startSaveFoodItem(foodItem: Partial<IFoodItem>): PayloadAction {
+function startSaveFoodItem(foodItem: IFoodItem): PayloadAction {
 	return {
 		type: FoodItemsActions.START_SAVE_FOOD_ITEM,
 		payload: { foodItem },
@@ -120,11 +123,9 @@ function*loadFoodItemSaga(): Generator {
 		}
 
 		try {
-			const foodItem: IFoodItem = yield call(() => axios.get(`/api/food-items/${foodItemId}`)
-					.then((res) => {
-						const raw: IFoodItem = res.data;
-						return mapFoodItemFromApi(raw);
-					}));
+			const foodItem: IFoodItem = yield call(() => axios
+					.get(`/api/food-items/${foodItemId}`)
+					.then((res) => mapFoodItemFromJson(res.data as IJsonObject)));
 
 			yield all([
 				put(setFoodItem(foodItem)),
@@ -143,11 +144,9 @@ function*loadAllFoodItemsSaga(): Generator {
 		}
 
 		try {
-			const foodItems: IFoodItem[] = yield call(() => axios.get("/api/food-items/all")
-					.then((res) => {
-						const raw: IFoodItem[] = res.data;
-						return raw.map(mapFoodItemFromApi);
-					}));
+			const foodItems: IFoodItem[] = yield call(() => axios
+					.get("/api/food-items/all")
+					.then((res) => safeMapEntities(mapFoodItemFromJson, res.data as IJsonArray)));
 
 			yield all([
 				put(setAllFoodItems(foodItems)),
@@ -162,14 +161,12 @@ function*loadAllFoodItemsSaga(): Generator {
 function*saveFoodItemSaga(): Generator {
 	yield takeEvery(FoodItemsActions.START_SAVE_FOOD_ITEM, function*(action: PayloadAction): Generator {
 		try {
-			const foodItem: Partial<IFoodItem> = action.payload.foodItem;
+			const foodItem: IFoodItem = action.payload.foodItem;
 			const foodItemId = foodItem.id || "";
 			yield put(setEditorBusy(true));
-			const savedFoodItem: IFoodItem = yield call(() => axios.post(`/api/food-items/edit/${foodItemId}`, foodItem)
-					.then((res) => {
-						const raw: IFoodItem = res.data;
-						return mapFoodItemFromApi(raw);
-					}));
+			const savedFoodItem: IFoodItem = yield call(() => axios
+					.post(`/api/food-items/edit/${foodItemId}`, mapFoodItemToJson(foodItem))
+					.then((res) => mapFoodItemFromJson(res.data as IJsonObject)));
 
 			// note: this should happen before the group below
 			yield put(setLastFoodItemSaved(savedFoodItem));

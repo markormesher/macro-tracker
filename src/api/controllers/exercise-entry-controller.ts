@@ -1,12 +1,13 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-import * as Moment from "moment";
-import { IExerciseEntry } from "../../commons/models/IExerciseEntry";
+import { mapExerciseEntryFromJson } from "../../commons/models/IExerciseEntry";
+import { IJsonObject } from "../../commons/models/IJsonObject";
 import { urlStringToMoment } from "../../commons/utils/dates";
 import { cleanUuid } from "../../commons/utils/entities";
 import { cleanString } from "../../commons/utils/strings";
 import {
-	deleteExerciseEntry, getAllExerciseLabels,
+	deleteExerciseEntry,
+	getAllExerciseLabels,
 	getExerciseEntriesForDate,
 	getExerciseEntry,
 	saveExerciseEntry,
@@ -36,11 +37,7 @@ exerciseEntriesRouter.get("/for-date/:dateStr", (req: Request, res: Response, ne
 
 exerciseEntriesRouter.post("/edit/:exerciseEntryId?", (req: Request, res: Response, next: NextFunction) => {
 	const exerciseEntryId: string = cleanUuid(req.params.exerciseEntryId, null);
-	const properties: Partial<IExerciseEntry> = {
-		date: Moment(req.body.date),
-		label: cleanString(req.body.label),
-		caloriesBurned: parseFloat(req.body.caloriesBurned),
-	};
+	const properties = mapExerciseEntryFromJson(req.body as IJsonObject);
 
 	saveExerciseEntry(exerciseEntryId, properties)
 			.then(() => res.sendStatus(200))

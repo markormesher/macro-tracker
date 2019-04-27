@@ -1,5 +1,8 @@
 import * as Moment from "moment";
+import { cleanUuid } from "../utils/entities";
+import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
+import { IJsonObject } from "./IJsonObject";
 import { IValidationResult } from "./IValidationResult";
 
 interface IExerciseEntry extends IBaseModel {
@@ -17,15 +20,33 @@ interface IExerciseEntryValidationResult extends IValidationResult {
 	};
 }
 
-function mapExerciseEntryFromApi(exerciseEntry?: IExerciseEntry): IExerciseEntry {
-	if (!exerciseEntry) {
-		return exerciseEntry;
+function mapExerciseEntryFromJson(json?: IJsonObject): IExerciseEntry {
+	if (!json) {
+		return null;
 	}
 
 	return {
-		...exerciseEntry,
-		date: Moment(exerciseEntry.date),
-		lastEdit: Moment(exerciseEntry.lastEdit),
+		id: cleanUuid(json.id as string),
+		deleted: json.deleted as boolean,
+		date: json.date ? Moment(cleanString(json.date as string)) : null,
+		lastEdit: json.lastEdit ? Moment(cleanString(json.lastEdit as string)) : null,
+		label: cleanString(json.label as string),
+		caloriesBurned: parseFloat(json.caloriesBurned as string),
+	};
+}
+
+function mapExerciseEntryToJson(exerciseEntry?: IExerciseEntry): IJsonObject {
+	if (!exerciseEntry) {
+		return null;
+	}
+
+	return {
+		id: exerciseEntry.id,
+		deleted: exerciseEntry.deleted,
+		date: exerciseEntry.date ? exerciseEntry.date.toISOString() : null,
+		lastEdit: exerciseEntry.lastEdit ? exerciseEntry.lastEdit.toISOString() : null,
+		label: exerciseEntry.label,
+		caloriesBurned: exerciseEntry.caloriesBurned,
 	};
 }
 
@@ -90,7 +111,8 @@ function getDefaultExerciseEntry(): IExerciseEntry {
 export {
 	IExerciseEntry,
 	IExerciseEntryValidationResult,
-	mapExerciseEntryFromApi,
+	mapExerciseEntryFromJson,
+	mapExerciseEntryToJson,
 	validateExerciseEntry,
 	getDefaultExerciseEntry,
 };

@@ -1,6 +1,9 @@
+import { cleanUuid } from "../utils/entities";
+import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
 import { IDiaryEntry } from "./IDiaryEntry";
-import { IFoodItem, mapFoodItemFromApi } from "./IFoodItem";
+import { IFoodItem, mapFoodItemFromJson, mapFoodItemToJson } from "./IFoodItem";
+import { IJsonObject } from "./IJsonObject";
 import { IValidationResult } from "./IValidationResult";
 
 interface IServingSize extends IBaseModel {
@@ -18,14 +21,32 @@ interface IServingSizeValidationResult extends IValidationResult {
 	};
 }
 
-function mapServingSizeFromApi(servingSize?: IServingSize): IServingSize {
-	if (!servingSize) {
-		return servingSize;
+function mapServingSizeFromJson(json?: IJsonObject): IServingSize {
+	if (!json) {
+		return null;
 	}
 
 	return {
-		...servingSize,
-		foodItem: mapFoodItemFromApi(servingSize.foodItem),
+		id: cleanUuid(json.id as string),
+		deleted: json.deleted as boolean,
+		label: cleanString(json.label as string),
+		measurement: parseFloat(json.measurement as string),
+		foodItem: mapFoodItemFromJson(json.foodItem as IJsonObject),
+		diaryEntries: [],
+	};
+}
+
+function mapServingSizeToJson(servingSize?: IServingSize): IJsonObject {
+	if (!servingSize) {
+		return null;
+	}
+
+	return {
+		id: servingSize.id,
+		deleted: servingSize.deleted,
+		label: servingSize.label,
+		measurement: servingSize.measurement,
+		foodItem: mapFoodItemToJson(servingSize.foodItem),
 	};
 }
 
@@ -101,7 +122,8 @@ function servingSizeComparator(a: IServingSize, b: IServingSize): number {
 export {
 	IServingSize,
 	IServingSizeValidationResult,
-	mapServingSizeFromApi,
+	mapServingSizeFromJson,
+	mapServingSizeToJson,
 	validateServingSize,
 	getDefaultServingSize,
 	servingSizeComparator,

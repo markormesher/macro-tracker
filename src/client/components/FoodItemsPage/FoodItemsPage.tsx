@@ -4,7 +4,7 @@ import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
-import { IFoodItem, mapFoodItemFromApi } from "../../../commons/models/IFoodItem";
+import { IFoodItem, mapFoodItemFromJson } from "../../../commons/models/IFoodItem";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { history } from "../../helpers/single-history";
@@ -63,7 +63,7 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
 	private dataProvider = new ApiDataTableDataProvider<IFoodItem>(
 			"/api/food-items/table",
 			() => ({ updateTime: this.props.updateTime }),
-			mapFoodItemFromApi,
+			mapFoodItemFromJson,
 	);
 
 	public constructor(props: IFoodItemsPageProps) {

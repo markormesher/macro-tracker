@@ -1,6 +1,8 @@
 import * as Moment from "moment";
-import { NULL_UUID } from "../utils/entities";
+import { cleanUuid, NULL_UUID } from "../utils/entities";
+import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
+import { IJsonObject } from "./IJsonObject";
 import { IValidationResult } from "./IValidationResult";
 
 interface ITarget extends IBaseModel {
@@ -21,14 +23,35 @@ interface ITargetValidationResult extends IValidationResult {
 	};
 }
 
-function mapTargetFromApi(target?: ITarget): ITarget {
-	if (!target) {
-		return target;
+function mapTargetFromJson(json?: IJsonObject): ITarget {
+	if (!json) {
+		return null;
 	}
 
 	return {
-		...target,
-		startDate: Moment(target.startDate),
+		id: cleanUuid(json.id as string),
+		deleted: json.deleted as boolean,
+		baselineCaloriesPerDay: parseFloat(json.baselineCaloriesPerDay as string),
+		proportionCarbohydrates: parseFloat(json.proportionCarbohydrates as string),
+		proportionFat: parseFloat(json.proportionFat as string),
+		proportionProtein: parseFloat(json.proportionProtein as string),
+		startDate: json.startDate ? Moment(cleanString(json.startDate as string)) : null,
+	};
+}
+
+function mapTargetToJson(target?: ITarget): IJsonObject {
+	if (!target) {
+		return null;
+	}
+
+	return {
+		id: target.id,
+		deleted: target.deleted,
+		baselineCaloriesPerDay: target.baselineCaloriesPerDay,
+		proportionCarbohydrates: target.proportionCarbohydrates,
+		proportionFat: target.proportionFat,
+		proportionProtein: target.proportionProtein,
+		startDate: target.startDate ? target.startDate.toISOString() : null,
 	};
 }
 
@@ -91,32 +114,6 @@ function validateTarget(target: Partial<ITarget>): ITargetValidationResult {
 		};
 	}
 
-	if (!target.proportionProtein && target.proportionProtein !== 0) {
-		result = {
-			isValid: false,
-			errors: {
-				...result.errors,
-				proportionProtein: "The proportion of protein must be entered",
-			},
-		};
-	} else if (isNaN(target.proportionProtein)) {
-		result = {
-			isValid: false,
-			errors: {
-				...result.errors,
-				proportionProtein: "The proportion of protein must be numeric",
-			},
-		};
-	} else if (target.proportionProtein < 0 || target.proportionProtein > 1) {
-		result = {
-			isValid: false,
-			errors: {
-				...result.errors,
-				proportionProtein: "The proportion of protein must be between zero and one",
-			},
-		};
-	}
-
 	if (!target.proportionFat && target.proportionFat !== 0) {
 		result = {
 			isValid: false,
@@ -139,6 +136,32 @@ function validateTarget(target: Partial<ITarget>): ITargetValidationResult {
 			errors: {
 				...result.errors,
 				proportionFat: "The proportion of fat must be between zero and one",
+			},
+		};
+	}
+
+	if (!target.proportionProtein && target.proportionProtein !== 0) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				proportionProtein: "The proportion of protein must be entered",
+			},
+		};
+	} else if (isNaN(target.proportionProtein)) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				proportionProtein: "The proportion of protein must be numeric",
+			},
+		};
+	} else if (target.proportionProtein < 0 || target.proportionProtein > 1) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				proportionProtein: "The proportion of protein must be between zero and one",
 			},
 		};
 	}
@@ -184,7 +207,8 @@ function getStaticTarget(): ITarget {
 export {
 	ITarget,
 	ITargetValidationResult,
-	mapTargetFromApi,
+	mapTargetFromJson,
+	mapTargetToJson,
 	validateTarget,
 	getDefaultTarget,
 	getStaticTarget,

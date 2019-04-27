@@ -34,7 +34,7 @@ async function getDiaryEntriesForDate(date: Moment.Moment): Promise<DbDiaryEntry
 			.getMany();
 }
 
-async function saveDiaryEntry(diaryEntryId: string, values: Partial<IDiaryEntry>): Promise<DbDiaryEntry> {
+async function saveDiaryEntry(diaryEntryId: string, values: IDiaryEntry): Promise<DbDiaryEntry> {
 	if (!validateDiaryEntry(values).isValid) {
 		throw new StatusError(400, "The diary entry was not valid");
 	}

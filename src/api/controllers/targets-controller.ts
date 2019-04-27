@@ -1,7 +1,8 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import * as Moment from "moment";
-import { ITarget } from "../../commons/models/ITarget";
+import { IJsonObject } from "../../commons/models/IJsonObject";
+import { ITarget, mapTargetFromJson } from "../../commons/models/ITarget";
 import { cleanUuid } from "../../commons/utils/entities";
 import { DbTarget } from "../db/models/DbTarget";
 import { getDataForTable } from "../helpers/datatable-helper";
@@ -42,13 +43,7 @@ targetsRouter.get("/:targetId", (req: Request, res: Response, next: NextFunction
 
 targetsRouter.post("/edit/:targetId?", (req: Request, res: Response, next: NextFunction) => {
 	const targetId: string = cleanUuid(req.params.targetId, null);
-	const properties: Partial<ITarget> = {
-		baselineCaloriesPerDay: req.body.baselineCaloriesPerDay ? parseFloat(req.body.baselineCaloriesPerDay) : 0,
-		proportionCarbohydrates: req.body.proportionCarbohydrates ? parseFloat(req.body.proportionCarbohydrates) : 0,
-		proportionProtein: req.body.proportionProtein ? parseFloat(req.body.proportionProtein) : 0,
-		proportionFat: req.body.proportionFat ? parseFloat(req.body.proportionFat) : 0,
-		startDate: Moment(req.body.startDate),
-	};
+	const properties = mapTargetFromJson(req.body as IJsonObject);
 
 	saveTarget(targetId, properties)
 			.then(() => res.sendStatus(200))

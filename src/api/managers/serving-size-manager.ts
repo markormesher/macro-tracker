@@ -16,7 +16,7 @@ async function getServingSize(id: string): Promise<DbServingSize> {
 			.getOne();
 }
 
-async function saveServingSize(values: Partial<IServingSize>, force: boolean = false): Promise<DbServingSize> {
+async function saveServingSize(values: IServingSize, force: boolean = false): Promise<DbServingSize> {
 	if (!validateServingSize(values).isValid) {
 		throw new StatusError(400, "The serving size was not valid");
 	}

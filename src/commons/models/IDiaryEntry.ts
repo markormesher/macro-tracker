@@ -1,8 +1,11 @@
 import * as Moment from "moment";
 import { Meal } from "../enums";
+import { cleanUuid } from "../utils/entities";
+import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
-import { IFoodItem, mapFoodItemFromApi } from "./IFoodItem";
-import { IServingSize, mapServingSizeFromApi } from "./IServingSize";
+import { IFoodItem, mapFoodItemFromJson, mapFoodItemToJson } from "./IFoodItem";
+import { IJsonObject } from "./IJsonObject";
+import { IServingSize, mapServingSizeFromJson, mapServingSizeToJson } from "./IServingSize";
 import { IValidationResult } from "./IValidationResult";
 
 interface IDiaryEntry extends IBaseModel {
@@ -25,18 +28,37 @@ interface IDiaryEntryValidationResult extends IValidationResult {
 	};
 }
 
-function mapDiaryEntryFromApi(diaryEntry?: IDiaryEntry): IDiaryEntry {
-	if (!diaryEntry) {
-		return diaryEntry;
+function mapDiaryEntryFromJson(json?: IJsonObject): IDiaryEntry {
+	if (!json) {
+		return null;
 	}
 
 	return {
-		...diaryEntry,
-		date: Moment(diaryEntry.date),
-		lastEdit: Moment(diaryEntry.lastEdit),
+		id: cleanUuid(json.id as string),
+		deleted: json.deleted as boolean,
+		date: json.date ? Moment(cleanString(json.date as string)) : null,
+		lastEdit: json.date ? Moment(cleanString(json.lastEdit as string)) : null,
+		meal: cleanString(json.meal as string) as Meal,
+		servingQty: parseFloat(json.servingQty as string),
+		foodItem: mapFoodItemFromJson(json.foodItem as IJsonObject),
+		servingSize: mapServingSizeFromJson(json.servingSize as IJsonObject),
+	};
+}
 
-		foodItem: mapFoodItemFromApi(diaryEntry.foodItem),
-		servingSize: mapServingSizeFromApi(diaryEntry.servingSize),
+function mapDiaryEntryToJson(diaryEntry?: IDiaryEntry): IJsonObject {
+	if (!diaryEntry) {
+		return null;
+	}
+
+	return {
+		id: diaryEntry.id,
+		deleted: diaryEntry.deleted,
+		date: diaryEntry.date ? diaryEntry.date.toISOString() : null,
+		lastEdit: diaryEntry.lastEdit ? diaryEntry.lastEdit.toISOString() : null,
+		meal: diaryEntry.meal,
+		servingQty: diaryEntry.servingQty,
+		foodItem: mapFoodItemToJson(diaryEntry.foodItem),
+		servingSize: mapServingSizeToJson(diaryEntry.servingSize),
 	};
 }
 
@@ -135,7 +157,8 @@ function getDefaultDiaryEntry(): IDiaryEntry {
 export {
 	IDiaryEntry,
 	IDiaryEntryValidationResult,
-	mapDiaryEntryFromApi,
+	mapDiaryEntryFromJson,
+	mapDiaryEntryToJson,
 	validateDiaryEntry,
 	getDefaultDiaryEntry,
 };

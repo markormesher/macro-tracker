@@ -39,7 +39,7 @@ async function getAllExerciseLabels(): Promise<string[]> {
 	return rawResults.map((r) => r.label);
 }
 
-async function saveExerciseEntry(exerciseEntryId: string, values: Partial<IExerciseEntry>): Promise<DbExerciseEntry> {
+async function saveExerciseEntry(exerciseEntryId: string, values: IExerciseEntry): Promise<DbExerciseEntry> {
 	if (!validateExerciseEntry(values).isValid) {
 		throw new StatusError(400, "The exercise entry was not valid");
 	}

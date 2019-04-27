@@ -1,9 +1,11 @@
 import axios, { AxiosError } from "axios";
 import * as Moment from "moment";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { IExerciseEntry, mapExerciseEntryFromApi } from "../../commons/models/IExerciseEntry";
+import { IExerciseEntry, mapExerciseEntryFromJson, mapExerciseEntryToJson } from "../../commons/models/IExerciseEntry";
+import { IJsonArray } from "../../commons/models/IJsonArray";
+import { IJsonObject } from "../../commons/models/IJsonObject";
 import { momentToDateKey, momentToUrlString } from "../../commons/utils/dates";
-import { mapEntitiesFromApi } from "../../commons/utils/entities";
+import { safeMapEntities } from "../../commons/utils/entities";
 import { setError } from "./global";
 import { ActionResult } from "./helpers/ActionResult";
 import { KeyCache } from "./helpers/KeyCache";
@@ -109,7 +111,7 @@ function startLoadAllExerciseLabels(): PayloadAction {
 	};
 }
 
-function startSaveExerciseEntry(exerciseEntry: Partial<IExerciseEntry>): PayloadAction {
+function startSaveExerciseEntry(exerciseEntry: IExerciseEntry): PayloadAction {
 	return {
 		type: ExerciseEntriesActions.START_SAVE_EXERCISE_ENTRY,
 		payload: { exerciseEntry },
@@ -132,11 +134,9 @@ function*loadExerciseEntrySaga(): Generator {
 		}
 
 		try {
-			const exerciseEntry: IExerciseEntry = yield call(() => axios.get(`/api/exercise-entries/${exerciseEntryId}`)
-					.then((res) => {
-						const raw: IExerciseEntry = res.data;
-						return mapExerciseEntryFromApi(raw);
-					}));
+			const exerciseEntry: IExerciseEntry = yield call(() => axios
+					.get(`/api/exercise-entries/${exerciseEntryId}`)
+					.then((res) => mapExerciseEntryFromJson(res.data as IJsonObject)));
 
 			yield all([
 				put(setExerciseEntry(exerciseEntry)),
@@ -158,13 +158,9 @@ function*loadExerciseEntriesForDateSaga(): Generator {
 				}
 
 				try {
-					const exerciseEntries: IExerciseEntry[] = yield call(() => {
-						return axios.get(`/api/exercise-entries/for-date/${momentToUrlString(date)}`)
-								.then((res) => {
-									const raw: IExerciseEntry[] = res.data;
-									return mapEntitiesFromApi(mapExerciseEntryFromApi, raw);
-								});
-					});
+					const exerciseEntries: IExerciseEntry[] = yield call(() => axios
+							.get(`/api/exercise-entries/for-date/${momentToUrlString(date)}`)
+							.then((res) => safeMapEntities(mapExerciseEntryFromJson, res.data as IJsonArray)));
 
 					yield all([
 						put(setExerciseEntriesForDate(date, exerciseEntries)),
@@ -197,13 +193,12 @@ function*loadAllExerciseLabelsSaga(): Generator {
 
 function*saveExerciseEntrySaga(): Generator {
 	yield takeEvery(ExerciseEntriesActions.START_SAVE_EXERCISE_ENTRY, function*(action: PayloadAction): Generator {
-		const exerciseEntry: Partial<IExerciseEntry> = action.payload.exerciseEntry;
+		const exerciseEntry: IExerciseEntry = action.payload.exerciseEntry;
 		const exerciseEntryId = exerciseEntry.id || "";
 		try {
-			yield all([
-				put(setEditorBusy(true)),
-				call(() => axios.post(`/api/exercise-entries/edit/${exerciseEntryId}`, exerciseEntry)),
-			]);
+			yield put(setEditorBusy(true));
+			yield call(() => axios
+					.post(`/api/exercise-entries/edit/${exerciseEntryId}`, mapExerciseEntryToJson(exerciseEntry)));
 
 			yield all([
 				put(setEditorBusy(false)),

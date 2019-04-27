@@ -22,7 +22,7 @@ async function getAllTargets(): Promise<DbTarget[]> {
 			.getMany();
 }
 
-async function saveTarget(targetId: string, values: Partial<ITarget>): Promise<DbTarget> {
+async function saveTarget(targetId: string, values: ITarget): Promise<DbTarget> {
 	if (!validateTarget(values).isValid) {
 		throw new StatusError(400, "The target was not valid");
 	}

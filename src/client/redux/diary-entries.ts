@@ -1,9 +1,11 @@
 import axios, { AxiosError } from "axios";
 import * as Moment from "moment";
 import { all, call, put, takeEvery } from "redux-saga/effects";
-import { IDiaryEntry, mapDiaryEntryFromApi } from "../../commons/models/IDiaryEntry";
+import { IDiaryEntry, mapDiaryEntryFromJson, mapDiaryEntryToJson } from "../../commons/models/IDiaryEntry";
+import { IJsonArray } from "../../commons/models/IJsonArray";
+import { IJsonObject } from "../../commons/models/IJsonObject";
 import { momentToDateKey, momentToUrlString } from "../../commons/utils/dates";
-import { mapEntitiesFromApi } from "../../commons/utils/entities";
+import { safeMapEntities } from "../../commons/utils/entities";
 import { setError } from "./global";
 import { ActionResult } from "./helpers/ActionResult";
 import { KeyCache } from "./helpers/KeyCache";
@@ -101,7 +103,7 @@ function startLoadDiaryEntriesForDate(date: Moment.Moment): PayloadAction {
 	};
 }
 
-function startSaveDiaryEntry(diaryEntry: Partial<IDiaryEntry>): PayloadAction {
+function startSaveDiaryEntry(diaryEntry: IDiaryEntry): PayloadAction {
 	return {
 		type: DiaryEntriesActions.START_SAVE_DIARY_ENTRY,
 		payload: { diaryEntry },
@@ -124,11 +126,9 @@ function*loadDiaryEntrySaga(): Generator {
 		}
 
 		try {
-			const diaryEntry: IDiaryEntry = yield call(() => axios.get(`/api/diary-entries/${diaryEntryId}`)
-					.then((res) => {
-						const raw: IDiaryEntry = res.data;
-						return mapDiaryEntryFromApi(raw);
-					}));
+			const diaryEntry: IDiaryEntry = yield call(() => axios
+					.get(`/api/diary-entries/${diaryEntryId}`)
+					.then((res) => mapDiaryEntryFromJson(res.data as IJsonObject)));
 
 			yield all([
 				put(setDiaryEntry(diaryEntry)),
@@ -149,13 +149,9 @@ function*loadDiaryEntriesForDateSaga(): Generator {
 		}
 
 		try {
-			const diaryEntries: IDiaryEntry[] = yield call(() => {
-				return axios.get(`/api/diary-entries/for-date/${momentToUrlString(date)}`)
-						.then((res) => {
-							const raw: IDiaryEntry[] = res.data;
-							return mapEntitiesFromApi(mapDiaryEntryFromApi, raw);
-						});
-			});
+			const diaryEntries: IDiaryEntry[] = yield call(() => axios
+					.get(`/api/diary-entries/for-date/${momentToUrlString(date)}`)
+					.then((res) => safeMapEntities(mapDiaryEntryFromJson, res.data as IJsonArray)));
 
 			yield all([
 				put(setDiaryEntriesForDate(date, diaryEntries)),
@@ -169,16 +165,14 @@ function*loadDiaryEntriesForDateSaga(): Generator {
 
 function*saveDiaryEntrySaga(): Generator {
 	yield takeEvery(DiaryEntriesActions.START_SAVE_DIARY_ENTRY, function*(action: PayloadAction): Generator {
-		const diaryEntry: Partial<IDiaryEntry> = action.payload.diaryEntry;
+		const diaryEntry: IDiaryEntry = action.payload.diaryEntry;
 		const diaryEntryId = diaryEntry.id || "";
 		try {
 			yield put(setEditorBusy(true));
 
-			const savedEntry: IDiaryEntry = yield call(() => axios.post(`/api/diary-entries/edit/${diaryEntryId}`, diaryEntry)
-					.then((res) => {
-						const raw: IDiaryEntry = res.data;
-						return mapDiaryEntryFromApi(raw);
-					}));
+			const savedEntry: IDiaryEntry = yield call(() => axios
+					.post(`/api/diary-entries/edit/${diaryEntryId}`, mapDiaryEntryToJson(diaryEntry))
+					.then((res) => mapDiaryEntryFromJson(res.data as IJsonObject)));
 
 			// note: this should happen before the group below
 			yield put(setLastDiaryEntrySaved(savedEntry));

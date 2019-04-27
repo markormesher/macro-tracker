@@ -1,8 +1,7 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-import * as Moment from "moment";
-import { Meal } from "../../commons/enums";
-import { IDiaryEntry } from "../../commons/models/IDiaryEntry";
+import { mapDiaryEntryFromJson } from "../../commons/models/IDiaryEntry";
+import { IJsonObject } from "../../commons/models/IJsonObject";
 import { urlStringToMoment } from "../../commons/utils/dates";
 import { cleanUuid } from "../../commons/utils/entities";
 import { cleanString } from "../../commons/utils/strings";
@@ -31,13 +30,7 @@ diaryEntriesRouter.get("/for-date/:dateStr", (req: Request, res: Response, next:
 
 diaryEntriesRouter.post("/edit/:diaryEntryId?", (req: Request, res: Response, next: NextFunction) => {
 	const diaryEntryId: string = cleanUuid(req.params.diaryEntryId, null);
-	const properties: Partial<IDiaryEntry> = {
-		date: Moment(req.body.date),
-		meal: cleanString(req.body.meal) as Meal,
-		servingQty: parseFloat(req.body.servingQty),
-		foodItem: req.body.foodItem,
-		servingSize: req.body.servingSize,
-	};
+	const properties = mapDiaryEntryFromJson(req.body as IJsonObject);
 
 	saveDiaryEntry(diaryEntryId, properties)
 			.then((diaryEntry) => res.json(diaryEntry))

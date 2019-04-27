@@ -1,8 +1,11 @@
 import { FoodMeasurementUnit } from "../enums";
-import { mapEntitiesFromApi } from "../utils/entities";
+import { cleanUuid, safeMapEntities } from "../utils/entities";
+import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
-import { IDiaryEntry } from "./IDiaryEntry";
-import { IServingSize, mapServingSizeFromApi } from "./IServingSize";
+import { IDiaryEntry, mapDiaryEntryFromJson, mapDiaryEntryToJson } from "./IDiaryEntry";
+import { IJsonArray } from "./IJsonArray";
+import { IJsonObject } from "./IJsonObject";
+import { IServingSize, mapServingSizeFromJson, mapServingSizeToJson } from "./IServingSize";
 import { IValidationResult } from "./IValidationResult";
 
 interface IFoodItem extends IBaseModel {
@@ -43,14 +46,53 @@ interface IFoodItemValidationResultErrors {
 	readonly saltPer100?: string;
 }
 
-function mapFoodItemFromApi(foodItem?: IFoodItem): IFoodItem {
-	if (!foodItem) {
-		return foodItem;
+function mapFoodItemFromJson(json?: IJsonObject): IFoodItem {
+	if (!json) {
+		return null;
 	}
 
 	return {
-		...foodItem,
-		servingSizes: mapEntitiesFromApi(mapServingSizeFromApi, foodItem.servingSizes),
+		id: cleanUuid(json.id as string),
+		deleted: json.deleted as boolean,
+		brand: cleanString(json.brand as string),
+		name: cleanString(json.name as string),
+		upc: cleanString(json.upc as string),
+		measurementUnit: cleanString(json.measurementUnit as string) as FoodMeasurementUnit,
+		caloriesPer100: parseFloat(json.caloriesPer100 as string),
+		fatPer100: parseFloat(json.fatPer100 as string),
+		satFatPer100: parseFloat(json.satFatPer100 as string),
+		carbohydratePer100: parseFloat(json.carbohydratePer100 as string),
+		sugarPer100: parseFloat(json.sugarPer100 as string),
+		fibrePer100: parseFloat(json.fibrePer100 as string),
+		proteinPer100: parseFloat(json.proteinPer100 as string),
+		saltPer100: parseFloat(json.saltPer100 as string),
+		servingSizes: safeMapEntities(mapServingSizeFromJson, json.servingSizes as IJsonArray),
+		diaryEntries: safeMapEntities(mapDiaryEntryFromJson, json.diaryEntries as IJsonArray),
+	};
+}
+
+function mapFoodItemToJson(foodItem?: IFoodItem): IJsonObject {
+	if (!foodItem) {
+		return null;
+	}
+
+	return {
+		id: foodItem.id,
+		deleted: foodItem.deleted,
+		brand: foodItem.brand,
+		name: foodItem.name,
+		upc: foodItem.upc,
+		measurementUnit: foodItem.measurementUnit,
+		caloriesPer100: foodItem.caloriesPer100,
+		fatPer100: foodItem.fatPer100,
+		satFatPer100: foodItem.satFatPer100,
+		carbohydratePer100: foodItem.carbohydratePer100,
+		sugarPer100: foodItem.sugarPer100,
+		fibrePer100: foodItem.fibrePer100,
+		proteinPer100: foodItem.proteinPer100,
+		saltPer100: foodItem.saltPer100,
+		servingSizes: safeMapEntities(mapServingSizeToJson, foodItem.servingSizes),
+		diaryEntries: safeMapEntities(mapDiaryEntryToJson, foodItem.diaryEntries),
 	};
 }
 
@@ -180,7 +222,8 @@ function foodItemComparator(a: IFoodItem, b: IFoodItem): number {
 export {
 	IFoodItem,
 	IFoodItemValidationResult,
-	mapFoodItemFromApi,
+	mapFoodItemFromJson,
+	mapFoodItemToJson,
 	validateFoodItem,
 	getDefaultFoodItem,
 	foodItemComparator,

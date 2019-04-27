@@ -1,7 +1,9 @@
 import axios from "axios";
 import { all, call, put, select, takeEvery } from "redux-saga/effects";
-import { IFoodItem, mapFoodItemFromApi } from "../../commons/models/IFoodItem";
-import { mapEntitiesFromApi } from "../../commons/utils/entities";
+import { IFoodItem, mapFoodItemFromJson } from "../../commons/models/IFoodItem";
+import { IJsonArray } from "../../commons/models/IJsonArray";
+import { IJsonObject } from "../../commons/models/IJsonObject";
+import { safeMapEntities } from "../../commons/utils/entities";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { IRootState } from "./root";
@@ -69,11 +71,9 @@ function*searchFoodItemByUpcSaga(): Generator {
 
 		try {
 			// check our own DB first
-			const existingFoodItem: IFoodItem = yield call(() => axios.get(`/api/food-items/by-upc/${upc}`)
-					.then((res) => {
-						const raw: IFoodItem = res.data;
-						return mapFoodItemFromApi(raw);
-					}));
+			const existingFoodItem: IFoodItem = yield call(() => axios
+					.get(`/api/food-items/by-upc/${upc}`)
+					.then((res) => mapFoodItemFromJson(res.data as IJsonObject)));
 
 			if (existingFoodItem) {
 				yield all([
@@ -81,11 +81,9 @@ function*searchFoodItemByUpcSaga(): Generator {
 					put(setUpcSearchBusy(false)),
 				]);
 			} else {
-				const foodItems: IFoodItem[] = yield call(() => axios.get(`/api/nutritionix/search-upc/${upc}`)
-						.then((res) => {
-							const raw: IFoodItem[] = res.data;
-							return mapEntitiesFromApi(mapFoodItemFromApi, raw);
-						}));
+				const foodItems: IFoodItem[] = yield call(() => axios
+						.get(`/api/nutritionix/search-upc/${upc}`)
+						.then((res) => safeMapEntities(mapFoodItemFromJson, res.data as IJsonArray)));
 
 				yield all([
 					put(setFoodItemsByUpc(upc, foodItems)),
