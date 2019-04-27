@@ -99,9 +99,9 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 		this.resetEditor(true);
 
 		this.resetEditor = this.resetEditor.bind(this);
+		this.handleFoodItemChange = this.handleFoodItemChange.bind(this);
 		this.handleDateChange = this.handleDateChange.bind(this);
 		this.handleMealChange = this.handleMealChange.bind(this);
-		this.handleFoodItemChange = this.handleFoodItemChange.bind(this);
 		this.handleServingQtyChange = this.handleServingQtyChange.bind(this);
 		this.handleServingSizeChange = this.handleServingSizeChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -203,6 +203,16 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 							>
 								<div className={bs.row}>
 									<div className={combine(bs.col12, bs.formGroup)}>
+										<FoodItemPicker
+												value={currentValue.foodItem}
+												preSelectedId={urlFoodItemId}
+												onValueChange={this.handleFoodItemChange}
+												disabled={editorBusy}
+										/>
+									</div>
+								</div>
+								<div className={bs.row}>
+									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledDateInput
 												id={"date"}
 												label={"Date"}
@@ -230,20 +240,6 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 													</option>
 											))}
 										</ControlledSelectInput>
-									</div>
-								</div>
-								<div className={bs.row}>
-									<div className={combine(bs.col12, bs.formGroup)}>
-										<FoodItemPicker
-												value={currentValue.foodItem}
-												preSelectedId={urlFoodItemId}
-												onValueChange={this.handleFoodItemChange}
-												inputProps={{
-													label: "Food",
-													disabled: editorBusy,
-													error: errors.foodItem,
-												}}
-										/>
 									</div>
 								</div>
 								<div className={bs.row}>
@@ -276,11 +272,6 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 													spin: editorBusy,
 												}}
 										/>
-									</div>
-								</div>
-								<div className={bs.row}>
-									<div className={combine(bs.col12, bs.formGroup)}>
-										<pre>{JSON.stringify(currentValue, null, 2)}</pre>
 									</div>
 								</div>
 							</ControlledForm>
@@ -321,19 +312,19 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 		}
 	}
 
+	private handleFoodItemChange(foodItem: IFoodItem): void {
+		const servingSize = foodItem && foodItem.servingSizes.length
+				? foodItem.servingSizes.sort(servingSizeComparator)[0]
+				: undefined;
+		this.updateModel({ foodItem, servingSize });
+	}
+
 	private handleDateChange(date: Moment.Moment): void {
 		this.updateModel({ date });
 	}
 
 	private handleMealChange(meal: string): void {
 		this.updateModel({ meal: meal as Meal });
-	}
-
-	private handleFoodItemChange(foodItem: IFoodItem): void {
-		const servingSize = foodItem && foodItem.servingSizes.length
-				? foodItem.servingSizes.sort(servingSizeComparator)[0]
-				: undefined;
-		this.updateModel({ foodItem, servingSize });
 	}
 
 	private handleServingQtyChange(servingQty: number): void {

@@ -1,0 +1,41 @@
+@import "~bootstrap-scss/functions";
+@import "~bootstrap-scss/variables";
+
+$search-bg-colour: #fff;
+$search-border-colour: #c0c0c0;
+// sass-lint:disable no-color-literals
+$highlight-colour: rgba(red($blue), green($blue), blue($blue), .2);
+
+.search {
+	background-color: $search-bg-colour;
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	left: 0;
+	margin: 0;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 9999;
+
+	.input-wrapper {
+		border-bottom: 1px solid $search-border-colour;
+		flex-grow: 0;
+		padding: #{$spacer / 2};
+	}
+
+	.candidates-wrapper {
+		flex-grow: 1;
+		overflow: scroll;
+	}
+
+	.cancel-wrapper {
+		border-top: 1px solid $search-border-colour;
+		flex-grow: 0;
+	}
+}
+
+.highlight {
+	background-color: $highlight-colour;
+	font-weight: bold;
+}

@@ -3,7 +3,7 @@ $viewfinder-bg-colour: #c0c0c0;
 
 .scanner {
 	background-color: $scanner-bg-colour;
-	display: none;
+	display: flex;
 	height: 100vh;
 	left: 0;
 	margin: 0;
@@ -11,10 +11,6 @@ $viewfinder-bg-colour: #c0c0c0;
 	top: 0;
 	width: 100%;
 	z-index: 9999;
-
-	&.show {
-		display: flex;
-	}
 
 	.wrapper {
 		margin: auto 10%;

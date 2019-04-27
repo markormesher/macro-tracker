@@ -10,7 +10,7 @@ body {
 h1,
 h2,
 h3 {
-	margin-bottom: $spacer * .5; // Bootstrap override
+	margin-bottom: $spacer; // Bootstrap override
 
 	svg {
 		margin-right: $spacer;

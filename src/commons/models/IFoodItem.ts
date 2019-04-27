@@ -210,11 +210,11 @@ function foodItemComparator(a: IFoodItem, b: IFoodItem): number {
 	} else if (!b) {
 		return 1;
 	} else {
-		const brandCompare = a.brand.localeCompare(b.brand);
-		if (brandCompare === 0) {
-			return a.name.localeCompare(b.name);
+		const nameCompare = a.name.localeCompare(b.name);
+		if (nameCompare === 0) {
+			return a.brand.localeCompare(b.brand);
 		} else {
-			return brandCompare;
+			return nameCompare;
 		}
 	}
 }

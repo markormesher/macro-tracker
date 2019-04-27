@@ -1,7 +1,11 @@
 import * as Moment from "moment";
 import * as React from "react";
+import { ReactNode } from "react";
 import { FoodMeasurementUnit, Meal } from "../../commons/enums";
+import { IFoodItem } from "../../commons/models/IFoodItem";
 import { utcMoment } from "../../commons/utils/dates";
+import * as bs from "../global-styles/Bootstrap.scss";
+import { combine } from "./style-helpers";
 
 function formatLargeNumber(amount: number): string {
 	return amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -74,6 +78,60 @@ function getMealTitle(meal: Meal): string {
 	return "";
 }
 
+function renderFoodItemSummary(
+		foodItem: IFoodItem,
+		pClass?: string,
+		nameFormatter?: (name: string) => string | ReactNode,
+): ReactNode {
+	const infoChunks: ReactNode[] = [];
+
+	infoChunks.push((
+			<span key={`info-chunk-calories`}>
+				{formatLargeNumber(foodItem.caloriesPer100)} kcal
+			</span>
+	));
+
+	infoChunks.push((
+			<span key={`info-chunk-fat`}>
+				{formatMeasurement(foodItem.fatPer100, "g")} fat
+			</span>
+	));
+
+	infoChunks.push((
+			<span key={`info-chunk-carbohydrates`}>
+				{formatMeasurement(foodItem.carbohydratePer100, "g")} carbs
+			</span>
+	));
+
+	infoChunks.push((
+			<span key={`info-chunk-protein`}>
+				{formatMeasurement(foodItem.proteinPer100, "g")} protein
+			</span>
+	));
+
+	for (let i = 1; i < infoChunks.length; i += 2) {
+		infoChunks.splice(i, 0, (
+				<span key={`spacer-${i}`} className={bs.mx1}>
+					&bull;
+				</span>
+		));
+	}
+
+	return (
+			<p className={pClass}>
+				{nameFormatter ? nameFormatter(foodItem.name) : foodItem.name}
+				<br/>
+				<span className={combine(bs.textMuted, bs.small)}>
+					{foodItem.brand}
+				</span>
+				<br/>
+				<span className={combine(bs.textMuted, bs.small)}>
+					Per {formatMeasurement(100, foodItem.measurementUnit)}: {infoChunks}
+				</span>
+			</p>
+	);
+}
+
 export {
 	formatLargeNumber,
 	formatPercent,
@@ -81,4 +139,5 @@ export {
 	formatMeasurement,
 	formatDate,
 	getMealTitle,
+	renderFoodItemSummary,
 };
