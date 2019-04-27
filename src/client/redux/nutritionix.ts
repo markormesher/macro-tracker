@@ -10,19 +10,16 @@ import { IRootState } from "./root";
 
 interface INutritionixState {
 	readonly upcSearchBusy: boolean;
-	readonly keywordSearchBusy: boolean;
 	readonly searchedFoodItemsByUpc: { readonly [key: string]: IFoodItem[] };
 }
 
 const initialState: INutritionixState = {
 	upcSearchBusy: false,
-	keywordSearchBusy: false,
 	searchedFoodItemsByUpc: {},
 };
 
 enum NutritionixActions {
 	SET_UPC_SEARCH_BUSY = "NutritionixActions.SET_UPC_SEARCH_BUSY",
-	SET_KEYWORD_SEARCH_BUSY = "NutritionixActions.SET_KEYWORD_SEARCH_BUSY",
 	SET_FOOD_ITEMS_BY_UPC = "NutritionixActions.SET_FOOD_ITEMS_BY_UPC",
 
 	START_SEARCH_FOOD_ITEMS_BY_UPC = "NutritionixActions.START_SEARCH_FOOD_ITEMS_BY_UPC",
@@ -32,13 +29,6 @@ function setUpcSearchBusy(upcSearchBusy: boolean): PayloadAction {
 	return {
 		type: NutritionixActions.SET_UPC_SEARCH_BUSY,
 		payload: { upcSearchBusy },
-	};
-}
-
-function setKeywordSearchBusy(keywordSearchBusy: boolean): PayloadAction {
-	return {
-		type: NutritionixActions.SET_KEYWORD_SEARCH_BUSY,
-		payload: { keywordSearchBusy },
 	};
 }
 
@@ -111,12 +101,6 @@ function nutritionixReducer(state = initialState, action: PayloadAction): INutri
 				upcSearchBusy: action.payload.upcSearchBusy,
 			};
 
-		case NutritionixActions.SET_KEYWORD_SEARCH_BUSY:
-			return {
-				...state,
-				keywordSearchBusy: action.payload.keywordSearchBusy,
-			};
-
 		case NutritionixActions.SET_FOOD_ITEMS_BY_UPC:
 			return (() => {
 				let newState = state;
@@ -146,6 +130,5 @@ export {
 	nutritionixReducer,
 	nutritionixSagas,
 	setUpcSearchBusy,
-	setKeywordSearchBusy,
 	startSearchFoodItemByUpc,
 };

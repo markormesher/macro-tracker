@@ -108,7 +108,6 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
 
 						<Route path={"/food-items/entry-chooser"} component={FoodItemEntryChooser}/>
 						<Route path={"/food-items/from-upc"} component={UpcFoodItemSearchPage}/>
-						{/*<Route path={"/food-items/from-search"} component={FoodItemEntryChooser}/>*/}
 						<Route path={"/food-items/edit/:foodItemId?"} component={EditFoodItemPage}/>
 						<Route path={"/food-items"} component={FoodItemsPage}/>
 

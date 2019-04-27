@@ -1,4 +1,4 @@
-import { faBarcodeScan, faPencil, faSearch } from "@fortawesome/pro-light-svg-icons";
+import { faBarcodeScan, faPencil } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { Link } from "react-router-dom";
@@ -18,7 +18,7 @@ class FoodItemEntryChooser extends PureComponent {
 						</div>
 					</div>
 					<div className={bs.row}>
-						<div className={bs.col}>
+						<div className={bs.col6}>
 							<Link to={"/food-items/from-upc"}>
 								<IconBtn
 										icon={faBarcodeScan}
@@ -31,20 +31,8 @@ class FoodItemEntryChooser extends PureComponent {
 										}}
 								/>
 							</Link>
-
-							<Link to={"/food-items/from-search"}>
-								<IconBtn
-										icon={faSearch}
-										text={"Search"}
-										btnProps={{
-											className: combine(bs.btnOutlineDark, bs.mb1),
-											style: {
-												width: "100%",
-											},
-										}}
-								/>
-							</Link>
-
+						</div>
+						<div className={bs.col6}>
 							<Link to={"/food-items/edit"}>
 								<IconBtn
 										icon={faPencil}
