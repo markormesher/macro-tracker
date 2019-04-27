@@ -178,8 +178,8 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 
 		const targetCalories = target.baselineCaloriesPerDay + totalCaloriesBurned;
 		const targetCarbohydrates = targetCalories * target.proportionCarbohydrates / CALORIES_PER_G_CARBOHYDRATES;
-		const targetProtein = targetCalories * target.proportionProtein / CALORIES_PER_G_PROTEIN;
 		const targetFat = targetCalories * target.proportionFat / CALORIES_PER_G_FAT;
+		const targetProtein = targetCalories * target.proportionProtein / CALORIES_PER_G_PROTEIN;
 
 		const totalCalories = diaryEntries
 				.map((e) => e.foodItem.caloriesPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
@@ -187,17 +187,17 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 		const totalCarbohydrates = diaryEntries
 				.map((e) => e.foodItem.carbohydratePer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
 				.reduce((a, b) => a + b, 0);
-		const totalProtein = diaryEntries
-				.map((e) => e.foodItem.proteinPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
-				.reduce((a, b) => a + b, 0);
 		const totalFat = diaryEntries
 				.map((e) => e.foodItem.fatPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
+				.reduce((a, b) => a + b, 0);
+		const totalProtein = diaryEntries
+				.map((e) => e.foodItem.proteinPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
 				.reduce((a, b) => a + b, 0);
 
 		const percentCalories = totalCalories / targetCalories;
 		const percentCarbohydrates = totalCarbohydrates / targetCarbohydrates;
-		const percentProtein = totalProtein / targetProtein;
 		const percentFat = totalFat / targetFat;
+		const percentProtein = totalProtein / targetProtein;
 
 		return (
 				<div className={bs.row}>
@@ -220,21 +220,21 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 								barClasses={this.getProgressBarClasses(percentCarbohydrates)}
 						/>
 						<ProgressBar
+								label={"Fat"}
+								value={totalFat}
+								total={targetFat}
+								unit={"g"}
+								showPercent={percentFat > 1}
+								wrapperClasses={bs.mb1}
+								barClasses={this.getProgressBarClasses(percentFat)}
+						/>
+						<ProgressBar
 								label={"Protein"}
 								value={totalProtein}
 								total={targetProtein}
 								unit={"g"}
 								showPercent={percentProtein > 1}
-								wrapperClasses={bs.mb1}
 								barClasses={this.getProgressBarClasses(percentProtein)}
-						/>
-						<ProgressBar
-								label={"Fat"}
-								value={totalFat}
-								total={targetFat}
-								showPercent={percentFat > 1}
-								unit={"g"}
-								barClasses={this.getProgressBarClasses(percentFat)}
 						/>
 					</div>
 				</div>

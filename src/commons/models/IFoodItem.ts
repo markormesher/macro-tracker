@@ -11,12 +11,12 @@ interface IFoodItem extends IBaseModel {
 	readonly upc: string;
 	readonly measurementUnit: FoodMeasurementUnit;
 	readonly caloriesPer100: number;
-	readonly carbohydratePer100: number;
-	readonly sugarPer100: number;
 	readonly fatPer100: number;
 	readonly satFatPer100: number;
-	readonly proteinPer100: number;
+	readonly carbohydratePer100: number;
+	readonly sugarPer100: number;
 	readonly fibrePer100: number;
+	readonly proteinPer100: number;
 	readonly saltPer100: number;
 
 	readonly servingSizes: IServingSize[];
@@ -34,12 +34,12 @@ interface IFoodItemValidationResultErrors {
 	readonly upc?: string;
 	readonly measurementUnit?: string;
 	readonly caloriesPer100?: string;
-	readonly carbohydratePer100?: string;
-	readonly sugarPer100?: string;
 	readonly fatPer100?: string;
 	readonly satFatPer100?: string;
-	readonly proteinPer100?: string;
+	readonly carbohydratePer100?: string;
+	readonly sugarPer100?: string;
 	readonly fibrePer100?: string;
+	readonly proteinPer100?: string;
 	readonly saltPer100?: string;
 }
 
@@ -103,12 +103,12 @@ function validateFoodItem(foodItem?: Partial<IFoodItem>): IFoodItemValidationRes
 
 	const nutritionProperties: Array<[string, keyof IFoodItem & keyof IFoodItemValidationResultErrors]> = [
 		["calories", "caloriesPer100"],
-		["carbohydrates", "carbohydratePer100"],
-		["sugar", "sugarPer100"],
 		["fat", "fatPer100"],
 		["sat. fat", "satFatPer100"],
-		["protein", "proteinPer100"],
+		["carbohydrates", "carbohydratePer100"],
+		["sugar", "sugarPer100"],
 		["fibre", "fibrePer100"],
+		["protein", "proteinPer100"],
 		["salt", "saltPer100"],
 	];
 
@@ -147,12 +147,12 @@ function getDefaultFoodItem(): IFoodItem {
 		upc: null,
 		measurementUnit: "g",
 		caloriesPer100: 0,
-		carbohydratePer100: 0,
-		sugarPer100: 0,
 		fatPer100: 0,
 		satFatPer100: 0,
-		proteinPer100: 0,
+		carbohydratePer100: 0,
+		sugarPer100: 0,
 		fibrePer100: 0,
+		proteinPer100: 0,
 		saltPer100: 0,
 
 		servingSizes: [],

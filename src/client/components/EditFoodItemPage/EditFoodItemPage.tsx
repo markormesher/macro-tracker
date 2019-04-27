@@ -99,12 +99,12 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 		this.handleUpcChange = this.handleUpcChange.bind(this);
 		this.handleMeasurementUnitChange = this.handleMeasurementUnitChange.bind(this);
 		this.handleCaloriesPer100Change = this.handleCaloriesPer100Change.bind(this);
-		this.handleCarbohydratePer100Change = this.handleCarbohydratePer100Change.bind(this);
-		this.handleSugarPer100Change = this.handleSugarPer100Change.bind(this);
 		this.handleFatPer100Change = this.handleFatPer100Change.bind(this);
 		this.handleSatFatPer100Change = this.handleSatFatPer100Change.bind(this);
-		this.handleProteinPer100Change = this.handleProteinPer100Change.bind(this);
+		this.handleCarbohydratePer100Change = this.handleCarbohydratePer100Change.bind(this);
+		this.handleSugarPer100Change = this.handleSugarPer100Change.bind(this);
 		this.handleFibrePer100Change = this.handleFibrePer100Change.bind(this);
+		this.handleProteinPer100Change = this.handleProteinPer100Change.bind(this);
 		this.handleSaltPer100Change = this.handleSaltPer100Change.bind(this);
 		this.handleServingSizeLabelChange = this.handleServingSizeLabelChange.bind(this);
 		this.handleServingSizeMeasurementChange = this.handleServingSizeMeasurementChange.bind(this);
@@ -285,34 +285,6 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
-												id={"carbohydratesPer100"}
-												label={`Carbohydrates per ${formatMeasurement(100, currentValue.measurementUnit)}`}
-												placeholder={"Carbohydrates"}
-												value={ControlledTextInput.safeNumericValue(currentValue.carbohydratePer100)}
-												onValueChange={this.handleCarbohydratePer100Change}
-												disabled={editorBusy}
-												error={errors.carbohydratePer100}
-												inputProps={{
-													type: "number",
-												}}
-										/>
-									</div>
-									<div className={combine(bs.col12, bs.formGroup)}>
-										<ControlledTextInput
-												id={"sugarPer100"}
-												label={`Sugar per ${formatMeasurement(100, currentValue.measurementUnit)}`}
-												placeholder={"Sugar"}
-												value={ControlledTextInput.safeNumericValue(currentValue.sugarPer100)}
-												onValueChange={this.handleSugarPer100Change}
-												disabled={editorBusy}
-												error={errors.sugarPer100}
-												inputProps={{
-													type: "number",
-												}}
-										/>
-									</div>
-									<div className={combine(bs.col12, bs.formGroup)}>
-										<ControlledTextInput
 												id={"fatPer100"}
 												label={`Fat per ${formatMeasurement(100, currentValue.measurementUnit)}`}
 												placeholder={"Fat"}
@@ -341,13 +313,27 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
-												id={"proteinPer100"}
-												label={`Protein per ${formatMeasurement(100, currentValue.measurementUnit)}`}
-												placeholder={"Protein"}
-												value={ControlledTextInput.safeNumericValue(currentValue.proteinPer100)}
-												onValueChange={this.handleProteinPer100Change}
+												id={"carbohydratesPer100"}
+												label={`Carbohydrates per ${formatMeasurement(100, currentValue.measurementUnit)}`}
+												placeholder={"Carbohydrates"}
+												value={ControlledTextInput.safeNumericValue(currentValue.carbohydratePer100)}
+												onValueChange={this.handleCarbohydratePer100Change}
 												disabled={editorBusy}
-												error={errors.proteinPer100}
+												error={errors.carbohydratePer100}
+												inputProps={{
+													type: "number",
+												}}
+										/>
+									</div>
+									<div className={combine(bs.col12, bs.formGroup)}>
+										<ControlledTextInput
+												id={"sugarPer100"}
+												label={`Sugar per ${formatMeasurement(100, currentValue.measurementUnit)}`}
+												placeholder={"Sugar"}
+												value={ControlledTextInput.safeNumericValue(currentValue.sugarPer100)}
+												onValueChange={this.handleSugarPer100Change}
+												disabled={editorBusy}
+												error={errors.sugarPer100}
 												inputProps={{
 													type: "number",
 												}}
@@ -362,6 +348,20 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 												onValueChange={this.handleFibrePer100Change}
 												disabled={editorBusy}
 												error={errors.fibrePer100}
+												inputProps={{
+													type: "number",
+												}}
+										/>
+									</div>
+									<div className={combine(bs.col12, bs.formGroup)}>
+										<ControlledTextInput
+												id={"proteinPer100"}
+												label={`Protein per ${formatMeasurement(100, currentValue.measurementUnit)}`}
+												placeholder={"Protein"}
+												value={ControlledTextInput.safeNumericValue(currentValue.proteinPer100)}
+												onValueChange={this.handleProteinPer100Change}
+												disabled={editorBusy}
+												error={errors.proteinPer100}
 												inputProps={{
 													type: "number",
 												}}
@@ -475,14 +475,6 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 		this.updateModel({ caloriesPer100: value === "" ? null : parseFloat(value) });
 	}
 
-	private handleCarbohydratePer100Change(value: string): void {
-		this.updateModel({ carbohydratePer100: value === "" ? null : parseFloat(value) });
-	}
-
-	private handleSugarPer100Change(value: string): void {
-		this.updateModel({ sugarPer100: value === "" ? null : parseFloat(value) });
-	}
-
 	private handleFatPer100Change(value: string): void {
 		this.updateModel({ fatPer100: value === "" ? null : parseFloat(value) });
 	}
@@ -491,12 +483,20 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 		this.updateModel({ satFatPer100: value === "" ? null : parseFloat(value) });
 	}
 
-	private handleProteinPer100Change(value: string): void {
-		this.updateModel({ proteinPer100: value === "" ? null : parseFloat(value) });
+	private handleCarbohydratePer100Change(value: string): void {
+		this.updateModel({ carbohydratePer100: value === "" ? null : parseFloat(value) });
+	}
+
+	private handleSugarPer100Change(value: string): void {
+		this.updateModel({ sugarPer100: value === "" ? null : parseFloat(value) });
 	}
 
 	private handleFibrePer100Change(value: string): void {
 		this.updateModel({ fibrePer100: value === "" ? null : parseFloat(value) });
+	}
+
+	private handleProteinPer100Change(value: string): void {
+		this.updateModel({ proteinPer100: value === "" ? null : parseFloat(value) });
 	}
 
 	private handleSaltPer100Change(value: string): void {

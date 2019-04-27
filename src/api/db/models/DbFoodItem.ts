@@ -25,22 +25,22 @@ class DbFoodItem extends BaseModel implements IFoodItem {
 	public caloriesPer100: number;
 
 	@Column({ type: "double precision" })
-	public carbohydratePer100: number;
-
-	@Column({ type: "double precision" })
-	public sugarPer100: number;
-
-	@Column({ type: "double precision" })
 	public fatPer100: number;
 
 	@Column({ type: "double precision" })
 	public satFatPer100: number;
 
 	@Column({ type: "double precision" })
-	public proteinPer100: number;
+	public carbohydratePer100: number;
+
+	@Column({ type: "double precision" })
+	public sugarPer100: number;
 
 	@Column({ type: "double precision" })
 	public fibrePer100: number;
+
+	@Column({ type: "double precision" })
+	public proteinPer100: number;
 
 	@Column({ type: "double precision" })
 	public saltPer100: number;
