@@ -199,35 +199,35 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps, IFoodItemPick
 
 		return (
 				<div className={style.search}>
-					<div className={style.inputWrapper}>
-						<ControlledTextInput
-								id={"search"}
-								placeholder={"Search"}
-								label={null}
-								value={searchTerm}
-								onValueChange={this.handleSearchTermChange}
-								disabled={false}
-								inputProps={{
-									autoFocus: true,
-								}}
-						/>
-					</div>
-					<div className={style.candidatesWrapper}>
-						<ContentWrapper>
-							{foodItemList}
-						</ContentWrapper>
-					</div>
-					<div className={style.cancelWrapper}>
-						<p className={combine(bs.my2, bs.textCenter)}>
+					<div className={combine(style.inputWrapper, bs.dFlex)}>
+						<div className={bs.flexGrow1}>
+							<ControlledTextInput
+									id={"search"}
+									placeholder={"Search"}
+									label={null}
+									value={searchTerm}
+									onValueChange={this.handleSearchTermChange}
+									disabled={false}
+									inputProps={{
+										autoFocus: true,
+									}}
+							/>
+						</div>
+						<div className={bs.flexGrow0}>
 							<IconBtn
 									icon={faTimes}
 									text={"Cancel"}
 									onClick={this.closeSearch}
 									btnProps={{
-										className: combine(bs.btnOutlineDark, bs.flexGrow0),
+										className: combine(bs.btnOutlineDark, bs.ml1),
 									}}
 							/>
-						</p>
+						</div>
+					</div>
+					<div className={style.candidatesWrapper}>
+						<ContentWrapper>
+							{foodItemList}
+						</ContentWrapper>
 					</div>
 				</div>
 		);

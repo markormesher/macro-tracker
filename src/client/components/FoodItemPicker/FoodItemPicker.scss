@@ -28,11 +28,6 @@ $highlight-colour: rgba(red($blue), green($blue), blue($blue), .2);
 		flex-grow: 1;
 		overflow: scroll;
 	}
-
-	.cancel-wrapper {
-		border-top: 1px solid $search-border-colour;
-		flex-grow: 0;
-	}
 }
 
 .highlight {
