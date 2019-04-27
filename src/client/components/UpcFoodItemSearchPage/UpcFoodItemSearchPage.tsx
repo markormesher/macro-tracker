@@ -15,6 +15,7 @@ import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { startSearchFoodItemByUpc } from "../../redux/nutritionix";
 import { IRootState } from "../../redux/root";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
+import { ControlledBarcodeInput } from "../_ui/ControlledBarcodeInput/ControlledBarcodeInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
@@ -143,7 +144,7 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 					</div>
 					<div className={bs.row}>
 						<div className={combine(bs.col12, bs.formGroup)}>
-							<ControlledTextInput
+							<ControlledBarcodeInput
 									id={"upc"}
 									label={"UPC"}
 									placeholder={"UPC"}
