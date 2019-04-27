@@ -177,7 +177,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 								<Link to={`/diary-entries/edit?initFood=${lastFoodItemSaved.id}`}>
 									<IconBtn
 											icon={faCalendarDay}
-											text={"Add to Diary Entry"}
+											text={"Add to Diary"}
 											btnProps={{
 												className: bs.btnOutlineDark,
 												style: {
@@ -447,6 +447,9 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 								value={isNaN(ss.measurement) || ss.measurement === null ? "" : ss.measurement}
 								disabled={editorBusy}
 								onValueChange={this.handleServingSizeMeasurementChange}
+								inputProps={{
+									type: "number",
+								}}
 						/>
 					</div>
 					<div className={combine(bs.flexGrow0, bs.pl1, bs.mAuto)}>

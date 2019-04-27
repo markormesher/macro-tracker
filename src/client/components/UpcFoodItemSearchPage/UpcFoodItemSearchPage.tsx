@@ -112,7 +112,7 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 								<Link to={`/diary-entries/edit?initFood=${lastFoodItemSaved.id}`}>
 									<IconBtn
 											icon={faCalendarDay}
-											text={"Add to Diary Entry"}
+											text={"Add to Diary"}
 											btnProps={{
 												className: bs.btnOutlineDark,
 												style: {
