@@ -57,6 +57,10 @@ function validateServingSize(servingSize?: Partial<IServingSize>): IServingSizeV
 
 	let result: IServingSizeValidationResult = { isValid: true, errors: {} };
 
+	if (servingSize.deleted) {
+		return result;
+	}
+
 	if (!servingSize.label || servingSize.label.trim() === "") {
 		result = {
 			isValid: false,

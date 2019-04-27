@@ -56,16 +56,14 @@ async function saveFoodItem(foodItemId: string, values: IFoodItem): Promise<DbFo
 				foodItem = DbFoodItem.getRepository().merge(foodItem || new DbFoodItem(), values);
 				const savedFoodItem = await foodItem.save();
 
-				// TODO: handle saving invalid sizes
-				// e.g. one that was added then removed in the browser
-				// e.d. one that was fully erased to delete it
-
 				// mark invalid serving sizes as deleted
 				const inputServingSizes = values.servingSizes || [];
 				const servingSizeSaveTasks = inputServingSizes.map((ss) => {
 					const isValid = validateServingSize(ss).isValid;
 					const updatedSs = {
 						...ss,
+						label: isValid ? ss.label : "",
+						measurement: isValid ? ss.measurement : 0,
 						foodItem: savedFoodItem,
 						deleted: ss.deleted || !isValid,
 					};

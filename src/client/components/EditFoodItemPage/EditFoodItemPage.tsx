@@ -109,6 +109,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 		this.handleSaltPer100Change = this.handleSaltPer100Change.bind(this);
 		this.handleServingSizeLabelChange = this.handleServingSizeLabelChange.bind(this);
 		this.handleServingSizeMeasurementChange = this.handleServingSizeMeasurementChange.bind(this);
+		this.updateServingSizes = this.updateServingSizes.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.updateModel = this.updateModel.bind(this);
 	}
@@ -219,6 +220,9 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 												error={errors.brand}
 												onValueChange={this.handleBrandChange}
 												suggestionOptions={allBrands}
+												inputProps={{
+													autoCapitalize: "words",
+												}}
 										/>
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
@@ -230,6 +234,9 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 												onValueChange={this.handleNameChange}
 												disabled={editorBusy}
 												error={errors.name}
+												inputProps={{
+													autoCapitalize: "words",
+												}}
 										/>
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
@@ -435,6 +442,9 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 								value={ss.label || ""}
 								disabled={editorBusy}
 								onValueChange={this.handleServingSizeLabelChange}
+								inputProps={{
+									autoCapitalize: "off",
+								}}
 						/>
 					</div>
 					<div className={combine(bs.flexGrow0, bs.px1, bs.mAuto)}>
@@ -529,7 +539,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 			servingSizes = [...originalServingSizes, { ...(getDefaultServingSize(ssId)), label: value }];
 		}
 
-		this.updateModel({ servingSizes });
+		this.updateServingSizes(servingSizes);
 	}
 
 	private handleServingSizeMeasurementChange(value: string, inputId: string): void {
@@ -552,8 +562,24 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 			});
 		} else {
 			// creating a new one
-			servingSizes = [...originalServingSizes, { ...(getDefaultServingSize(ssId)), label: value }];
+			servingSizes = [...originalServingSizes, { ...(getDefaultServingSize(ssId)), measurement: cleanValue }];
 		}
+
+		this.updateServingSizes(servingSizes);
+	}
+
+	private updateServingSizes(servingSizes: IServingSize[]): void {
+		const { loadedFoodItem } = this.props;
+		const originalServingSizeIds = loadedFoodItem.servingSizes.map((ss) => ss.id);
+
+		// remove fully-blank sizes that didn't already exist
+		servingSizes = servingSizes.filter((ss) => {
+			if (originalServingSizeIds.includes(ss.id)) {
+				return true;
+			}
+
+			return (ss.label && ss.label.trim() !== "") || (ss.measurement !== null && !isNaN(ss.measurement));
+		});
 
 		this.updateModel({ servingSizes });
 	}
