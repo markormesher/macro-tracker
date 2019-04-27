@@ -22,6 +22,7 @@ import { ActionResult } from "../../redux/helpers/ActionResult";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { IRootState } from "../../redux/root";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
+import { ControlledBarcodeInput } from "../_ui/ControlledBarcodeInput/ControlledBarcodeInput";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ControlledRadioInput } from "../_ui/ControlledInputs/ControlledRadioInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
@@ -232,7 +233,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 										/>
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
-										<ControlledTextInput
+										<ControlledBarcodeInput
 												id={"upc"}
 												label={"UPC"}
 												placeholder={"UPC"}
