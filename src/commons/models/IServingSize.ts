@@ -1,8 +1,9 @@
-import { cleanUuid } from "../utils/entities";
+import { cleanUuid, safeMapEntities } from "../utils/entities";
 import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
-import { IDiaryEntry } from "./IDiaryEntry";
+import { IDiaryEntry, mapDiaryEntryFromJson } from "./IDiaryEntry";
 import { IFoodItem, mapFoodItemFromJson, mapFoodItemToJson } from "./IFoodItem";
+import { IJsonArray } from "./IJsonArray";
 import { IJsonObject } from "./IJsonObject";
 import { IValidationResult } from "./IValidationResult";
 
@@ -32,7 +33,7 @@ function mapServingSizeFromJson(json?: IJsonObject): IServingSize {
 		label: cleanString(json.label as string),
 		measurement: parseFloat(json.measurement as string),
 		foodItem: mapFoodItemFromJson(json.foodItem as IJsonObject),
-		diaryEntries: [],
+		diaryEntries: safeMapEntities(mapDiaryEntryFromJson, json.diaryEntries as IJsonArray),
 	};
 }
 
