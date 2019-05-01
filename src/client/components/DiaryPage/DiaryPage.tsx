@@ -244,9 +244,9 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 	private getProgressBarClasses(percent: number): string {
 		if (percent < 0.6) {
 			return bs.bgWarning;
-		} else if (percent < 1) {
+		} else if (percent <= 1.05) {
 			return bs.bgSuccess;
-		} else if (percent < 1.1) {
+		} else if (percent <= 1.15) {
 			return bs.bgWarning;
 		} else {
 			return bs.bgDanger;

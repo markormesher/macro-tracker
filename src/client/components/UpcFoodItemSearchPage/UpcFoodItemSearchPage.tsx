@@ -16,9 +16,7 @@ import { startSearchFoodItemByUpc } from "../../redux/nutritionix";
 import { IRootState } from "../../redux/root";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { ControlledBarcodeInput } from "../_ui/ControlledBarcodeInput/ControlledBarcodeInput";
-import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
-import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 
 interface IUpcFoodItemSearchPageProps {
 	readonly upcSearchBusy?: boolean;
@@ -187,9 +185,9 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 
 		const searchResults = searchedFoodItemsByUpc[upcSearched];
 
-		if (upcSearchBusy) {
-			return <LoadingSpinner centre={true}/>;
-		} else if (!searchResults || !searchResults.length) {
+		if (upcSearchBusy || !searchResults) {
+			return null;
+		} else if (searchResults.length === 0) {
 			return (
 					<div className={bs.row}>
 						<div className={bs.col}>
