@@ -1,8 +1,7 @@
 import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
-import * as Moment from "moment";
 import { IJsonObject } from "../../commons/models/IJsonObject";
-import { ITarget, mapTargetFromJson } from "../../commons/models/ITarget";
+import { mapTargetFromJson } from "../../commons/models/ITarget";
 import { cleanUuid } from "../../commons/utils/entities";
 import { DbTarget } from "../db/models/DbTarget";
 import { getDataForTable } from "../helpers/datatable-helper";
@@ -13,10 +12,11 @@ import {
 	getTargetQueryBuilder,
 	saveTarget,
 } from "../managers/targets-manager";
+import { requireUser } from "../middleware/auth-middleware";
 
 const targetsRouter = Express.Router();
 
-targetsRouter.get("/table", (req: Request, res: Response, next: NextFunction) => {
+targetsRouter.get("/table", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const totalQuery = getTargetQueryBuilder()
 			.where("food_item.deleted = FALSE");
 
@@ -28,21 +28,21 @@ targetsRouter.get("/table", (req: Request, res: Response, next: NextFunction) =>
 			.catch(next);
 });
 
-targetsRouter.get("/all", (req: Request, res: Response, next: NextFunction) => {
+targetsRouter.get("/all", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	getAllTargets()
 			.then((targets) => res.json(targets))
 			.catch(next);
 });
 
-targetsRouter.get("/:targetId", (req: Request, res: Response, next: NextFunction) => {
-	const targetId: string = cleanUuid(req.params.targetId);
+targetsRouter.get("/:id", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const targetId: string = cleanUuid(req.params.id);
 	getTarget(targetId)
 			.then((target) => res.json(target))
 			.catch(next);
 });
 
-targetsRouter.post("/edit/:targetId?", (req: Request, res: Response, next: NextFunction) => {
-	const targetId: string = cleanUuid(req.params.targetId, null);
+targetsRouter.post("/edit/:id?", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const targetId: string = cleanUuid(req.params.id, null);
 	const properties = mapTargetFromJson(req.body as IJsonObject);
 
 	saveTarget(targetId, properties)
@@ -50,8 +50,8 @@ targetsRouter.post("/edit/:targetId?", (req: Request, res: Response, next: NextF
 			.catch(next);
 });
 
-targetsRouter.post("/delete/:targetId", (req: Request, res: Response, next: NextFunction) => {
-	const targetId: string = cleanUuid(req.params.targetId);
+targetsRouter.post("/delete/:id", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const targetId: string = cleanUuid(req.params.id);
 
 	deleteTarget(targetId)
 			.then(() => res.sendStatus(200))

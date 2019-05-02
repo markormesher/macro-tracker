@@ -12,31 +12,32 @@ import {
 	getExerciseEntry,
 	saveExerciseEntry,
 } from "../managers/exercise-entry-manager";
+import { requireUser } from "../middleware/auth-middleware";
 
 const exerciseEntriesRouter = Express.Router();
 
-exerciseEntriesRouter.get("/labels", (req: Request, res: Response, next: NextFunction) => {
+exerciseEntriesRouter.get("/labels", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	getAllExerciseLabels()
 			.then((labels) => res.json(labels))
 			.catch(next);
 });
 
-exerciseEntriesRouter.get("/:exerciseEntryId", (req: Request, res: Response, next: NextFunction) => {
-	const exerciseEntryId: string = cleanUuid(req.params.exerciseEntryId);
+exerciseEntriesRouter.get("/:id", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const exerciseEntryId: string = cleanUuid(req.params.id);
 	getExerciseEntry(exerciseEntryId)
 			.then((exerciseEntry) => res.json(exerciseEntry))
 			.catch(next);
 });
 
-exerciseEntriesRouter.get("/for-date/:dateStr", (req: Request, res: Response, next: NextFunction) => {
+exerciseEntriesRouter.get("/for-date/:dateStr", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const date = urlStringToMoment(cleanString(req.params.dateStr));
 	getExerciseEntriesForDate(date)
 			.then((exerciseEntries) => res.json(exerciseEntries))
 			.catch(next);
 });
 
-exerciseEntriesRouter.post("/edit/:exerciseEntryId?", (req: Request, res: Response, next: NextFunction) => {
-	const exerciseEntryId: string = cleanUuid(req.params.exerciseEntryId, null);
+exerciseEntriesRouter.post("/edit/:id?", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const exerciseEntryId: string = cleanUuid(req.params.id, null);
 	const properties = mapExerciseEntryFromJson(req.body as IJsonObject);
 
 	saveExerciseEntry(exerciseEntryId, properties)
@@ -44,8 +45,8 @@ exerciseEntriesRouter.post("/edit/:exerciseEntryId?", (req: Request, res: Respon
 			.catch(next);
 });
 
-exerciseEntriesRouter.post("/delete/:exerciseEntryId", (req: Request, res: Response, next: NextFunction) => {
-	const exerciseEntryId: string = cleanUuid(req.params.exerciseEntryId);
+exerciseEntriesRouter.post("/delete/:id", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const exerciseEntryId: string = cleanUuid(req.params.id);
 
 	deleteExerciseEntry(exerciseEntryId)
 			.then(() => res.sendStatus(200))

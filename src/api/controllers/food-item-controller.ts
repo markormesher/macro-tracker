@@ -15,10 +15,11 @@ import {
 	getFoodItemQueryBuilder,
 	saveFoodItem,
 } from "../managers/food-item-manager";
+import { requireUser } from "../middleware/auth-middleware";
 
 const foodItemsRouter = Express.Router();
 
-foodItemsRouter.get("/table", (req: Request, res: Response, next: NextFunction) => {
+foodItemsRouter.get("/table", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const searchTerm = req.query.searchTerm || "";
 
 	const totalQuery = getFoodItemQueryBuilder()
@@ -41,28 +42,28 @@ foodItemsRouter.get("/table", (req: Request, res: Response, next: NextFunction) 
 			.catch(next);
 });
 
-foodItemsRouter.get("/all", (req: Request, res: Response, next: NextFunction) => {
+foodItemsRouter.get("/all", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	getAllFoodItems()
 			.then((foodItems) => res.json(foodItems))
 			.catch(next);
 });
 
-foodItemsRouter.get("/by-upc/:upc", (req: Request, res: Response, next: NextFunction) => {
+foodItemsRouter.get("/by-upc/:upc", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const upc: string = cleanString(req.params.upc);
 	getFoodItemByUpc(upc, { includeServingSizes: true })
 			.then((foodItem) => res.json(foodItem))
 			.catch(next);
 });
 
-foodItemsRouter.get("/:foodItemId", (req: Request, res: Response, next: NextFunction) => {
-	const foodItemId: string = cleanUuid(req.params.foodItemId);
+foodItemsRouter.get("/:id", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const foodItemId: string = cleanUuid(req.params.id);
 	getFoodItem(foodItemId, { includeServingSizes: true })
 			.then((foodItem) => res.json(foodItem))
 			.catch(next);
 });
 
-foodItemsRouter.post("/edit/:foodItemId?", (req: Request, res: Response, next: NextFunction) => {
-	const foodItemId: string = cleanUuid(req.params.foodItemId, null);
+foodItemsRouter.post("/edit/:id?", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const foodItemId: string = cleanUuid(req.params.id, null);
 	const properties = mapFoodItemFromJson(req.body as IJsonObject);
 
 	saveFoodItem(foodItemId, properties)
@@ -70,8 +71,8 @@ foodItemsRouter.post("/edit/:foodItemId?", (req: Request, res: Response, next: N
 			.catch(next);
 });
 
-foodItemsRouter.post("/delete/:foodItemId", (req: Request, res: Response, next: NextFunction) => {
-	const foodItemId: string = cleanUuid(req.params.foodItemId);
+foodItemsRouter.post("/delete/:id", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const foodItemId: string = cleanUuid(req.params.id);
 
 	deleteFoodItem(foodItemId)
 			.then(() => res.sendStatus(200))

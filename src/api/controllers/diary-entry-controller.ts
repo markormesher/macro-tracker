@@ -11,25 +11,26 @@ import {
 	getDiaryEntry,
 	saveDiaryEntry,
 } from "../managers/diary-entry-manager";
+import { requireUser } from "../middleware/auth-middleware";
 
 const diaryEntriesRouter = Express.Router();
 
-diaryEntriesRouter.get("/:diaryEntryId", (req: Request, res: Response, next: NextFunction) => {
-	const diaryEntryId: string = cleanUuid(req.params.diaryEntryId);
+diaryEntriesRouter.get("/:id", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const diaryEntryId: string = cleanUuid(req.params.id);
 	getDiaryEntry(diaryEntryId)
 			.then((diaryEntry) => res.json(diaryEntry))
 			.catch(next);
 });
 
-diaryEntriesRouter.get("/for-date/:dateStr", (req: Request, res: Response, next: NextFunction) => {
+diaryEntriesRouter.get("/for-date/:dateStr", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const date = urlStringToMoment(cleanString(req.params.dateStr));
 	getDiaryEntriesForDate(date)
 			.then((diaryEntries) => res.json(diaryEntries))
 			.catch(next);
 });
 
-diaryEntriesRouter.post("/edit/:diaryEntryId?", (req: Request, res: Response, next: NextFunction) => {
-	const diaryEntryId: string = cleanUuid(req.params.diaryEntryId, null);
+diaryEntriesRouter.post("/edit/:id?", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const diaryEntryId: string = cleanUuid(req.params.id, null);
 	const properties = mapDiaryEntryFromJson(req.body as IJsonObject);
 
 	saveDiaryEntry(diaryEntryId, properties)
@@ -37,8 +38,8 @@ diaryEntriesRouter.post("/edit/:diaryEntryId?", (req: Request, res: Response, ne
 			.catch(next);
 });
 
-diaryEntriesRouter.post("/delete/:diaryEntryId", (req: Request, res: Response, next: NextFunction) => {
-	const diaryEntryId: string = cleanUuid(req.params.diaryEntryId);
+diaryEntriesRouter.post("/delete/:id", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const diaryEntryId: string = cleanUuid(req.params.id);
 
 	deleteDiaryEntry(diaryEntryId)
 			.then(() => res.sendStatus(200))
