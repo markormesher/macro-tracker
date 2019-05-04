@@ -1,12 +1,15 @@
-import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
+import { faBarcodeAlt, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
 import { IFoodItem, mapFoodItemFromJson } from "../../../commons/models/IFoodItem";
+import { servingSizeComparator } from "../../../commons/models/IServingSize";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
+import { formatMeasurement } from "../../helpers/formatters";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
 import { FoodItemsCacheKeys, startDeleteFoodItem } from "../../redux/food-items";
@@ -112,12 +115,39 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
 	}
 
 	private tableRowRenderer(foodItem: IFoodItem): ReactElement<void> {
+		const sizes = (foodItem.servingSizes || [])
+				.filter((ss) => !ss.deleted)
+				.sort(servingSizeComparator)
+				.map((ss) => `${ss.label} (${formatMeasurement(ss.measurement, foodItem.measurementUnit)})`);
+		let sizeList: ReactNode = null;
+		if (sizes.length > 0) {
+			sizeList = (
+					<span className={combine(bs.textMuted, bs.dNone, bs.dMdInlineBlock)}>
+						<span className={combine(bs.small, bs.textMuted, bs.mx1)}>
+							&bull;
+						</span>
+						<span className={combine(bs.small, bs.textMuted)}>
+							{sizes.join(", ")}
+						</span>
+					</span>
+			);
+		}
+
 		return (
 				<tr key={foodItem.id}>
 					<td>
 						{foodItem.name}
+						{foodItem.upc && (
+								<FontAwesomeIcon
+										icon={faBarcodeAlt}
+										className={combine(bs.ml1, bs.textMuted, bs.dNone, bs.dMdInlineBlock)}
+								/>
+						)}
 						<br/>
-						<span className={combine(bs.small, bs.textMuted)}>{foodItem.brand}</span>
+						<span className={combine(bs.small, bs.textMuted)}>
+							{foodItem.brand}
+						</span>
+						{sizeList}
 					</td>
 					<td style={{ verticalAlign: "middle" }}>
 						{this.generateActionButtons(foodItem)}

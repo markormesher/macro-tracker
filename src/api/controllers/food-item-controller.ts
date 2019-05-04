@@ -25,7 +25,7 @@ foodItemsRouter.get("/table", requireUser, (req: Request, res: Response, next: N
 	const totalQuery = getFoodItemQueryBuilder()
 			.where("food_item.deleted = FALSE");
 
-	const filteredQuery = getFoodItemQueryBuilder()
+	const filteredQuery = getFoodItemQueryBuilder({ includeServingSizes: true })
 			.where("food_item.deleted = FALSE")
 			.andWhere(new Brackets((qb) => qb.where(
 					"food_item.brand ILIKE :searchTerm" +
