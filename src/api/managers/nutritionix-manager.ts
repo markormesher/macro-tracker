@@ -49,7 +49,10 @@ function mapFoodItemFromNutritionixApi(foodItem?: INutritionixFoodItem, upc?: st
 	// work out what to multiply the per-serving nutrition values by
 	let measurementUnit: FoodMeasurementUnit = "g";
 	let conversionFactor = 0;
-	if ((/ml( .*)?/i).test(foodItem.serving_unit)) {
+	if (foodItem.serving_weight_grams) {
+		measurementUnit = "g";
+		conversionFactor = 100 / foodItem.serving_weight_grams;
+	} else if ((/ml( .*)?/i).test(foodItem.serving_unit)) {
 		measurementUnit = "ml";
 		conversionFactor = 100 / foodItem.serving_qty;
 	} else if ((/fl\.? oz( .*)?/i).test(foodItem.serving_unit)) {
