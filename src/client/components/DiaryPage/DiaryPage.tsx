@@ -5,15 +5,16 @@ import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link, match as Match } from "react-router-dom";
 import { Dispatch } from "redux";
-import { CALORIES_PER_G_CARBOHYDRATES, CALORIES_PER_G_FAT, CALORIES_PER_G_PROTEIN } from "../../../commons/constants";
 import { Meal } from "../../../commons/enums";
 import { IDiaryEntry } from "../../../commons/models/IDiaryEntry";
 import { IExerciseEntry } from "../../../commons/models/IExerciseEntry";
+import { generateMacroSummary } from "../../../commons/models/IMacroSummary";
 import { ITarget } from "../../../commons/models/ITarget";
 import { momentToDateKey, momentToUrlString, urlStringToMoment } from "../../../commons/utils/dates";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatDate, formatLargeNumber, formatMeasurement, getMealTitle } from "../../helpers/formatters";
+import { renderMacroSummary } from "../../helpers/rendering";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
 import { DiaryEntriesCacheKeys, startDeleteDiaryEntry, startLoadDiaryEntriesForDate } from "../../redux/diary-entries";
@@ -30,7 +31,6 @@ import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
-import { ProgressBar } from "../_ui/ProgressBar/ProgressBar";
 import { DateScroller } from "../DateScroller/DateScroller";
 
 interface IDiaryPageProps {
@@ -138,12 +138,12 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 	}
 
 	private renderInner(): ReactNode {
-		const { currentDate, loadedDiaryEntriesByDate, loadedExerciseEntriesByDate } = this.props;
+		const { currentDate, loadedDiaryEntriesByDate, loadedExerciseEntriesByDate, allTargets } = this.props;
 
 		const diaryEntries = loadedDiaryEntriesByDate[momentToDateKey(currentDate)];
 		const exerciseEntries = loadedExerciseEntriesByDate[momentToDateKey(currentDate)];
 
-		if (!diaryEntries || !exerciseEntries) {
+		if (!diaryEntries || !exerciseEntries || !allTargets) {
 			return (
 					<ContentWrapper>
 						<LoadingSpinner centre={true}/>
@@ -174,83 +174,8 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 			return <p>No target set for {formatDate(currentDate, "user")}.</p>;
 		}
 
-		const totalCaloriesBurned = exerciseEntries.map((ee) => ee.caloriesBurned).reduce((a, b) => a + b, 0);
-
-		const targetCalories = target.baselineCaloriesPerDay + totalCaloriesBurned;
-		const targetCarbohydrates = targetCalories * target.proportionCarbohydrates / CALORIES_PER_G_CARBOHYDRATES;
-		const targetFat = targetCalories * target.proportionFat / CALORIES_PER_G_FAT;
-		const targetProtein = targetCalories * target.proportionProtein / CALORIES_PER_G_PROTEIN;
-
-		const totalCalories = diaryEntries
-				.map((e) => e.foodItem.caloriesPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
-				.reduce((a, b) => a + b, 0);
-		const totalCarbohydrates = diaryEntries
-				.map((e) => e.foodItem.carbohydratePer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
-				.reduce((a, b) => a + b, 0);
-		const totalFat = diaryEntries
-				.map((e) => e.foodItem.fatPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
-				.reduce((a, b) => a + b, 0);
-		const totalProtein = diaryEntries
-				.map((e) => e.foodItem.proteinPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
-				.reduce((a, b) => a + b, 0);
-
-		const percentCalories = totalCalories / targetCalories;
-		const percentCarbohydrates = totalCarbohydrates / targetCarbohydrates;
-		const percentFat = totalFat / targetFat;
-		const percentProtein = totalProtein / targetProtein;
-
-		return (
-				<div className={bs.row}>
-					<div className={bs.col}>
-						<ProgressBar
-								label={"Calories"}
-								value={totalCalories}
-								total={targetCalories}
-								showPercent={percentCalories > 1}
-								wrapperClasses={bs.mb1}
-								barClasses={this.getProgressBarClasses(percentCalories)}
-						/>
-						<ProgressBar
-								label={"Carbohydrates"}
-								value={totalCarbohydrates}
-								total={targetCarbohydrates}
-								unit={"g"}
-								showPercent={percentCarbohydrates > 1}
-								wrapperClasses={bs.mb1}
-								barClasses={this.getProgressBarClasses(percentCarbohydrates)}
-						/>
-						<ProgressBar
-								label={"Fat"}
-								value={totalFat}
-								total={targetFat}
-								unit={"g"}
-								showPercent={percentFat > 1}
-								wrapperClasses={bs.mb1}
-								barClasses={this.getProgressBarClasses(percentFat)}
-						/>
-						<ProgressBar
-								label={"Protein"}
-								value={totalProtein}
-								total={targetProtein}
-								unit={"g"}
-								showPercent={percentProtein > 1}
-								barClasses={this.getProgressBarClasses(percentProtein)}
-						/>
-					</div>
-				</div>
-		);
-	}
-
-	private getProgressBarClasses(percent: number): string {
-		if (percent < 0.6) {
-			return bs.bgWarning;
-		} else if (percent <= 1.05) {
-			return bs.bgSuccess;
-		} else if (percent <= 1.15) {
-			return bs.bgWarning;
-		} else {
-			return bs.bgDanger;
-		}
+		const summary = generateMacroSummary(diaryEntries, exerciseEntries, target);
+		return renderMacroSummary(summary);
 	}
 
 	private renderExercise(): ReactNode {
