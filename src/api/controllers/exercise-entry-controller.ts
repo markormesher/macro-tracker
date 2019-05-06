@@ -41,7 +41,7 @@ exerciseEntriesRouter.post("/edit/:id?", requireUser, (req: Request, res: Respon
 	const properties = mapExerciseEntryFromJson(req.body as IJsonObject);
 
 	saveExerciseEntry(exerciseEntryId, properties)
-			.then(() => res.sendStatus(200))
+			.then((exerciseEntry) => res.json(exerciseEntry ))
 			.catch(next);
 });
 

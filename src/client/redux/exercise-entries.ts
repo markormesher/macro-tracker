@@ -17,6 +17,7 @@ interface IExerciseEntriesState {
 	readonly loadedExerciseEntries: { readonly [key: string]: IExerciseEntry };
 	readonly loadedExerciseEntriesByDate: { readonly [key: string]: IExerciseEntry[] };
 	readonly allExerciseLabels: string[];
+	readonly lastExerciseEntrySaved: IExerciseEntry;
 }
 
 const initialState: IExerciseEntriesState = {
@@ -25,6 +26,7 @@ const initialState: IExerciseEntriesState = {
 	loadedExerciseEntries: {},
 	loadedExerciseEntriesByDate: {},
 	allExerciseLabels: [],
+	lastExerciseEntrySaved: undefined,
 };
 
 enum ExerciseEntriesActions {
@@ -33,6 +35,7 @@ enum ExerciseEntriesActions {
 	SET_EXERCISE_ENTRY = "ExerciseEntriesActions.SET_EXERCISE_ENTRY",
 	SET_EXERCISE_ENTRIES_FOR_DATE = "ExerciseEntriesActions.SET_EXERCISE_ENTRIES_FOR_DATE",
 	SET_ALL_EXERCISE_LABELS = "ExerciseEntriesActions.SET_ALL_EXERCISE_LABELS",
+	SET_LAST_EXERCISE_ENTRY_SAVED = "ExerciseEntriesActions.SET_LAST_EXERCISE_ENTRY_SAVED",
 
 	START_LOAD_EXERCISE_ENTRY = "ExerciseEntriesActions.START_LOAD_EXERCISE_ENTRY",
 	START_LOAD_EXERCISE_ENTRIES_FOR_DATE = "ExerciseEntriesActions.START_LOAD_EXERCISE_ENTRIES_FOR_DATE",
@@ -88,6 +91,13 @@ function setAllExerciseLabels(labels: string[]): PayloadAction {
 	return {
 		type: ExerciseEntriesActions.SET_ALL_EXERCISE_LABELS,
 		payload: { labels },
+	};
+}
+
+function setLastExerciseEntrySaved(exerciseEntry: IExerciseEntry): PayloadAction {
+	return {
+		type: ExerciseEntriesActions.SET_LAST_EXERCISE_ENTRY_SAVED,
+		payload: { exerciseEntry },
 	};
 }
 
@@ -197,8 +207,12 @@ function*saveExerciseEntrySaga(): Generator {
 		const exerciseEntryId = exerciseEntry.id || "";
 		try {
 			yield put(setEditorBusy(true));
-			yield call(() => axios
-					.post(`/api/exercise-entries/edit/${exerciseEntryId}`, mapExerciseEntryToJson(exerciseEntry)));
+			const savedEntry: IExerciseEntry = yield call(() => axios
+					.post(`/api/exercise-entries/edit/${exerciseEntryId}`, mapExerciseEntryToJson(exerciseEntry))
+					.then((res) => mapExerciseEntryFromJson(res.data as IJsonObject)));
+
+			// note: this should happen before the group below
+			yield put(setLastExerciseEntrySaved(savedEntry));
 
 			yield all([
 				put(setEditorBusy(false)),
@@ -295,6 +309,12 @@ function exerciseEntriesReducer(state = initialState, action: PayloadAction): IE
 					allExerciseLabels: labels,
 				};
 			})();
+
+		case ExerciseEntriesActions.SET_LAST_EXERCISE_ENTRY_SAVED:
+			return {
+				...state,
+				lastExerciseEntrySaved: action.payload.exerciseEntry,
+			};
 
 		default:
 			return state;

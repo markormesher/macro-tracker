@@ -14,6 +14,7 @@ import {
 } from "../../../commons/models/IExerciseEntry";
 import { momentToUrlString, urlStringToMoment } from "../../../commons/utils/dates";
 import * as bs from "../../global-styles/Bootstrap.scss";
+import { formatDate } from "../../helpers/formatters";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
 import {
@@ -27,6 +28,7 @@ import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { IRootState } from "../../redux/root";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
+import { ControlledDateInput } from "../_ui/ControlledInputs/ControlledDateInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
@@ -37,6 +39,7 @@ interface IEditExerciseEntryPageProps {
 	readonly editorResult?: ActionResult;
 	readonly loadedExerciseEntry?: IExerciseEntry;
 	readonly allExerciseLabels?: string[];
+	readonly lastExerciseEntrySaved?: IExerciseEntry;
 	readonly actions?: {
 		readonly resetEditorResult: () => PayloadAction;
 		readonly startLoadExerciseEntry: () => PayloadAction;
@@ -45,7 +48,7 @@ interface IEditExerciseEntryPageProps {
 	};
 
 	// derived from query string
-	readonly initialDate?: Moment.Moment;
+	readonly urlDate?: Moment.Moment;
 
 	// added by connected react router
 	readonly match?: Match<{ readonly exerciseEntryId: string }>;
@@ -65,8 +68,9 @@ function mapStateToProps(state: IRootState, props: IEditExerciseEntryPageProps):
 		editorResult: state.exerciseEntries.editorResult,
 		loadedExerciseEntry: state.exerciseEntries.loadedExerciseEntries[exerciseEntryId],
 		allExerciseLabels: state.exerciseEntries.allExerciseLabels,
+		lastExerciseEntrySaved: state.exerciseEntries.lastExerciseEntrySaved,
 
-		initialDate: urlParams.has("initDate") ? urlStringToMoment(urlParams.get("initDate")) : undefined,
+		urlDate: urlParams.has("initDate") ? urlStringToMoment(urlParams.get("initDate")) : undefined,
 	};
 }
 
@@ -193,6 +197,18 @@ class UCEditExerciseEntryPage extends PureComponent<IEditExerciseEntryPageProps,
 							>
 								<div className={bs.row}>
 									<div className={combine(bs.col12, bs.formGroup)}>
+										<ControlledDateInput
+												id={"date"}
+												label={"Date"}
+												value={formatDate(currentValue.date, "system") || ""}
+												onValueChange={this.handleDateChange}
+												disabled={editorBusy}
+												error={errors.date}
+										/>
+									</div>
+								</div>
+								<div className={bs.row}>
+									<div className={combine(bs.col12, bs.formGroup)}>
 										<SuggestionTextInput
 												id={"label"}
 												label={"Label"}
@@ -247,27 +263,37 @@ class UCEditExerciseEntryPage extends PureComponent<IEditExerciseEntryPageProps,
 	}
 
 	private resetEditor(init: boolean = false): void {
-		this.props.actions.resetEditorResult();
+		const { urlDate, lastExerciseEntrySaved, actions } = this.props;
 
-		// also reset the URL
-		if (!init) {
-			history.push("/exercise-entries/edit");
+		actions.resetEditorResult();
+
+		const defaultExerciseEntry = getDefaultExerciseEntry();
+		let nextDate: Moment.Moment;
+
+		if (init) {
+			nextDate = urlDate ? urlDate : defaultExerciseEntry.date;
+		} else {
+			nextDate = lastExerciseEntrySaved ? lastExerciseEntrySaved.date : defaultExerciseEntry.date;
 		}
 
-		const defaultExerciseEntry = {
-			...(getDefaultExerciseEntry()),
-			date: init ? this.props.initialDate : this.state.currentValue.date,
+		const exerciseEntry = {
+			...defaultExerciseEntry,
+			date: nextDate,
 		};
 
 		if (init) {
 			this.state = {
-				currentValue: defaultExerciseEntry,
-				validationResult: validateExerciseEntry(defaultExerciseEntry),
+				currentValue: exerciseEntry,
+				validationResult: validateExerciseEntry(exerciseEntry),
 			};
 		} else {
+			// reset the URL as well
+			const urlProps = new URLSearchParams({ initDate: momentToUrlString(nextDate) });
+			history.push(`/exercise-entries/edit?${urlProps}`);
+
 			this.setState({
-				currentValue: defaultExerciseEntry,
-				validationResult: validateExerciseEntry(defaultExerciseEntry),
+				currentValue: exerciseEntry,
+				validationResult: validateExerciseEntry(exerciseEntry),
 			});
 		}
 	}

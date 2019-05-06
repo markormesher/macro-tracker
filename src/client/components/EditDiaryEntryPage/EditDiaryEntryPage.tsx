@@ -287,9 +287,16 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 		actions.resetEditorResult();
 
 		const defaultDiaryEntry = getDefaultDiaryEntry();
+		let nextDate: Moment.Moment;
+		let nextMeal: Meal;
 
-		const nextDate = init ? urlDate : (lastDiaryEntrySaved ? lastDiaryEntrySaved.date : defaultDiaryEntry.date);
-		const nextMeal = init ? urlMeal : (lastDiaryEntrySaved ? lastDiaryEntrySaved.meal : defaultDiaryEntry.meal);
+		if (init) {
+			nextDate = urlDate ? urlDate : defaultDiaryEntry.date;
+			nextMeal = urlMeal ? urlMeal : defaultDiaryEntry.meal;
+		} else {
+			nextDate = lastDiaryEntrySaved ? lastDiaryEntrySaved.date : defaultDiaryEntry.date;
+			nextMeal = lastDiaryEntrySaved ? lastDiaryEntrySaved.meal : defaultDiaryEntry.meal;
+		}
 
 		const diaryEntry = {
 			...defaultDiaryEntry,
