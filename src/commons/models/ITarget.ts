@@ -1,6 +1,6 @@
 import * as Moment from "moment";
 import { utcMoment } from "../utils/dates";
-import { cleanUuid, NULL_UUID } from "../utils/entities";
+import { cleanUuid } from "../utils/entities";
 import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
 import { IJsonObject } from "./IJsonObject";
@@ -192,19 +192,6 @@ function getDefaultTarget(): ITarget {
 	};
 }
 
-// TODO: replace with DB-stored, editable target
-function getStaticTarget(): ITarget {
-	return {
-		id: NULL_UUID,
-		deleted: null,
-		baselineCaloriesPerDay: 2800,
-		proportionCarbohydrates: 0.4,
-		proportionProtein: 0.4,
-		proportionFat: 0.2,
-		startDate: Moment("2019-04-20"),
-	};
-}
-
 export {
 	ITarget,
 	ITargetValidationResult,
@@ -212,5 +199,4 @@ export {
 	mapTargetToJson,
 	validateTarget,
 	getDefaultTarget,
-	getStaticTarget,
 };

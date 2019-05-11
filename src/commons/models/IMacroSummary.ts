@@ -1,7 +1,4 @@
-import { CALORIES_PER_G_CARBOHYDRATES, CALORIES_PER_G_FAT, CALORIES_PER_G_PROTEIN } from "../constants";
-import { IDiaryEntry } from "./IDiaryEntry";
-import { IExerciseEntry } from "./IExerciseEntry";
-import { ITarget } from "./ITarget";
+import { IJsonObject } from "./IJsonObject";
 
 interface IMacroSummary {
 	readonly totalCalories: number;
@@ -14,36 +11,20 @@ interface IMacroSummary {
 	readonly targetProtein: number;
 }
 
-function generateMacroSummary(
-		diaryEntries: IDiaryEntry[],
-		exerciseEntries: IExerciseEntry[],
-		target: ITarget,
-): IMacroSummary {
-
-	const totalCaloriesBurned = exerciseEntries.map((ee) => ee.caloriesBurned).reduce((a, b) => a + b, 0);
-	const targetCalories = target.baselineCaloriesPerDay + totalCaloriesBurned;
-	const targetCarbohydrates = targetCalories * target.proportionCarbohydrates / CALORIES_PER_G_CARBOHYDRATES;
-	const targetFat = targetCalories * target.proportionFat / CALORIES_PER_G_FAT;
-	const targetProtein = targetCalories * target.proportionProtein / CALORIES_PER_G_PROTEIN;
-
-	const totalCalories = diaryEntries
-			.map((e) => e.foodItem.caloriesPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
-			.reduce((a, b) => a + b, 0);
-	const totalCarbohydrates = diaryEntries
-			.map((e) => e.foodItem.carbohydratePer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
-			.reduce((a, b) => a + b, 0);
-	const totalFat = diaryEntries
-			.map((e) => e.foodItem.fatPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
-			.reduce((a, b) => a + b, 0);
-	const totalProtein = diaryEntries
-			.map((e) => e.foodItem.proteinPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
-			.reduce((a, b) => a + b, 0);
+function mapMacroSummaryFromJson(json?: IJsonObject): IMacroSummary {
+	if (!json) {
+		return null;
+	}
 
 	return {
-		totalCalories, targetCalories,
-		totalCarbohydrates, targetCarbohydrates,
-		totalFat, targetFat,
-		totalProtein, targetProtein,
+		totalCalories: parseFloat(json.totalCalories as string),
+		targetCalories: parseFloat(json.targetCalories as string),
+		totalCarbohydrates: parseFloat(json.totalCarbohydrates as string),
+		targetCarbohydrates: parseFloat(json.targetCarbohydrates as string),
+		totalFat: parseFloat(json.totalFat as string),
+		targetFat: parseFloat(json.targetFat as string),
+		totalProtein: parseFloat(json.totalProtein as string),
+		targetProtein: parseFloat(json.targetProtein as string),
 	};
 }
 
@@ -78,6 +59,6 @@ function calculateTotalMacroSummary(summaries: IMacroSummary[]): IMacroSummary {
 
 export {
 	IMacroSummary,
-	generateMacroSummary,
+	mapMacroSummaryFromJson,
 	calculateTotalMacroSummary,
 };

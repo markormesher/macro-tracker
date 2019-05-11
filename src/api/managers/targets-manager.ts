@@ -1,7 +1,9 @@
+import * as Moment from "moment";
 import { SelectQueryBuilder } from "typeorm";
 import { ITarget, validateTarget } from "../../commons/models/ITarget";
 import { StatusError } from "../../commons/StatusError";
 import { DbTarget } from "../db/models/DbTarget";
+import { MomentDateTransformer } from "../db/MomentDateTransformer";
 
 function getTargetQueryBuilder(): SelectQueryBuilder<DbTarget> {
 	return DbTarget
@@ -13,6 +15,14 @@ async function getTarget(id: string): Promise<DbTarget> {
 			.where("target.deleted = FALSE")
 			.andWhere("target.id = :id")
 			.setParameter("id", id)
+			.getOne();
+}
+
+async function getTargetForDate(date: Moment.Moment): Promise<DbTarget> {
+	return getTargetQueryBuilder()
+			.where("target.deleted = FALSE")
+			.andWhere("target.startDate <= :date")
+			.setParameter("date", MomentDateTransformer.toDbFormat(date))
 			.getOne();
 }
 
@@ -55,6 +65,7 @@ async function deleteTarget(targetId: string): Promise<void> {
 export {
 	getTargetQueryBuilder,
 	getTarget,
+	getTargetForDate,
 	getAllTargets,
 	saveTarget,
 	deleteTarget,

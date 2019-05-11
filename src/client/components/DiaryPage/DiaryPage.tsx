@@ -8,12 +8,11 @@ import { Dispatch } from "redux";
 import { Meal } from "../../../commons/enums";
 import { IDiaryEntry } from "../../../commons/models/IDiaryEntry";
 import { IExerciseEntry } from "../../../commons/models/IExerciseEntry";
-import { generateMacroSummary } from "../../../commons/models/IMacroSummary";
-import { ITarget } from "../../../commons/models/ITarget";
+import { IMacroSummary } from "../../../commons/models/IMacroSummary";
 import { momentToDateKey, momentToUrlString, urlStringToMoment } from "../../../commons/utils/dates";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
-import { formatDate, formatLargeNumber, formatMeasurement, getMealTitle } from "../../helpers/formatters";
+import { formatLargeNumber, formatMeasurement, getMealTitle } from "../../helpers/formatters";
 import { renderMacroSummary } from "../../helpers/rendering";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
@@ -23,28 +22,31 @@ import {
 	startDeleteExerciseEntry,
 	startLoadExerciseEntriesForDate,
 } from "../../redux/exercise-entries";
+import { FoodItemsCacheKeys } from "../../redux/food-items";
 import { KeyCache } from "../../redux/helpers/KeyCache";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
+import { startLoadMacroSummaryForDate } from "../../redux/macro-summaries";
 import { IRootState } from "../../redux/root";
-import { startLoadAllTargets } from "../../redux/targets";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { DateScroller } from "../DateScroller/DateScroller";
 
+// TODO: WAY too many network requests being made on each page load
+
 interface IDiaryPageProps {
 	readonly updateTime?: number;
 	readonly currentDate: Moment.Moment;
+	readonly loadedMacroSummariesByDate?: { readonly [key: string]: IMacroSummary };
 	readonly loadedExerciseEntriesByDate?: { readonly [key: string]: IExerciseEntry[] };
 	readonly loadedDiaryEntriesByDate?: { readonly [key: string]: IDiaryEntry[] };
-	readonly allTargets?: ITarget[];
 	readonly actions?: {
+		readonly loadMacroSummaryForDate: (date: Moment.Moment) => PayloadAction;
 		readonly loadExerciseEntriesForDate: (date: Moment.Moment) => PayloadAction;
 		readonly loadDiaryEntriesForDate: (date: Moment.Moment) => PayloadAction;
 		readonly deleteExerciseEntry: (exerciseEntry: IExerciseEntry) => PayloadAction;
 		readonly deleteDiaryEntry: (diaryEntry: IDiaryEntry) => PayloadAction;
-		readonly loadAllTargets: () => PayloadAction;
 	};
 
 	// added by connected react router
@@ -59,11 +61,12 @@ function mapStateToProps(state: IRootState, props: IDiaryPageProps): IDiaryPageP
 		updateTime: Math.max(
 				KeyCache.getKeyTime(DiaryEntriesCacheKeys.LATEST_UPDATE_TIME),
 				KeyCache.getKeyTime(ExerciseEntriesCacheKeys.LATEST_UPDATE_TIME),
+				KeyCache.getKeyTime(FoodItemsCacheKeys.LATEST_UPDATE_TIME),
 		),
 		currentDate: date,
+		loadedMacroSummariesByDate: state.macroSummaries.loadedMacroSummariesByDate,
 		loadedExerciseEntriesByDate: state.exerciseEntries.loadedExerciseEntriesByDate,
 		loadedDiaryEntriesByDate: state.diaryEntries.loadedDiaryEntriesByDate,
-		allTargets: state.targets.allTargets,
 	};
 }
 
@@ -71,11 +74,11 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDiaryPageProps): IDiaryP
 	return {
 		...props,
 		actions: {
+			loadMacroSummaryForDate: (date: Moment.Moment) => dispatch(startLoadMacroSummaryForDate(date)),
 			loadExerciseEntriesForDate: (date: Moment.Moment) => dispatch(startLoadExerciseEntriesForDate(date)),
 			loadDiaryEntriesForDate: (date: Moment.Moment) => dispatch(startLoadDiaryEntriesForDate(date)),
 			deleteExerciseEntry: (exerciseEntry: IExerciseEntry) => dispatch(startDeleteExerciseEntry(exerciseEntry)),
 			deleteDiaryEntry: (diaryEntry: IDiaryEntry) => dispatch(startDeleteDiaryEntry(diaryEntry)),
-			loadAllTargets: () => dispatch(startLoadAllTargets()),
 		},
 	};
 }
@@ -102,13 +105,12 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 		this.renderMeal = this.renderMeal.bind(this);
 		this.renderExerciseEntry = this.renderExerciseEntry.bind(this);
 		this.renderDiaryEntry = this.renderDiaryEntry.bind(this);
-		this.getCurrentTarget = this.getCurrentTarget.bind(this);
 	}
 
 	public componentDidMount(): void {
+		this.props.actions.loadMacroSummaryForDate(this.props.currentDate);
 		this.props.actions.loadExerciseEntriesForDate(this.props.currentDate);
 		this.props.actions.loadDiaryEntriesForDate(this.props.currentDate);
-		this.props.actions.loadAllTargets();
 	}
 
 	public componentDidUpdate(
@@ -118,6 +120,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 	): void {
 		const props = this.props;
 		if (props.currentDate !== prevProps.currentDate || props.updateTime !== prevProps.updateTime) {
+			props.actions.loadMacroSummaryForDate(props.currentDate);
 			props.actions.loadExerciseEntriesForDate(props.currentDate);
 			props.actions.loadDiaryEntriesForDate(props.currentDate);
 		}
@@ -138,12 +141,16 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 	}
 
 	private renderInner(): ReactNode {
-		const { currentDate, loadedDiaryEntriesByDate, loadedExerciseEntriesByDate, allTargets } = this.props;
+		const {
+			currentDate, loadedMacroSummariesByDate, loadedDiaryEntriesByDate,
+			loadedExerciseEntriesByDate,
+		} = this.props;
 
+		const summary = loadedMacroSummariesByDate[momentToDateKey(currentDate)];
 		const diaryEntries = loadedDiaryEntriesByDate[momentToDateKey(currentDate)];
 		const exerciseEntries = loadedExerciseEntriesByDate[momentToDateKey(currentDate)];
 
-		if (!diaryEntries || !exerciseEntries || !allTargets) {
+		if (!summary || !diaryEntries || !exerciseEntries) {
 			return (
 					<ContentWrapper>
 						<LoadingSpinner centre={true}/>
@@ -153,7 +160,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 
 		return (
 				<ContentWrapper>
-					{this.renderSummary(diaryEntries, exerciseEntries)}
+					{this.renderSummary()}
 					{this.renderExercise()}
 					{this.renderMeal("snacks_1")}
 					{this.renderMeal("breakfast")}
@@ -166,15 +173,9 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 		);
 	}
 
-	private renderSummary(diaryEntries: IDiaryEntry[], exerciseEntries: IExerciseEntry[]): ReactNode {
-		const { currentDate } = this.props;
-		const target = this.getCurrentTarget();
-
-		if (!target) {
-			return <p>No target set for {formatDate(currentDate, "user")}.</p>;
-		}
-
-		const summary = generateMacroSummary(diaryEntries, exerciseEntries, target);
+	private renderSummary(): ReactNode {
+		const { currentDate, loadedMacroSummariesByDate } = this.props;
+		const summary = loadedMacroSummariesByDate[momentToDateKey(currentDate)];
 		return renderMacroSummary(summary);
 	}
 
@@ -377,24 +378,6 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 					</div>
 				</div>
 		);
-	}
-
-	private getCurrentTarget(): ITarget {
-		const { currentDate, allTargets } = this.props;
-		if (!allTargets || !allTargets.length) {
-			return null;
-		}
-
-		const sortedTargets = allTargets.sort((a, b) => -1 * a.startDate.diff(b.startDate));
-
-		// go through targets latest-first and pick the first one that is before today
-		for (const target of sortedTargets) {
-			if (target.startDate.clone().startOf("day").isSameOrBefore(currentDate)) {
-				return target;
-			}
-		}
-
-		return null;
 	}
 }
 

@@ -6,6 +6,7 @@ import { exerciseEntriesReducer, exerciseEntriesSagas, IExerciseEntriesState } f
 import { foodItemsReducer, foodItemsSagas, IFoodItemsState } from "./food-items";
 import { globalReducer, IGlobalState } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
+import { IMacroSummariesState, macroSummariesReducer, macroSummariesSagas } from "./macro-summaries";
 import { INutritionixState, nutritionixReducer, nutritionixSagas } from "./nutritionix";
 import { ITargetsState, targetsReducer, targetsSagas } from "./targets";
 
@@ -15,6 +16,7 @@ interface IRootState {
 	readonly exerciseEntries: IExerciseEntriesState;
 	readonly foodItems: IFoodItemsState;
 	readonly global: IGlobalState;
+	readonly macroSummaries: IMacroSummariesState;
 	readonly nutritionix: INutritionixState;
 	readonly targets: ITargetsState;
 
@@ -29,6 +31,7 @@ const rootReducers = {
 	exerciseEntries: exerciseEntriesReducer,
 	foodItems: foodItemsReducer,
 	global: globalReducer,
+	macroSummaries: macroSummariesReducer,
 	nutritionix: nutritionixReducer,
 	targets: targetsReducer,
 };
@@ -39,6 +42,7 @@ function*rootSaga(): Generator {
 		diaryEntriesSagas(),
 		exerciseEntriesSagas(),
 		foodItemsSagas(),
+		macroSummariesSagas(),
 		nutritionixSagas(),
 		targetsSagas(),
 	]);
