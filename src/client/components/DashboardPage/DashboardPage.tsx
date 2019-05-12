@@ -13,10 +13,6 @@ import { chartColours, defaultDatasetProps } from "../../helpers/charts";
 import { formatDate, formatPercent } from "../../helpers/formatters";
 import { renderMacroSummary } from "../../helpers/rendering";
 import { combine } from "../../helpers/style-helpers";
-import { DiaryEntriesCacheKeys } from "../../redux/diary-entries";
-import { ExerciseEntriesCacheKeys } from "../../redux/exercise-entries";
-import { FoodItemsCacheKeys } from "../../redux/food-items";
-import { KeyCache } from "../../redux/helpers/KeyCache";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { startLoadMacroSummaryForDate } from "../../redux/macro-summaries";
 import { IRootState } from "../../redux/root";
@@ -24,7 +20,6 @@ import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 
 interface IDashboardPageProps {
-	readonly updateTime?: number;
 	readonly loadedMacroSummariesByDate?: { readonly [key: string]: IMacroSummary };
 	readonly actions?: {
 		readonly loadMacroSummaryForDate: (date: Moment.Moment) => PayloadAction;
@@ -37,11 +32,6 @@ interface IDashboardPageProps {
 function mapStateToProps(state: IRootState, props: IDashboardPageProps): IDashboardPageProps {
 	return {
 		...props,
-		updateTime: Math.max(
-				KeyCache.getKeyTime(DiaryEntriesCacheKeys.LATEST_UPDATE_TIME),
-				KeyCache.getKeyTime(ExerciseEntriesCacheKeys.LATEST_UPDATE_TIME),
-				KeyCache.getKeyTime(FoodItemsCacheKeys.LATEST_UPDATE_TIME),
-		),
 		loadedMacroSummariesByDate: state.macroSummaries.loadedMacroSummariesByDate,
 	};
 }
@@ -69,13 +59,6 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 
 	public componentDidMount(): void {
 		this.loadData();
-	}
-
-	public componentDidUpdate(prevProps: Readonly<IDashboardPageProps>, prevState: Readonly<{}>, snapshot?: any): void {
-		const props = this.props;
-		if (props.updateTime !== prevProps.updateTime) {
-			this.loadData();
-		}
 	}
 
 	public render(): ReactNode {

@@ -16,14 +16,8 @@ import { formatLargeNumber, formatMeasurement, getMealTitle } from "../../helper
 import { renderMacroSummary } from "../../helpers/rendering";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
-import { DiaryEntriesCacheKeys, startDeleteDiaryEntry, startLoadDiaryEntriesForDate } from "../../redux/diary-entries";
-import {
-	ExerciseEntriesCacheKeys,
-	startDeleteExerciseEntry,
-	startLoadExerciseEntriesForDate,
-} from "../../redux/exercise-entries";
-import { FoodItemsCacheKeys } from "../../redux/food-items";
-import { KeyCache } from "../../redux/helpers/KeyCache";
+import { startDeleteDiaryEntry, startLoadDiaryEntriesForDate } from "../../redux/diary-entries";
+import { startDeleteExerciseEntry, startLoadExerciseEntriesForDate } from "../../redux/exercise-entries";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { startLoadMacroSummaryForDate } from "../../redux/macro-summaries";
 import { IRootState } from "../../redux/root";
@@ -33,10 +27,7 @@ import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { DateScroller } from "../DateScroller/DateScroller";
 
-// TODO: WAY too many network requests being made on each page load
-
 interface IDiaryPageProps {
-	readonly updateTime?: number;
 	readonly currentDate: Moment.Moment;
 	readonly loadedMacroSummariesByDate?: { readonly [key: string]: IMacroSummary };
 	readonly loadedExerciseEntriesByDate?: { readonly [key: string]: IExerciseEntry[] };
@@ -58,11 +49,6 @@ function mapStateToProps(state: IRootState, props: IDiaryPageProps): IDiaryPageP
 
 	return {
 		...props,
-		updateTime: Math.max(
-				KeyCache.getKeyTime(DiaryEntriesCacheKeys.LATEST_UPDATE_TIME),
-				KeyCache.getKeyTime(ExerciseEntriesCacheKeys.LATEST_UPDATE_TIME),
-				KeyCache.getKeyTime(FoodItemsCacheKeys.LATEST_UPDATE_TIME),
-		),
 		currentDate: date,
 		loadedMacroSummariesByDate: state.macroSummaries.loadedMacroSummariesByDate,
 		loadedExerciseEntriesByDate: state.exerciseEntries.loadedExerciseEntriesByDate,
@@ -100,6 +86,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 	constructor(props: IDiaryPageProps, context: any) {
 		super(props, context);
 
+		this.loadData = this.loadData.bind(this);
 		this.renderInner = this.renderInner.bind(this);
 		this.renderExercise = this.renderExercise.bind(this);
 		this.renderMeal = this.renderMeal.bind(this);
@@ -108,9 +95,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 	}
 
 	public componentDidMount(): void {
-		this.props.actions.loadMacroSummaryForDate(this.props.currentDate);
-		this.props.actions.loadExerciseEntriesForDate(this.props.currentDate);
-		this.props.actions.loadDiaryEntriesForDate(this.props.currentDate);
+		this.loadData();
 	}
 
 	public componentDidUpdate(
@@ -118,11 +103,12 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 			prevState: Readonly<{}>,
 			snapshot?: any,
 	): void {
-		const props = this.props;
-		if (props.currentDate !== prevProps.currentDate || props.updateTime !== prevProps.updateTime) {
-			props.actions.loadMacroSummaryForDate(props.currentDate);
-			props.actions.loadExerciseEntriesForDate(props.currentDate);
-			props.actions.loadDiaryEntriesForDate(props.currentDate);
+		const currProps = this.props;
+
+		if (currProps.currentDate) {
+			if (!prevProps.currentDate || !prevProps.currentDate.isSame(currProps.currentDate, "day")) {
+				this.loadData();
+			}
 		}
 	}
 
@@ -138,6 +124,13 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 					{this.renderInner()}
 				</>
 		);
+	}
+
+	private loadData(): void {
+		const { actions, currentDate } = this.props;
+		actions.loadMacroSummaryForDate(currentDate);
+		actions.loadExerciseEntriesForDate(currentDate);
+		actions.loadDiaryEntriesForDate(currentDate);
 	}
 
 	private renderInner(): ReactNode {

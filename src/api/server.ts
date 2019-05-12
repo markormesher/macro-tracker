@@ -27,6 +27,7 @@ app.use(ExpressSession({
 	store: new RedisSessionStore({ host: "redis" }),
 	secret: getSecret("session.secret"),
 	resave: false,
+	rolling: true,
 	saveUninitialized: false,
 }));
 
