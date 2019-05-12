@@ -49,6 +49,8 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 
 	private static HISTORY_DAYS = 7;
 
+	private loadDataDebounceTimeout: NodeJS.Timer = undefined;
+
 	constructor(props: IDashboardPageProps, context: any) {
 		super(props, context);
 
@@ -87,11 +89,20 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 	}
 
 	private loadData(): void {
-		const today = utcMoment();
+		const { actions } = this.props;
 
-		for (let i = 0; i <= UCDashboardPage.HISTORY_DAYS; ++i) {
-			this.props.actions.loadMacroSummaryForDate(today.clone().subtract(i, "day"));
+		if (this.loadDataDebounceTimeout) {
+			global.clearTimeout(this.loadDataDebounceTimeout);
+			this.loadDataDebounceTimeout = undefined;
 		}
+
+		this.loadDataDebounceTimeout = global.setTimeout(() => {
+			const today = utcMoment();
+
+			for (let i = 0; i <= UCDashboardPage.HISTORY_DAYS; ++i) {
+				actions.loadMacroSummaryForDate(today.clone().subtract(i, "day"));
+			}
+		}, 500);
 	}
 
 	private renderToday(): ReactNode {

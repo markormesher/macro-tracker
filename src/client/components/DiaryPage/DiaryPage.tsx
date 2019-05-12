@@ -16,8 +16,13 @@ import { formatLargeNumber, formatMeasurement, getMealTitle } from "../../helper
 import { renderMacroSummary } from "../../helpers/rendering";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
-import { startDeleteDiaryEntry, startLoadDiaryEntriesForDate } from "../../redux/diary-entries";
-import { startDeleteExerciseEntry, startLoadExerciseEntriesForDate } from "../../redux/exercise-entries";
+import { diaryEntriesCacheKeys, startDeleteDiaryEntry, startLoadDiaryEntriesForDate } from "../../redux/diary-entries";
+import {
+	exerciseEntriesCacheKeys,
+	startDeleteExerciseEntry,
+	startLoadExerciseEntriesForDate,
+} from "../../redux/exercise-entries";
+import { KeyCache } from "../../redux/helpers/KeyCache";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { startLoadMacroSummaryForDate } from "../../redux/macro-summaries";
 import { IRootState } from "../../redux/root";
@@ -28,6 +33,7 @@ import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { DateScroller } from "../DateScroller/DateScroller";
 
 interface IDiaryPageProps {
+	readonly updateTime: number;
 	readonly currentDate: Moment.Moment;
 	readonly loadedMacroSummariesByDate?: { readonly [key: string]: IMacroSummary };
 	readonly loadedExerciseEntriesByDate?: { readonly [key: string]: IExerciseEntry[] };
@@ -49,6 +55,10 @@ function mapStateToProps(state: IRootState, props: IDiaryPageProps): IDiaryPageP
 
 	return {
 		...props,
+		updateTime: KeyCache.getMaxKeyTime([
+			diaryEntriesCacheKeys.latestUpdate,
+			exerciseEntriesCacheKeys.latestUpdate,
+		]),
 		currentDate: date,
 		loadedMacroSummariesByDate: state.macroSummaries.loadedMacroSummariesByDate,
 		loadedExerciseEntriesByDate: state.exerciseEntries.loadedExerciseEntriesByDate,
@@ -83,6 +93,8 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 		history.push(`/diary-entries/${momentToUrlString(date)}`);
 	}
 
+	private loadDataDebounceTimeout: NodeJS.Timer = undefined;
+
 	constructor(props: IDiaryPageProps, context: any) {
 		super(props, context);
 
@@ -105,7 +117,9 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 	): void {
 		const currProps = this.props;
 
-		if (currProps.currentDate) {
+		if (currProps.updateTime !== prevProps.updateTime) {
+			this.loadData();
+		} else if (currProps.currentDate) {
 			if (!prevProps.currentDate || !prevProps.currentDate.isSame(currProps.currentDate, "day")) {
 				this.loadData();
 			}
@@ -128,9 +142,17 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 
 	private loadData(): void {
 		const { actions, currentDate } = this.props;
-		actions.loadMacroSummaryForDate(currentDate);
-		actions.loadExerciseEntriesForDate(currentDate);
-		actions.loadDiaryEntriesForDate(currentDate);
+
+		if (this.loadDataDebounceTimeout) {
+			global.clearTimeout(this.loadDataDebounceTimeout);
+			this.loadDataDebounceTimeout = undefined;
+		}
+
+		this.loadDataDebounceTimeout = global.setTimeout(() => {
+			actions.loadMacroSummaryForDate(currentDate);
+			actions.loadExerciseEntriesForDate(currentDate);
+			actions.loadDiaryEntriesForDate(currentDate);
+		}, 500);
 	}
 
 	private renderInner(): ReactNode {
