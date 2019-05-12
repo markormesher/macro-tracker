@@ -12,7 +12,7 @@ import * as gs from "../../global-styles/Global.scss";
 import { formatMeasurement } from "../../helpers/formatters";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
-import { FoodItemsCacheKeys, startDeleteFoodItem } from "../../redux/food-items";
+import { foodItemsCacheKeys, startDeleteFoodItem } from "../../redux/food-items";
 import { KeyCache } from "../../redux/helpers/KeyCache";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { IRootState } from "../../redux/root";
@@ -32,7 +32,7 @@ interface IFoodItemsPageProps {
 function mapStateToProps(state: IRootState, props: IFoodItemsPageProps): IFoodItemsPageProps {
 	return {
 		...props,
-		updateTime: KeyCache.getKeyTime(FoodItemsCacheKeys.LATEST_UPDATE_TIME),
+		updateTime: KeyCache.getKeyTime(foodItemsCacheKeys.latestUpdate),
 	};
 }
 

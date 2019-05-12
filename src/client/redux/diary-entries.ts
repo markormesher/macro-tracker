@@ -6,6 +6,7 @@ import { IJsonArray } from "../../commons/models/IJsonArray";
 import { IJsonObject } from "../../commons/models/IJsonObject";
 import { momentToDateKey, momentToUrlString } from "../../commons/utils/dates";
 import { safeMapEntities } from "../../commons/utils/entities";
+import { formatDate } from "../helpers/formatters";
 import { setError } from "./global";
 import { ActionResult } from "./helpers/ActionResult";
 import { KeyCache } from "./helpers/KeyCache";
@@ -40,19 +41,11 @@ enum DiaryEntriesActions {
 	START_DELETE_DIARY_ENTRY = "DiaryEntriesActions.START_DELETE_DIARY_ENTRY",
 }
 
-enum DiaryEntriesCacheKeys {
-	LATEST_UPDATE_TIME = "DiaryEntriesCacheKeys.LATEST_UPDATE_TIME",
-	LOADED_DIARY_ENTRY = "DiaryEntriesCacheKeys.LOADED_DIARY_ENTRY",
-	LOADED_DIARY_ENTRIES_BY_DATE = "DiaryEntriesCacheKeys.LOADED_DIARY_ENTRIES_BY_DATE",
-}
-
-function getCacheKeyForLoadedDiaryEntry(id: string): string {
-	return `${DiaryEntriesCacheKeys.LOADED_DIARY_ENTRY}_${id}`;
-}
-
-function getCacheKeyForLoadedDiaryEntriesByDate(date: Moment.Moment): string {
-	return `${DiaryEntriesCacheKeys.LOADED_DIARY_ENTRIES_BY_DATE}_${momentToDateKey(date)}`;
-}
+const diaryEntriesCacheKeys = {
+	latestUpdate: "diary-entries.latest-update",
+	forEntry: (id: string) => `diary-entries.entry.${id}`,
+	forEntriesByDate: (date: Moment.Moment) => `diary-entries.entries-by-date.${formatDate(date, "system")}`,
+};
 
 function setEditorBusy(editorBusy: boolean): PayloadAction {
 	return {
@@ -121,7 +114,7 @@ function*loadDiaryEntrySaga(): Generator {
 	yield takeEvery(DiaryEntriesActions.START_LOAD_DIARY_ENTRY, function*(action: PayloadAction): Generator {
 		const diaryEntryId: string = action.payload.diaryEntryId;
 
-		if (KeyCache.keyIsValid(getCacheKeyForLoadedDiaryEntry(diaryEntryId))) {
+		if (KeyCache.keyIsValid(diaryEntriesCacheKeys.forEntry(diaryEntryId))) {
 			return;
 		}
 
@@ -132,7 +125,7 @@ function*loadDiaryEntrySaga(): Generator {
 
 			yield all([
 				put(setDiaryEntry(diaryEntry)),
-				put(KeyCache.updateKey(getCacheKeyForLoadedDiaryEntry(diaryEntryId))),
+				put(KeyCache.updateKey(diaryEntriesCacheKeys.forEntry(diaryEntryId))),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -144,7 +137,7 @@ function*loadDiaryEntriesForDateSaga(): Generator {
 	yield takeEvery(DiaryEntriesActions.START_LOAD_DIARY_ENTRIES_FOR_DATE, function*(action: PayloadAction): Generator {
 		const date: Moment.Moment = action.payload.date;
 
-		if (KeyCache.keyIsValid(getCacheKeyForLoadedDiaryEntriesByDate(date))) {
+		if (KeyCache.keyIsValid(diaryEntriesCacheKeys.forEntriesByDate(date))) {
 			return;
 		}
 
@@ -155,7 +148,7 @@ function*loadDiaryEntriesForDateSaga(): Generator {
 
 			yield all([
 				put(setDiaryEntriesForDate(date, diaryEntries)),
-				put(KeyCache.updateKey(getCacheKeyForLoadedDiaryEntriesByDate(date))),
+				put(KeyCache.updateKey(diaryEntriesCacheKeys.forEntriesByDate(date))),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -180,9 +173,9 @@ function*saveDiaryEntrySaga(): Generator {
 			yield all([
 				put(setEditorBusy(false)),
 				put(setEditorResult("success")),
-				put(KeyCache.updateKey(DiaryEntriesCacheKeys.LATEST_UPDATE_TIME)),
-				put(KeyCache.invalidateKey(getCacheKeyForLoadedDiaryEntry(diaryEntry.id))),
-				put(KeyCache.invalidateKey(getCacheKeyForLoadedDiaryEntriesByDate(diaryEntry.date))),
+				put(KeyCache.updateKey(diaryEntriesCacheKeys.latestUpdate)),
+				put(KeyCache.invalidateKey(diaryEntriesCacheKeys.forEntry(diaryEntry.id))),
+				put(KeyCache.invalidateKey(diaryEntriesCacheKeys.forEntriesByDate(diaryEntry.date))),
 			]);
 		} catch (rawError) {
 			const error = rawError as AxiosError;
@@ -201,9 +194,9 @@ function*deleteDiaryEntrySaga(): Generator {
 			yield call(() => axios.post(`/api/diary-entries/delete/${diaryEntry.id}`));
 
 			yield all([
-				put(KeyCache.updateKey(DiaryEntriesCacheKeys.LATEST_UPDATE_TIME)),
-				put(KeyCache.invalidateKey(getCacheKeyForLoadedDiaryEntry(diaryEntry.id))),
-				put(KeyCache.invalidateKey(getCacheKeyForLoadedDiaryEntriesByDate(diaryEntry.date))),
+				put(KeyCache.updateKey(diaryEntriesCacheKeys.latestUpdate)),
+				put(KeyCache.invalidateKey(diaryEntriesCacheKeys.forEntry(diaryEntry.id))),
+				put(KeyCache.invalidateKey(diaryEntriesCacheKeys.forEntriesByDate(diaryEntry.date))),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -275,7 +268,7 @@ function diaryEntriesReducer(state = initialState, action: PayloadAction): IDiar
 
 export {
 	IDiaryEntriesState,
-	DiaryEntriesCacheKeys,
+	diaryEntriesCacheKeys,
 	diaryEntriesReducer,
 	diaryEntriesSagas,
 	setEditorBusy,

@@ -42,7 +42,7 @@ interface IFoodItemPickerState {
 function mapStateToProps(state: IRootState, props: IFoodItemPickerProps): IFoodItemPickerProps {
 	return {
 		...props,
-		allFoodItems: state.foodItems.allFoodItems,
+		allItems: state.foodItems.allFoodItems,
 	};
 }
 

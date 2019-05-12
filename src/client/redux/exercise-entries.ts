@@ -6,6 +6,7 @@ import { IJsonArray } from "../../commons/models/IJsonArray";
 import { IJsonObject } from "../../commons/models/IJsonObject";
 import { momentToDateKey, momentToUrlString } from "../../commons/utils/dates";
 import { safeMapEntities } from "../../commons/utils/entities";
+import { formatDate } from "../helpers/formatters";
 import { setError } from "./global";
 import { ActionResult } from "./helpers/ActionResult";
 import { KeyCache } from "./helpers/KeyCache";
@@ -44,20 +45,12 @@ enum ExerciseEntriesActions {
 	START_DELETE_EXERCISE_ENTRY = "ExerciseEntriesActions.START_DELETE_EXERCISE_ENTRY",
 }
 
-enum ExerciseEntriesCacheKeys {
-	LATEST_UPDATE_TIME = "ExerciseEntriesCacheKeys.LATEST_UPDATE_TIME",
-	LOADED_EXERCISE_ENTRY = "ExerciseEntriesCacheKeys.LOADED_EXERCISE_ENTRY",
-	LOADED_EXERCISE_ENTRIES_BY_DATE = "ExerciseEntriesCacheKeys.LOADED_EXERCISE_ENTRIES_BY_DATE",
-	ALL_EXERCISE_LABELS = "ExerciseEntriesCacheKeys.ALL_EXERCISE_LABELS",
-}
-
-function getCacheKeyForLoadedExerciseEntry(id: string): string {
-	return `${ExerciseEntriesCacheKeys.LOADED_EXERCISE_ENTRY}_${id}`;
-}
-
-function getCacheKeyForLoadedExerciseEntriesByDate(date: Moment.Moment): string {
-	return `${ExerciseEntriesCacheKeys.LOADED_EXERCISE_ENTRIES_BY_DATE}_${momentToDateKey(date)}`;
-}
+const exerciseEntriesCacheKeys = {
+	latestUpdate: "exercise-entries.latest-update",
+	allLabels: "exercise-entries.all-labels",
+	forEntry: (id: string) => `exercise-entries.entry.${id}`,
+	forEntriesByDate: (date: Moment.Moment) => `exercise-entries.entries-by-date.${formatDate(date, "system")}`,
+};
 
 function setEditorBusy(editorBusy: boolean): PayloadAction {
 	return {
@@ -139,7 +132,7 @@ function*loadExerciseEntrySaga(): Generator {
 	yield takeEvery(ExerciseEntriesActions.START_LOAD_EXERCISE_ENTRY, function*(action: PayloadAction): Generator {
 		const exerciseEntryId: string = action.payload.exerciseEntryId;
 
-		if (KeyCache.keyIsValid(getCacheKeyForLoadedExerciseEntry(exerciseEntryId))) {
+		if (KeyCache.keyIsValid(exerciseEntriesCacheKeys.forEntry(exerciseEntryId))) {
 			return;
 		}
 
@@ -150,7 +143,7 @@ function*loadExerciseEntrySaga(): Generator {
 
 			yield all([
 				put(setExerciseEntry(exerciseEntry)),
-				put(KeyCache.updateKey(getCacheKeyForLoadedExerciseEntry(exerciseEntryId))),
+				put(KeyCache.updateKey(exerciseEntriesCacheKeys.forEntry(exerciseEntryId))),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -163,7 +156,7 @@ function*loadExerciseEntriesForDateSaga(): Generator {
 			function*(action: PayloadAction): Generator {
 				const date: Moment.Moment = action.payload.date;
 
-				if (KeyCache.keyIsValid(getCacheKeyForLoadedExerciseEntriesByDate(date))) {
+				if (KeyCache.keyIsValid(exerciseEntriesCacheKeys.forEntriesByDate(date))) {
 					return;
 				}
 
@@ -174,7 +167,7 @@ function*loadExerciseEntriesForDateSaga(): Generator {
 
 					yield all([
 						put(setExerciseEntriesForDate(date, exerciseEntries)),
-						put(KeyCache.updateKey(getCacheKeyForLoadedExerciseEntriesByDate(date))),
+						put(KeyCache.updateKey(exerciseEntriesCacheKeys.forEntriesByDate(date))),
 					]);
 				} catch (err) {
 					yield put(setError(err));
@@ -184,7 +177,7 @@ function*loadExerciseEntriesForDateSaga(): Generator {
 
 function*loadAllExerciseLabelsSaga(): Generator {
 	yield takeEvery(ExerciseEntriesActions.START_LOAD_ALL_EXERCISE_LABELS, function*(): Generator {
-		if (KeyCache.keyIsValid(ExerciseEntriesCacheKeys.ALL_EXERCISE_LABELS)) {
+		if (KeyCache.keyIsValid(exerciseEntriesCacheKeys.allLabels)) {
 			return;
 		}
 
@@ -193,7 +186,7 @@ function*loadAllExerciseLabelsSaga(): Generator {
 
 			yield all([
 				put(setAllExerciseLabels(labels)),
-				put(KeyCache.updateKey(ExerciseEntriesCacheKeys.ALL_EXERCISE_LABELS)),
+				put(KeyCache.updateKey(exerciseEntriesCacheKeys.allLabels)),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -217,9 +210,10 @@ function*saveExerciseEntrySaga(): Generator {
 			yield all([
 				put(setEditorBusy(false)),
 				put(setEditorResult("success")),
-				put(KeyCache.updateKey(ExerciseEntriesCacheKeys.LATEST_UPDATE_TIME)),
-				put(KeyCache.invalidateKey(getCacheKeyForLoadedExerciseEntry(exerciseEntry.id))),
-				put(KeyCache.invalidateKey(getCacheKeyForLoadedExerciseEntriesByDate(exerciseEntry.date))),
+				put(KeyCache.updateKey(exerciseEntriesCacheKeys.latestUpdate)),
+				put(KeyCache.invalidateKey(exerciseEntriesCacheKeys.allLabels)),
+				put(KeyCache.invalidateKey(exerciseEntriesCacheKeys.forEntry(exerciseEntry.id))),
+				put(KeyCache.invalidateKey(exerciseEntriesCacheKeys.forEntriesByDate(exerciseEntry.date))),
 			]);
 		} catch (rawError) {
 			const error = rawError as AxiosError;
@@ -238,9 +232,10 @@ function*deleteExerciseEntrySaga(): Generator {
 			yield call(() => axios.post(`/api/exercise-entries/delete/${exerciseEntry.id}`));
 
 			yield all([
-				put(KeyCache.updateKey(ExerciseEntriesCacheKeys.LATEST_UPDATE_TIME)),
-				put(KeyCache.invalidateKey(getCacheKeyForLoadedExerciseEntry(exerciseEntry.id))),
-				put(KeyCache.invalidateKey(getCacheKeyForLoadedExerciseEntriesByDate(exerciseEntry.date))),
+				put(KeyCache.updateKey(exerciseEntriesCacheKeys.latestUpdate)),
+				put(KeyCache.invalidateKey(exerciseEntriesCacheKeys.allLabels)),
+				put(KeyCache.invalidateKey(exerciseEntriesCacheKeys.forEntry(exerciseEntry.id))),
+				put(KeyCache.invalidateKey(exerciseEntriesCacheKeys.forEntriesByDate(exerciseEntry.date))),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -323,7 +318,7 @@ function exerciseEntriesReducer(state = initialState, action: PayloadAction): IE
 
 export {
 	IExerciseEntriesState,
-	ExerciseEntriesCacheKeys,
+	exerciseEntriesCacheKeys,
 	exerciseEntriesReducer,
 	exerciseEntriesSagas,
 	setEditorBusy,

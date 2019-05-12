@@ -21,6 +21,7 @@ class KeyCache<State> {
 
 	public static STATE_KEY = "__cache";
 	public static store?: Store;
+	public static maxTimestampGiven = 0;
 
 	public static setStore(store: Store): void {
 		KeyCache.store = store;
@@ -28,6 +29,7 @@ class KeyCache<State> {
 
 	public static updateKey(key: string): IKeyCacheAction {
 		KeyCache.checkStore();
+
 		return {
 			type: KeyCacheActions.UPDATE,
 			key,
@@ -48,24 +50,31 @@ class KeyCache<State> {
 		return state[key] || INVALID_KEY;
 	}
 
-	public static keysAreValid(keys: string[], dependencies: string[] = []): boolean {
-		KeyCache.checkStore();
-		const minKeyTime = keys.map((key) => KeyCache.getKeyTime(key)).reduce((a, b) => Math.min(a, b), MIN_VALID_KEY);
-		if (minKeyTime < MIN_VALID_KEY) {
-			return false;
+	public static getMinKeyTime(keys: string[]): number {
+		if (!keys || keys.length === 0) {
+			return INVALID_KEY;
 		}
 
-		let valid = true;
-		dependencies.forEach((d) => {
-			if (KeyCache.getKeyTime(d) >= minKeyTime) {
-				valid = false;
-			}
-		});
-		return valid;
+		const keyTimes = keys.map((key) => this.getKeyTime(key));
+		return Math.min(...keyTimes);
+	}
+
+	public static getMaxKeyTime(keys: string[]): number {
+		if (!keys || keys.length === 0) {
+			return INVALID_KEY;
+		}
+
+		const keyTimes = keys.map((key) => this.getKeyTime(key));
+		return Math.max(...keyTimes);
 	}
 
 	public static keyIsValid(key: string, dependencies: string[] = []): boolean {
-		return this.keysAreValid([key], dependencies);
+		KeyCache.checkStore();
+
+		const keyTime = this.getKeyTime(key);
+		const maxDependencyTime = this.getMaxKeyTime(dependencies);
+
+		return keyTime >= MIN_VALID_KEY && keyTime > maxDependencyTime;
 	}
 
 	public static reducer(state: IKeyCacheState = {}, action: IKeyCacheAction): IKeyCacheState {
@@ -86,8 +95,6 @@ class KeyCache<State> {
 				return state;
 		}
 	}
-
-	private static maxTimestampGiven = 0;
 
 	private static checkStore(): void {
 		if (!KeyCache.store) {

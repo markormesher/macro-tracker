@@ -38,15 +38,11 @@ enum FoodItemsActions {
 	START_DELETE_FOOD_ITEM = "FoodItemsActions.START_DELETE_FOOD_ITEM",
 }
 
-enum FoodItemsCacheKeys {
-	LATEST_UPDATE_TIME = "FoodItemsCacheKeys.LATEST_UPDATE_TIME",
-	ALL_FOOD_ITEMS = "FoodItemsCacheKeys.ALL_FOOD_ITEMS",
-	LOADED_FOOD_ITEM = "FoodItemsCacheKeys.LOADED_FOOD_ITEM",
-}
-
-function getCacheKeyForLoadedFoodItem(id: string): string {
-	return `${FoodItemsCacheKeys.LOADED_FOOD_ITEM}_${id}`;
-}
+const foodItemsCacheKeys = {
+	latestUpdate: "food-items.latest-update",
+	allItems: "food-items.all-items",
+	forItem: (id: string) => `food-items.item.${id}`,
+};
 
 function setEditorBusy(editorBusy: boolean): PayloadAction {
 	return {
@@ -114,11 +110,7 @@ function*loadFoodItemSaga(): Generator {
 	yield takeEvery(FoodItemsActions.START_LOAD_FOOD_ITEM, function*(action: PayloadAction): Generator {
 		const foodItemId: string = action.payload.foodItemId;
 
-		if (KeyCache.keyIsValid(getCacheKeyForLoadedFoodItem(foodItemId))) {
-			return;
-		}
-
-		if (KeyCache.keyIsValid(FoodItemsCacheKeys.ALL_FOOD_ITEMS)) {
+		if (KeyCache.keyIsValid(foodItemsCacheKeys.forItem(foodItemId))) {
 			return;
 		}
 
@@ -129,7 +121,7 @@ function*loadFoodItemSaga(): Generator {
 
 			yield all([
 				put(setFoodItem(foodItem)),
-				put(KeyCache.updateKey(getCacheKeyForLoadedFoodItem(foodItemId))),
+				put(KeyCache.updateKey(foodItemsCacheKeys.forItem(foodItemId))),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -139,7 +131,7 @@ function*loadFoodItemSaga(): Generator {
 
 function*loadAllFoodItemsSaga(): Generator {
 	yield takeEvery(FoodItemsActions.START_LOAD_ALL_FOOD_ITEMS, function*(): Generator {
-		if (KeyCache.keyIsValid(FoodItemsCacheKeys.ALL_FOOD_ITEMS)) {
+		if (KeyCache.keyIsValid(foodItemsCacheKeys.allItems)) {
 			return;
 		}
 
@@ -150,7 +142,7 @@ function*loadAllFoodItemsSaga(): Generator {
 
 			yield all([
 				put(setAllFoodItems(foodItems)),
-				KeyCache.updateKey(FoodItemsCacheKeys.ALL_FOOD_ITEMS),
+				KeyCache.updateKey(foodItemsCacheKeys.allItems),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -174,9 +166,9 @@ function*saveFoodItemSaga(): Generator {
 			yield all([
 				put(setEditorBusy(false)),
 				put(setEditorResult("success")),
-				put(KeyCache.updateKey(FoodItemsCacheKeys.LATEST_UPDATE_TIME)),
-				put(KeyCache.invalidateKey(FoodItemsCacheKeys.ALL_FOOD_ITEMS)),
-				put(KeyCache.invalidateKey(getCacheKeyForLoadedFoodItem(foodItem.id))),
+				put(KeyCache.updateKey(foodItemsCacheKeys.latestUpdate)),
+				put(KeyCache.invalidateKey(foodItemsCacheKeys.allItems)),
+				put(KeyCache.invalidateKey(foodItemsCacheKeys.forItem(foodItem.id))),
 			]);
 		} catch (rawError) {
 			const error = rawError as AxiosError;
@@ -195,9 +187,9 @@ function*deleteFoodItemSaga(): Generator {
 			yield call(() => axios.post(`/api/food-items/delete/${foodItem.id}`));
 
 			yield all([
-				put(KeyCache.updateKey(FoodItemsCacheKeys.LATEST_UPDATE_TIME)),
-				put(KeyCache.invalidateKey(FoodItemsCacheKeys.ALL_FOOD_ITEMS)),
-				put(KeyCache.invalidateKey(getCacheKeyForLoadedFoodItem(foodItem.id))),
+				put(KeyCache.updateKey(foodItemsCacheKeys.latestUpdate)),
+				put(KeyCache.invalidateKey(foodItemsCacheKeys.allItems)),
+				put(KeyCache.invalidateKey(foodItemsCacheKeys.forItem(foodItem.id))),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -281,7 +273,7 @@ function foodItemsReducer(state = initialState, action: PayloadAction): IFoodIte
 
 export {
 	IFoodItemsState,
-	FoodItemsCacheKeys,
+	foodItemsCacheKeys,
 	foodItemsReducer,
 	foodItemsSagas,
 	setEditorBusy,

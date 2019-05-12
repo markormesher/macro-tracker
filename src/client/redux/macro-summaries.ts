@@ -4,9 +4,10 @@ import { all, call, put, takeEvery } from "redux-saga/effects";
 import { IJsonObject } from "../../commons/models/IJsonObject";
 import { IMacroSummary, mapMacroSummaryFromJson } from "../../commons/models/IMacroSummary";
 import { momentToDateKey, momentToUrlString } from "../../commons/utils/dates";
-import { DiaryEntriesCacheKeys } from "./diary-entries";
-import { ExerciseEntriesCacheKeys } from "./exercise-entries";
-import { FoodItemsCacheKeys } from "./food-items";
+import { formatDate } from "../helpers/formatters";
+import { diaryEntriesCacheKeys } from "./diary-entries";
+import { exerciseEntriesCacheKeys } from "./exercise-entries";
+import { foodItemsCacheKeys } from "./food-items";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
@@ -25,13 +26,9 @@ enum MacroSummariesActions {
 	START_LOAD_MACRO_SUMMARY_FOR_DATE = "MacroSummariesActions.START_LOAD_MACRO_SUMMARY_FOR_DATE",
 }
 
-enum MacroSummariesCacheKeys {
-	LOADED_MACRO_SUMMARY_BY_DATE = "MacroSummariesCacheKeys.LOADED_MACRO_SUMMARY_BY_DATE",
-}
-
-function getCacheKeyForLoadedMacroSummaryByDate(date: Moment.Moment): string {
-	return `${MacroSummariesCacheKeys.LOADED_MACRO_SUMMARY_BY_DATE}_${momentToDateKey(date)}`;
-}
+const macroSummariesCacheKeys = {
+	forDate: (date: Moment.Moment) => `macro-summaries.for-date.${formatDate(date, "system")}`,
+};
 
 function setMacroSummariesForDate(date: Moment.Moment, macroSummary: IMacroSummary): PayloadAction {
 	return {
@@ -52,11 +49,11 @@ function*loadMacroSummaryForDateSaga(): Generator {
 		const date: Moment.Moment = action.payload.date;
 
 		// the summary must be newer than all diary, exercise and food item changes
-		const summaryKey = getCacheKeyForLoadedMacroSummaryByDate(date);
+		const summaryKey = macroSummariesCacheKeys.forDate(date);
 		const dependencyKeys = [
-			DiaryEntriesCacheKeys.LATEST_UPDATE_TIME,
-			ExerciseEntriesCacheKeys.LATEST_UPDATE_TIME,
-			FoodItemsCacheKeys.LATEST_UPDATE_TIME,
+			diaryEntriesCacheKeys.latestUpdate,
+			exerciseEntriesCacheKeys.latestUpdate,
+			foodItemsCacheKeys.latestUpdate,
 		];
 
 		if (KeyCache.keyIsValid(summaryKey, dependencyKeys)) {
@@ -108,7 +105,7 @@ function macroSummariesReducer(state = initialState, action: PayloadAction): IMa
 
 export {
 	IMacroSummariesState,
-	MacroSummariesCacheKeys,
+	macroSummariesCacheKeys,
 	macroSummariesReducer,
 	macroSummariesSagas,
 	startLoadMacroSummaryForDate,

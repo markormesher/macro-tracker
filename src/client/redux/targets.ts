@@ -35,15 +35,11 @@ enum TargetsActions {
 	START_DELETE_TARGET = "TargetsActions.START_DELETE_TARGET",
 }
 
-enum TargetsCacheKeys {
-	LATEST_CACHE_TIME = "TargetsCacheKeys.LATEST_CACHE_TIME",
-	ALL_TARGETS = "TargetsCacheKeys.ALL_TARGETS",
-	LOADED_TARGET = "TargetsCacheKeys.LOADED_TARGET",
-}
-
-function getCacheKeyForLoadedTarget(id: string): string {
-	return `${TargetsCacheKeys.LOADED_TARGET}_${id}`;
-}
+const targetsCacheKeys = {
+	latestUpdate: "targets.latest-update",
+	allTargets: "targets.all-targets",
+	forTarget: (id: string) => `targets.target.${id}`,
+};
 
 function setEditorBusy(editorBusy: boolean): PayloadAction {
 	return {
@@ -104,7 +100,7 @@ function*loadTargetSaga(): Generator {
 	yield takeEvery(TargetsActions.START_LOAD_TARGET, function*(action: PayloadAction): Generator {
 		const targetId: string = action.payload.targetId;
 
-		if (KeyCache.keyIsValid(getCacheKeyForLoadedTarget(targetId))) {
+		if (KeyCache.keyIsValid(targetsCacheKeys.forTarget(targetId))) {
 			return;
 		}
 
@@ -115,7 +111,7 @@ function*loadTargetSaga(): Generator {
 
 			yield all([
 				put(setTarget(target)),
-				put(KeyCache.updateKey(getCacheKeyForLoadedTarget(target.id))),
+				put(KeyCache.updateKey(targetsCacheKeys.forTarget(target.id))),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -125,7 +121,7 @@ function*loadTargetSaga(): Generator {
 
 function*loadAllTargetsSaga(): Generator {
 	yield takeEvery(TargetsActions.START_LOAD_ALL_TARGETS, function*(): Generator {
-		if (KeyCache.keyIsValid(TargetsCacheKeys.ALL_TARGETS)) {
+		if (KeyCache.keyIsValid(targetsCacheKeys.allTargets)) {
 			return;
 		}
 
@@ -136,7 +132,7 @@ function*loadAllTargetsSaga(): Generator {
 
 			yield all([
 				put(setAllTargets(targets)),
-				KeyCache.updateKey(TargetsCacheKeys.ALL_TARGETS),
+				KeyCache.updateKey(targetsCacheKeys.allTargets),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -155,9 +151,9 @@ function*saveTargetSaga(): Generator {
 			yield all([
 				put(setEditorBusy(false)),
 				put(setEditorResult("success")),
-				put(KeyCache.updateKey(TargetsCacheKeys.LATEST_CACHE_TIME)),
-				put(KeyCache.invalidateKey(TargetsCacheKeys.ALL_TARGETS)),
-				put(KeyCache.invalidateKey(getCacheKeyForLoadedTarget(target.id))),
+				put(KeyCache.updateKey(targetsCacheKeys.latestUpdate)),
+				put(KeyCache.invalidateKey(targetsCacheKeys.allTargets)),
+				put(KeyCache.invalidateKey(targetsCacheKeys.forTarget(target.id))),
 			]);
 		} catch (rawError) {
 			const error = rawError as AxiosError;
@@ -176,9 +172,9 @@ function*deleteTargetSaga(): Generator {
 			yield call(() => axios.post(`/api/targets/delete/${target.id}`));
 
 			yield all([
-				put(KeyCache.updateKey(TargetsCacheKeys.LATEST_CACHE_TIME)),
-				put(KeyCache.invalidateKey(TargetsCacheKeys.ALL_TARGETS)),
-				put(KeyCache.invalidateKey(getCacheKeyForLoadedTarget(target.id))),
+				put(KeyCache.updateKey(targetsCacheKeys.latestUpdate)),
+				put(KeyCache.invalidateKey(targetsCacheKeys.allTargets)),
+				put(KeyCache.invalidateKey(targetsCacheKeys.forTarget(target.id))),
 			]);
 		} catch (err) {
 			yield put(setError(err));
@@ -248,7 +244,7 @@ function targetsReducer(state = initialState, action: PayloadAction): ITargetsSt
 
 export {
 	ITargetsState,
-	TargetsCacheKeys,
+	targetsCacheKeys,
 	targetsReducer,
 	targetsSagas,
 	setEditorBusy,
