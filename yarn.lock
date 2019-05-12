@@ -984,6 +984,25 @@
   resolved "https://registry.yarnpkg.com/@types/cheerio/-/cheerio-0.22.9.tgz#b5990152604c2ada749b7f88cab3476f21f39d7b"
   integrity sha512-q6LuBI0t5u04f0Q4/R+cGBqIbZMtJkVvCSF+nTfFBBdQqQvJR/mNHeWjRkszyLl7oyf2rDoKUYMEjTw5AV0hiw==
 
+"@types/color-convert@*":
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/@types/color-convert/-/color-convert-1.9.0.tgz#bfa8203e41e7c65471e9841d7e306a7cd8b5172d"
+  integrity sha512-OKGEfULrvSL2VRbkl/gnjjgbbF7ycIlpSsX7Nkab4MOWi5XxmgBYvuiQ7lcCFY5cPDz7MUNaKgxte2VRmtr4Fg==
+  dependencies:
+    "@types/color-name" "*"
+
+"@types/color-name@*":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@types/color-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
+  integrity sha512-rr+OQyAjxze7GgWrSaJwydHStIhHq2lvY3BOC2Mj7KnzI7XK0Uw1TOOdI9lDoajEbSWLiYgoo4f1R51erQfhPQ==
+
+"@types/color@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@types/color/-/color-3.0.0.tgz#40f8a6bf2fd86e969876b339a837d8ff1b0a6e30"
+  integrity sha512-5qqtNia+m2I0/85+pd2YzAXaTyKO8j+svirO5aN+XaQJ5+eZ8nx0jPtEWZLxCi50xwYsX10xUHetFzfb1WEs4Q==
+  dependencies:
+    "@types/color-convert" "*"
+
 "@types/compression@^0.0.36":
   version "0.0.36"
   resolved "https://registry.yarnpkg.com/@types/compression/-/compression-0.0.36.tgz#7646602ffbfc43ea48a8bf0b2f1d5e5f9d75c0d0"
@@ -1058,11 +1077,6 @@
   version "4.7.2"
   resolved "https://registry.yarnpkg.com/@types/history/-/history-4.7.2.tgz#0e670ea254d559241b6eeb3894f8754991e73220"
   integrity sha512-ui3WwXmjTaY73fOQ3/m3nnajU/Orhi6cEu5rzX+BrAAJxa3eITXZ5ch9suPqtM03OWhAHhPSyBGCN4UKoxO20Q==
-
-"@types/lodash@^4.14.118":
-  version "4.14.118"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.118.tgz#247bab39bfcc6d910d4927c6e06cbc70ec376f27"
-  integrity sha512-iiJbKLZbhSa6FYRip/9ZDX6HXhayXLDGY2Fqws9cOkEQ6XeKfaxB0sC541mowZJueYyMnVUmmG+al5/4fCDrgw==
 
 "@types/loglevel@*":
   version "1.5.3"
@@ -2591,6 +2605,14 @@ color@3.0.x:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/color/-/color-3.0.0.tgz#d920b4328d534a3ac8295d68f7bd4ba6c427be9a"
   integrity sha512-jCpd5+s0s0t7p3pHQKpnJ0TpQKKdleP71LWcA0aqiljpiuAkOSUFN/dyH8ZwF0hRmFlrIuRhufds1QyEP9EB+w==
+  dependencies:
+    color-convert "^1.9.1"
+    color-string "^1.5.2"
+
+color@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/color/-/color-3.1.1.tgz#7abf5c0d38e89378284e873c207ae2172dcc8a61"
+  integrity sha512-PvUltIXRjehRKPSy89VnDWFKY58xyhTLyxIg21vwQBI6qLwZNPmC8k3C1uytIgFKEpOIzN4y32iPm8231zFHIg==
   dependencies:
     color-convert "^1.9.1"
     color-string "^1.5.2"

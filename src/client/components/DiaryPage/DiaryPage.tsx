@@ -160,7 +160,11 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 
 		return (
 				<ContentWrapper>
-					{this.renderSummary()}
+					<div className={bs.row}>
+						<div className={bs.col}>
+							{this.renderSummary()}
+						</div>
+					</div>
 					{this.renderExercise()}
 					{this.renderMeal("snacks_1")}
 					{this.renderMeal("breakfast")}

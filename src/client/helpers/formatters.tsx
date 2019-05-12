@@ -29,13 +29,15 @@ function formatMeasurement(amount: number, unit: FoodMeasurementUnit): string {
 	return formatLargeNumber(amount) + formatMeasurementUnit(unit);
 }
 
-function formatDate(date: Moment.Moment, format: "user" | "title" | "system" = "user"): string {
+function formatDate(date: Moment.Moment, format: "short" | "user" | "title" | "system" = "user"): string {
 	if (!date) {
 		return undefined;
 	}
 
 	/* istanbul ignore else: protected by type system */
-	if (format === "user") {
+	if (format === "short") {
+		return date.format("DD/MM");
+	} else if (format === "user") {
 		return date.format("DD MMM YYYY");
 	} else if (format === "title") {
 		const now = utcMoment();
