@@ -47,14 +47,15 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDashboardPageProps): IDa
 
 class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 
+	private static HISTORY_DAYS = 7;
+
 	constructor(props: IDashboardPageProps, context: any) {
 		super(props, context);
 
-		this.renderSummaryForToday = this.renderSummaryForToday.bind(this);
-		this.renderSummaryForLast7Days = this.renderSummaryForLast7Days.bind(this);
-		this.renderSummaryForDates = this.renderSummaryForDates.bind(this);
-		this.renderChartForLast7Days = this.renderChartForLast7Days.bind(this);
 		this.loadData = this.loadData.bind(this);
+		this.renderToday = this.renderToday.bind(this);
+		this.renderHistory = this.renderHistory.bind(this);
+		this.renderCharts = this.renderCharts.bind(this);
 	}
 
 	public componentDidMount(): void {
@@ -70,80 +71,97 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 						</div>
 					</div>
 
-					<div className={bs.row}>
-						<div className={bs.col}>
-							{this.renderSummaryForToday()}
-						</div>
-					</div>
+					{this.renderToday()}
 
 					<hr/>
 
 					<div className={bs.row}>
 						<div className={bs.col}>
-							<h5>Last 7 Days</h5>
+							<h5>Last {UCDashboardPage.HISTORY_DAYS} Days</h5>
 						</div>
 					</div>
 
-					<div className={bs.row}>
-						<div className={combine(bs.col, bs.mb3)}>
-							{this.renderSummaryForLast7Days()}
-						</div>
-					</div>
-
-					<div className={bs.row}>
-						<div className={bs.col}>
-							{this.renderChartForLast7Days()}
-						</div>
-					</div>
+					{this.renderHistory(UCDashboardPage.HISTORY_DAYS)}
 				</ContentWrapper>
 		);
 	}
 
-	private renderSummaryForToday(): ReactNode {
-		return this.renderSummaryForDates([utcMoment()]);
-	}
-
-	private renderSummaryForLast7Days(): ReactNode {
+	private loadData(): void {
 		const today = utcMoment();
-		const dates: Moment.Moment[] = [];
 
-		for (let i = 1; i <= 7; ++i) {
-			dates.push(today.clone().subtract(i, "day"));
+		for (let i = 0; i <= UCDashboardPage.HISTORY_DAYS; ++i) {
+			this.props.actions.loadMacroSummaryForDate(today.clone().subtract(i, "day"));
 		}
-
-		return this.renderSummaryForDates(dates);
 	}
 
-	private renderSummaryForDates(dates: Moment.Moment[]): ReactNode {
+	private renderToday(): ReactNode {
 		const { loadedMacroSummariesByDate } = this.props;
 
-		const summaries = dates.map((d) => loadedMacroSummariesByDate[momentToDateKey(d)]);
-		if (summaries.some((e) => !e)) {
-			return <LoadingSpinner centre={true}/>;
+		const now = utcMoment();
+		const summary = loadedMacroSummariesByDate[momentToDateKey(now)];
+
+		if (!summary) {
+			return (
+					<div className={bs.row}>
+						<div className={bs.col}>
+							<LoadingSpinner centre={true}/>
+						</div>
+					</div>
+			);
 		}
 
-		return renderMacroSummary(calculateTotalMacroSummary(summaries));
+		return (
+				<div className={bs.row}>
+					<div className={bs.col}>
+						{renderMacroSummary(summary)}
+					</div>
+				</div>
+		);
 	}
 
-	private renderChartForLast7Days(): ReactNode {
+	private renderHistory(days: number): ReactNode {
 		const { loadedMacroSummariesByDate } = this.props;
 
-		const today = utcMoment();
+		const now = utcMoment();
 		const dates: Moment.Moment[] = [];
 
-		for (let i = 1; i <= 7; ++i) {
-			dates.push(today.clone().subtract(i, "day").startOf("day"));
+		for (let i = 1; i <= days; ++i) {
+			dates.push(now.clone().subtract(i, "day"));
 		}
 
 		const summaries = dates.map((d) => loadedMacroSummariesByDate[momentToDateKey(d)]);
+
 		if (summaries.some((e) => !e)) {
-			return <LoadingSpinner centre={true}/>;
+			return (
+					<div className={bs.row}>
+						<div className={bs.col}>
+							<LoadingSpinner centre={true}/>
+						</div>
+					</div>
+			);
 		}
 
+		return (
+				<>
+					<div className={bs.row}>
+						<div className={combine(bs.col, bs.mb3)}>
+							{renderMacroSummary(calculateTotalMacroSummary(summaries))}
+						</div>
+					</div>
+					<div className={bs.row}>
+						<div className={bs.col}>
+							{this.renderCharts(dates, summaries)}
+						</div>
+					</div>
+				</>
+		);
+	}
+
+	private renderCharts(dates: Moment.Moment[], summaries: IMacroSummary[]): ReactNode {
 		const caloriesDatasets: ChartDataSets[] = [
 			{
 				...defaultDatasetProps,
-				borderColor: "rgba(0, 0, 0, 1)",
+				borderColor: chartColours.black.toString(),
 				borderWidth: 1,
 				borderDash: [5, 10],
 				data: dates.map((date) => ({
@@ -154,7 +172,7 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 			{
 				...defaultDatasetProps,
 				label: "Calories",
-				borderColor: "rgba(0, 0, 0, .5)",
+				borderColor: chartColours.blackSemiTransparent.toString(),
 				data: summaries.map((sum, idx) => ({
 					x: dates[idx].toDate(),
 					y: sum.totalCalories / sum.targetCalories * 100,
@@ -164,7 +182,7 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 		const carbohydratesDatasets: ChartDataSets[] = [
 			{
 				...defaultDatasetProps,
-				borderColor: "rgba(0, 0, 0, 1)",
+				borderColor: chartColours.black.toString(),
 				borderWidth: 1,
 				borderDash: [5, 10],
 				data: dates.map((date) => ({
@@ -185,7 +203,7 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 		const fatDatasets: ChartDataSets[] = [
 			{
 				...defaultDatasetProps,
-				borderColor: "rgba(0, 0, 0, 1)",
+				borderColor: chartColours.black.toString(),
 				borderWidth: 1,
 				borderDash: [5, 10],
 				data: dates.map((date) => ({
@@ -206,7 +224,7 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 		const proteinDatasets: ChartDataSets[] = [
 			{
 				...defaultDatasetProps,
-				borderColor: "rgba(0, 0, 0, 1)",
+				borderColor: chartColours.black.toString(),
 				borderWidth: 1,
 				borderDash: [5, 10],
 				data: dates.map((date) => ({
@@ -304,14 +322,6 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 					</div>
 				</>
 		);
-	}
-
-	private loadData(): void {
-		const today = utcMoment();
-
-		for (let i = 0; i < 8; ++i) {
-			this.props.actions.loadMacroSummaryForDate(today.clone().subtract(i, "day"));
-		}
 	}
 }
 
