@@ -69,7 +69,7 @@ function mapStateToProps(state: IRootState, props: IEditDiaryEntryPageProps): IE
 		editorBusy: state.diaryEntries.editorBusy,
 		editorResult: state.diaryEntries.editorResult,
 		loadedDiaryEntry: state.diaryEntries.loadedDiaryEntries[diaryEntryId],
-		allItems: state.foodItems.allFoodItems,
+		allFoodItems: state.foodItems.allFoodItems,
 		lastDiaryEntrySaved: state.diaryEntries.lastDiaryEntrySaved,
 
 		urlDate: urlParams.has("initDate") ? urlStringToMoment(urlParams.get("initDate")) : undefined,
