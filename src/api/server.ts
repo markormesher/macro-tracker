@@ -25,6 +25,9 @@ ensureLogFilesAreCreated();
 const RedisSessionStore = ConnectRedis(ExpressSession);
 app.use(ExpressSession({
 	store: new RedisSessionStore({ host: "redis" }),
+	cookie: {
+		maxAge: 1000 * 60 * 60 * 24, // 24h
+	},
 	secret: getSecret("session.secret"),
 	resave: false,
 	rolling: true,
