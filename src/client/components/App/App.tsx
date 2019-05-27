@@ -7,6 +7,7 @@ import { DetailedError } from "../../helpers/errors/DetailedError";
 import { Http404Error } from "../../helpers/errors/Http404Error";
 import { IRootState } from "../../redux/root";
 import { FullPageSpinner } from "../_ui/FullPageSpinner/FullPageSpinner";
+import { CloneMealPage } from "../CloneMealPage/CloneMealPage";
 import { DashboardPage } from "../DashboardPage/DashboardPage";
 import { DiaryPage } from "../DiaryPage/DiaryPage";
 import { EditDiaryEntryPage } from "../EditDiaryEntryPage/EditDiaryEntryPage";
@@ -99,6 +100,8 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
 					<Nav/>
 					<Switch>
 						<Route exact={true} path="/" component={DashboardPage}/>
+
+						<Route path={"/clone-meal"} component={CloneMealPage}/>
 
 						<Route path={"/diary-entries/edit/:diaryEntryId?"} component={EditDiaryEntryPage}/>
 						<Route path={"/diary-entries/:date?"} component={DiaryPage}/>

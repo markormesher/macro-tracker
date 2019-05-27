@@ -1,9 +1,9 @@
-import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
+import { faCopy, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as Moment from "moment";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
-import { Link, match as Match } from "react-router-dom";
+import { match as Match } from "react-router-dom";
 import { Dispatch } from "redux";
 import { Meal } from "../../../commons/enums";
 import { IDiaryEntry } from "../../../commons/models/IDiaryEntry";
@@ -81,8 +81,20 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDiaryPageProps): IDiaryP
 
 class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 
+	private static startAddExerciseEntry(date: Moment.Moment): void {
+		history.push(`/exercise-entries/edit?initDate=${momentToUrlString(date)}`);
+	}
+
 	private static startEditExerciseEntry(exerciseEntry: IExerciseEntry): void {
 		history.push(`/exercise-entries/edit/${exerciseEntry.id}`);
+	}
+
+	private static startCloneMeal(values: { readonly date: Moment.Moment, readonly meal: Meal }): void {
+		history.push(`/clone-meal?fromDate=${momentToUrlString(values.date)}&fromMeal=${values.meal}`);
+	}
+
+	private static startAddDiaryEntry(values: { readonly date: Moment.Moment, readonly meal: Meal }): void {
+		history.push(`/diary-entries/edit?initDate=${momentToUrlString(values.date)}&initMeal=${values.meal}`);
 	}
 
 	private static startEditDiaryEntry(diaryEntry: IDiaryEntry): void {
@@ -221,18 +233,20 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 						<h5 className={bs.flexGrow1}>
 							Exercise
 						</h5>
-						<Link
-								to={`/exercise-entries/edit?initDate=${momentToUrlString(currentDate)}`}
-								className={combine(bs.dInlineBlock, bs.flexGrow0)}
+						<div
+								className={combine(bs.dInlineBlock, bs.btnGroup, bs.btnGroupSm, bs.flexGrow0)}
+								style={{ whiteSpace: "nowrap" }}
 						>
 							<IconBtn
 									icon={faPlus}
 									text={"Add"}
+									payload={currentDate}
+									onClick={UCDiaryPage.startAddExerciseEntry}
 									btnProps={{
 										className: combine(bs.btnOutlineDark, gs.btnMini),
 									}}
 							/>
-						</Link>
+						</div>
 					</div>
 					{renderedEntries}
 				</>
@@ -266,18 +280,29 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 						<h5 className={bs.flexGrow1}>
 							{getMealTitle(meal)}
 						</h5>
-						<Link
-								to={`/diary-entries/edit?initMeal=${meal}&initDate=${momentToUrlString(currentDate)}`}
-								className={combine(bs.dInlineBlock, bs.flexGrow0)}
+						<div
+								className={combine(bs.dInlineBlock, bs.btnGroup, bs.btnGroupSm, bs.flexGrow0)}
+								style={{ whiteSpace: "nowrap" }}
 						>
 							<IconBtn
 									icon={faPlus}
 									text={"Add"}
+									payload={{ date: currentDate, meal }}
+									onClick={UCDiaryPage.startAddDiaryEntry}
 									btnProps={{
 										className: combine(bs.btnOutlineDark, gs.btnMini),
 									}}
 							/>
-						</Link>
+							<IconBtn
+									icon={faCopy}
+									text={"Clone"}
+									payload={{ date: currentDate, meal }}
+									onClick={UCDiaryPage.startCloneMeal}
+									btnProps={{
+										className: combine(bs.btnOutlineDark, gs.btnMini),
+									}}
+							/>
+						</div>
 					</div>
 					{renderedEntries}
 				</>
