@@ -17,7 +17,7 @@ async function cloneMeal(request: ICloneMealRequest): Promise<void> {
 			.getMany();
 
 	const savePromises: Array<Promise<any>> = [];
-	for (const originalEntry of entriesToCopy) {
+	for (const originalEntry of entriesToCopy.filter((e) => !e.deleted)) {
 		const entryToSave: IDiaryEntry = {
 			...originalEntry,
 			id: undefined,
