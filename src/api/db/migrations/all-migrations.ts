@@ -189,6 +189,35 @@ const allMigrations: IDbMigration[] = [
 			`);
 		},
 	},
+
+	// refactor macro names for more generic forms
+	{
+		migrationNumber: 6,
+		up: (qr: QueryRunner) => {
+			return qr.query(`
+				ALTER TABLE db_food_item RENAME COLUMN calories_per_100 TO calories_per_base_amount;
+				ALTER TABLE db_food_item RENAME COLUMN fat_per_100 TO fat_per_base_amount;
+				ALTER TABLE db_food_item RENAME COLUMN sat_fat_per_100 TO sat_fat_per_bASE_AMOUNT;
+				ALTER TABLE db_food_item RENAME COLUMN carbohydrate_per_100 TO carbohydrate_per_bASE_AMOUNT;
+				ALTER TABLE db_food_item RENAME COLUMN sugar_per_100 TO sugar_per_bASE_AMOUNT;
+				ALTER TABLE db_food_item RENAME COLUMN fibre_per_100 TO fibre_per_bASE_AMOUNT;
+				ALTER TABLE db_food_item RENAME COLUMN protein_per_100 TO protein_per_bASE_AMOUNT;
+				ALTER TABLE db_food_item RENAME COLUMN salt_per_100 TO salt_per_bASE_AMOUNT;
+			`);
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_food_item RENAME COLUMN calories_per_base_amount TO calories_per_100;
+                ALTER TABLE db_food_item RENAME COLUMN fat_per_base_amount TO fat_per_100;
+                ALTER TABLE db_food_item RENAME COLUMN sat_fat_per_base_amount TO sat_fat_per_100;
+                ALTER TABLE db_food_item RENAME COLUMN carbohydrate_per_base_amount TO carbohydrate_per_100;
+                ALTER TABLE db_food_item RENAME COLUMN sugar_per_base_amount TO sugar_per_100;
+                ALTER TABLE db_food_item RENAME COLUMN fibre_per_base_amount TO fibre_per_100;
+                ALTER TABLE db_food_item RENAME COLUMN protein_per_base_amount TO protein_per_100;
+                ALTER TABLE db_food_item RENAME COLUMN salt_per_base_amount TO salt_per_100;
+			`);
+		},
+	},
 ];
 
 export {

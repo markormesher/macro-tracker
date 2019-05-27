@@ -21,28 +21,28 @@ class DbFoodItem extends BaseModel implements IFoodItem {
 	@Column({ type: "character varying" })
 	public measurementUnit: FoodMeasurementUnit;
 
-	@Column({ name: "calories_per_100", type: "double precision" })
+	@Column({ type: "double precision" })
 	public caloriesPerBaseAmount: number;
 
-	@Column({ name: "fat_per_100", type: "double precision" })
+	@Column({ type: "double precision" })
 	public fatPerBaseAmount: number;
 
-	@Column({ name: "sat_fat_per_100", type: "double precision" })
+	@Column({ type: "double precision" })
 	public satFatPerBaseAmount: number;
 
-	@Column({ name: "carbohydrate_per_100", type: "double precision" })
+	@Column({ type: "double precision" })
 	public carbohydratePerBaseAmount: number;
 
-	@Column({ name: "sugar_per_100", type: "double precision" })
+	@Column({ type: "double precision" })
 	public sugarPerBaseAmount: number;
 
-	@Column({ name: "fibre_per_100", type: "double precision" })
+	@Column({ type: "double precision" })
 	public fibrePerBaseAmount: number;
 
-	@Column({ name: "protein_per_100", type: "double precision" })
+	@Column({ type: "double precision" })
 	public proteinPerBaseAmount: number;
 
-	@Column({ name: "salt_per_100", type: "double precision" })
+	@Column({ type: "double precision" })
 	public saltPerBaseAmount: number;
 
 	@OneToMany(
