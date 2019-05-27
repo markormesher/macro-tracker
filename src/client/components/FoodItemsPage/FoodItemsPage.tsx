@@ -115,14 +115,15 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
 	}
 
 	private tableRowRenderer(foodItem: IFoodItem): ReactElement<void> {
-		const sizes = (foodItem.servingSizes || [])
-				.filter((ss) => !ss.deleted)
-				.sort(servingSizeComparator)
-				.map((ss) => `${ss.label} (${formatMeasurement(ss.measurement, foodItem.measurementUnit)})`);
 		let sizeList: ReactNode = null;
-		if (sizes.length > 0) {
-			sizeList = (
-					<span className={combine(bs.textMuted, bs.dNone, bs.dMdInlineBlock)}>
+		if (foodItem.measurementUnit !== "single_serving") {
+			const sizes = (foodItem.servingSizes || [])
+					.filter((ss) => !ss.deleted)
+					.sort(servingSizeComparator)
+					.map((ss) => `${ss.label} (${formatMeasurement(ss.measurement, foodItem.measurementUnit)})`);
+			if (sizes.length > 0) {
+				sizeList = (
+						<span className={combine(bs.textMuted, bs.dNone, bs.dMdInlineBlock)}>
 						<span className={combine(bs.small, bs.textMuted, bs.mx1)}>
 							&bull;
 						</span>
@@ -130,7 +131,8 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
 							{sizes.join(", ")}
 						</span>
 					</span>
-			);
+				);
+			}
 		}
 
 		return (

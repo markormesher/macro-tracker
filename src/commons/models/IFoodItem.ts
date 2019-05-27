@@ -13,14 +13,14 @@ interface IFoodItem extends IBaseModel {
 	readonly name: string;
 	readonly upc: string;
 	readonly measurementUnit: FoodMeasurementUnit;
-	readonly caloriesPer100: number;
-	readonly fatPer100: number;
-	readonly satFatPer100: number;
-	readonly carbohydratePer100: number;
-	readonly sugarPer100: number;
-	readonly fibrePer100: number;
-	readonly proteinPer100: number;
-	readonly saltPer100: number;
+	readonly caloriesPerBaseAmount: number;
+	readonly fatPerBaseAmount: number;
+	readonly satFatPerBaseAmount: number;
+	readonly carbohydratePerBaseAmount: number;
+	readonly sugarPerBaseAmount: number;
+	readonly fibrePerBaseAmount: number;
+	readonly proteinPerBaseAmount: number;
+	readonly saltPerBaseAmount: number;
 
 	readonly servingSizes: IServingSize[];
 	readonly diaryEntries: IDiaryEntry[];
@@ -36,14 +36,14 @@ interface IFoodItemValidationResultErrors {
 	readonly name?: string;
 	readonly upc?: string;
 	readonly measurementUnit?: string;
-	readonly caloriesPer100?: string;
-	readonly fatPer100?: string;
-	readonly satFatPer100?: string;
-	readonly carbohydratePer100?: string;
-	readonly sugarPer100?: string;
-	readonly fibrePer100?: string;
-	readonly proteinPer100?: string;
-	readonly saltPer100?: string;
+	readonly caloriesPerBaseAmount?: string;
+	readonly fatPerBaseAmount?: string;
+	readonly satFatPerBaseAmount?: string;
+	readonly carbohydratePerBaseAmount?: string;
+	readonly sugarPerBaseAmount?: string;
+	readonly fibrePerBaseAmount?: string;
+	readonly proteinPerBaseAmount?: string;
+	readonly saltPerBaseAmount?: string;
 }
 
 function mapFoodItemFromJson(json?: IJsonObject): IFoodItem {
@@ -58,14 +58,14 @@ function mapFoodItemFromJson(json?: IJsonObject): IFoodItem {
 		name: cleanString(json.name as string),
 		upc: cleanString(json.upc as string),
 		measurementUnit: cleanString(json.measurementUnit as string) as FoodMeasurementUnit,
-		caloriesPer100: parseFloat(json.caloriesPer100 as string),
-		fatPer100: parseFloat(json.fatPer100 as string),
-		satFatPer100: parseFloat(json.satFatPer100 as string),
-		carbohydratePer100: parseFloat(json.carbohydratePer100 as string),
-		sugarPer100: parseFloat(json.sugarPer100 as string),
-		fibrePer100: parseFloat(json.fibrePer100 as string),
-		proteinPer100: parseFloat(json.proteinPer100 as string),
-		saltPer100: parseFloat(json.saltPer100 as string),
+		caloriesPerBaseAmount: parseFloat(json.caloriesPerBaseAmount as string),
+		fatPerBaseAmount: parseFloat(json.fatPerBaseAmount as string),
+		satFatPerBaseAmount: parseFloat(json.satFatPerBaseAmount as string),
+		carbohydratePerBaseAmount: parseFloat(json.carbohydratePerBaseAmount as string),
+		sugarPerBaseAmount: parseFloat(json.sugarPerBaseAmount as string),
+		fibrePerBaseAmount: parseFloat(json.fibrePerBaseAmount as string),
+		proteinPerBaseAmount: parseFloat(json.proteinPerBaseAmount as string),
+		saltPerBaseAmount: parseFloat(json.saltPerBaseAmount as string),
 		servingSizes: safeMapEntities(mapServingSizeFromJson, json.servingSizes as IJsonArray),
 		diaryEntries: safeMapEntities(mapDiaryEntryFromJson, json.diaryEntries as IJsonArray),
 	};
@@ -83,14 +83,14 @@ function mapFoodItemToJson(foodItem?: IFoodItem): IJsonObject {
 		name: foodItem.name,
 		upc: foodItem.upc,
 		measurementUnit: foodItem.measurementUnit,
-		caloriesPer100: foodItem.caloriesPer100,
-		fatPer100: foodItem.fatPer100,
-		satFatPer100: foodItem.satFatPer100,
-		carbohydratePer100: foodItem.carbohydratePer100,
-		sugarPer100: foodItem.sugarPer100,
-		fibrePer100: foodItem.fibrePer100,
-		proteinPer100: foodItem.proteinPer100,
-		saltPer100: foodItem.saltPer100,
+		caloriesPerBaseAmount: foodItem.caloriesPerBaseAmount,
+		fatPerBaseAmount: foodItem.fatPerBaseAmount,
+		satFatPerBaseAmount: foodItem.satFatPerBaseAmount,
+		carbohydratePerBaseAmount: foodItem.carbohydratePerBaseAmount,
+		sugarPerBaseAmount: foodItem.sugarPerBaseAmount,
+		fibrePerBaseAmount: foodItem.fibrePerBaseAmount,
+		proteinPerBaseAmount: foodItem.proteinPerBaseAmount,
+		saltPerBaseAmount: foodItem.saltPerBaseAmount,
 		servingSizes: safeMapEntities(mapServingSizeToJson, foodItem.servingSizes),
 		diaryEntries: safeMapEntities(mapDiaryEntryToJson, foodItem.diaryEntries),
 	};
@@ -144,14 +144,14 @@ function validateFoodItem(foodItem?: Partial<IFoodItem>): IFoodItemValidationRes
 	}
 
 	const nutritionProperties: Array<[string, keyof IFoodItem & keyof IFoodItemValidationResultErrors]> = [
-		["calories", "caloriesPer100"],
-		["fat", "fatPer100"],
-		["sat. fat", "satFatPer100"],
-		["carbohydrates", "carbohydratePer100"],
-		["sugar", "sugarPer100"],
-		["fibre", "fibrePer100"],
-		["protein", "proteinPer100"],
-		["salt", "saltPer100"],
+		["calories", "caloriesPerBaseAmount"],
+		["fat", "fatPerBaseAmount"],
+		["sat. fat", "satFatPerBaseAmount"],
+		["carbohydrates", "carbohydratePerBaseAmount"],
+		["sugar", "sugarPerBaseAmount"],
+		["fibre", "fibrePerBaseAmount"],
+		["protein", "proteinPerBaseAmount"],
+		["salt", "saltPerBaseAmount"],
 	];
 
 	nutritionProperties.forEach((property) => {
@@ -188,14 +188,14 @@ function getDefaultFoodItem(): IFoodItem {
 		name: null,
 		upc: null,
 		measurementUnit: "g",
-		caloriesPer100: 0,
-		fatPer100: 0,
-		satFatPer100: 0,
-		carbohydratePer100: 0,
-		sugarPer100: 0,
-		fibrePer100: 0,
-		proteinPer100: 0,
-		saltPer100: 0,
+		caloriesPerBaseAmount: 0,
+		fatPerBaseAmount: 0,
+		satFatPerBaseAmount: 0,
+		carbohydratePerBaseAmount: 0,
+		sugarPerBaseAmount: 0,
+		fibrePerBaseAmount: 0,
+		proteinPerBaseAmount: 0,
+		saltPerBaseAmount: 0,
 
 		servingSizes: [],
 		diaryEntries: [],

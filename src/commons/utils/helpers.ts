@@ -1,13 +1,23 @@
-function groupBy<T>(data: T[], identifier: (entity: T) => string | number):
-		{ readonly [key: string]: T[] } | { readonly [key: number]: T[] } {
-	const empty: { [key: string]: T[] } = {};
-	return data.reduce((returnVal, entity) => {
-		const key = identifier(entity);
-		(returnVal[identifier(entity)] = returnVal[key] || []).push(entity);
-		return returnVal;
-	}, empty);
+import { IDiaryEntry } from "../models/IDiaryEntry";
+import { IFoodItem } from "../models/IFoodItem";
+
+function getTotalDiaryEntryMeasurement(diaryEntry: IDiaryEntry): number {
+	if (diaryEntry.foodItem.measurementUnit === "single_serving" || !diaryEntry.servingSize) {
+		return diaryEntry.servingQty;
+	} else {
+		return diaryEntry.servingQty * diaryEntry.servingSize.measurement;
+	}
+}
+
+function getNutritionBaseAmount(foodItem: IFoodItem): number {
+	if (foodItem.measurementUnit === "single_serving") {
+		return 1;
+	} else {
+		return 100;
+	}
 }
 
 export {
-	groupBy,
+	getTotalDiaryEntryMeasurement,
+	getNutritionBaseAmount,
 };

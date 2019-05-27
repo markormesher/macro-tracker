@@ -74,14 +74,14 @@ function mapFoodItemFromNutritionixApi(foodItem?: INutritionixFoodItem, upc?: st
 		name: foodItem.food_name,
 		upc,
 		measurementUnit,
-		caloriesPer100: roundToDp(foodItem.nf_calories * conversionFactor, 1),
-		fatPer100: roundToDp(foodItem.nf_total_fat * conversionFactor, 1),
-		satFatPer100: roundToDp(foodItem.nf_saturated_fat * conversionFactor, 1),
-		carbohydratePer100: roundToDp(foodItem.nf_total_carbohydrate * conversionFactor, 1),
-		sugarPer100: roundToDp(foodItem.nf_sugars * conversionFactor, 1),
-		fibrePer100: roundToDp(foodItem.nf_dietary_fiber * conversionFactor, 1),
-		proteinPer100: roundToDp(foodItem.nf_protein * conversionFactor, 1),
-		saltPer100: roundToDp(foodItem.nf_sodium * conversionFactor / 400, 1), // 1g salt ~= 400mg sodium
+		caloriesPerBaseAmount: roundToDp(foodItem.nf_calories * conversionFactor, 1),
+		fatPerBaseAmount: roundToDp(foodItem.nf_total_fat * conversionFactor, 1),
+		satFatPerBaseAmount: roundToDp(foodItem.nf_saturated_fat * conversionFactor, 1),
+		carbohydratePerBaseAmount: roundToDp(foodItem.nf_total_carbohydrate * conversionFactor, 1),
+		sugarPerBaseAmount: roundToDp(foodItem.nf_sugars * conversionFactor, 1),
+		fibrePerBaseAmount: roundToDp(foodItem.nf_dietary_fiber * conversionFactor, 1),
+		proteinPerBaseAmount: roundToDp(foodItem.nf_protein * conversionFactor, 1),
+		saltPerBaseAmount: roundToDp(foodItem.nf_sodium * conversionFactor / 400, 1), // 1g salt ~= 400mg sodium
 		servingSizes: [],
 		diaryEntries: [],
 	};

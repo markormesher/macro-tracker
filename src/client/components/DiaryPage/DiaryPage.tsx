@@ -10,6 +10,7 @@ import { IDiaryEntry } from "../../../commons/models/IDiaryEntry";
 import { IExerciseEntry } from "../../../commons/models/IExerciseEntry";
 import { IMacroSummary } from "../../../commons/models/IMacroSummary";
 import { momentToDateKey, momentToUrlString, urlStringToMoment } from "../../../commons/utils/dates";
+import { getNutritionBaseAmount, getTotalDiaryEntryMeasurement } from "../../../commons/utils/helpers";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatLargeNumber, formatMeasurement, getMealTitle } from "../../helpers/formatters";
@@ -349,12 +350,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 	private renderDiaryEntry(entry: IDiaryEntry): ReactNode {
 		const { foodItem, servingSize } = entry;
 
-		let totalMeasurement: number;
-		if (servingSize) {
-			totalMeasurement = entry.servingQty * servingSize.measurement;
-		} else {
-			totalMeasurement = entry.servingQty;
-		}
+		const totalMeasurement = getTotalDiaryEntryMeasurement(entry);
 
 		const infoChunks: ReactNode[] = [];
 
@@ -364,7 +360,13 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 				</span>
 		));
 
-		if (servingSize) {
+		if (foodItem.measurementUnit === "single_serving") {
+			infoChunks.push((
+					<span key={`info-chunk-serving-size`} className={combine(bs.textMuted, bs.small)}>
+						{entry.servingQty} serving
+					</span>
+			));
+		} else if (servingSize) {
 			infoChunks.push((
 					<span key={`info-chunk-serving-size`} className={combine(bs.textMuted, bs.small)}>
 						{entry.servingQty} {servingSize.label}
@@ -380,7 +382,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 
 		infoChunks.push((
 				<span key={`info-chunk-calories`} className={combine(bs.textMuted, bs.small)}>
-					{formatLargeNumber(totalMeasurement * foodItem.caloriesPer100 / 100)} kcal
+					{formatLargeNumber(totalMeasurement * foodItem.caloriesPerBaseAmount / getNutritionBaseAmount(foodItem))} kcal
 				</span>
 		));
 

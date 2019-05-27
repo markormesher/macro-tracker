@@ -50,9 +50,19 @@ async function saveDiaryEntry(diaryEntryId: string, values: IDiaryEntry): Promis
 				values = {
 					...values,
 					lastEdit: utcMoment(),
+
+					// remove serving size on non-measured food items
+					servingSize: values.foodItem.measurementUnit === "single_serving" ? null : values.servingSize,
 				};
 
 				diaryEntry = DbDiaryEntry.getRepository().merge(diaryEntry || new DbDiaryEntry(), values);
+
+				// typeorm doesn't merge nulls properly
+				// TODO: make this less property-specific
+				if (values.servingSize === null) {
+					diaryEntry.servingSize = null;
+				}
+
 				return diaryEntry.save();
 			});
 }

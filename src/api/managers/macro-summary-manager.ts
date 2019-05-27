@@ -4,6 +4,7 @@ import { IDiaryEntry } from "../../commons/models/IDiaryEntry";
 import { IExerciseEntry } from "../../commons/models/IExerciseEntry";
 import { IMacroSummary } from "../../commons/models/IMacroSummary";
 import { getDefaultTarget, ITarget } from "../../commons/models/ITarget";
+import { getNutritionBaseAmount, getTotalDiaryEntryMeasurement } from "../../commons/utils/helpers";
 import { getDiaryEntriesForDate } from "./diary-entry-manager";
 import { getExerciseEntriesForDate } from "./exercise-entry-manager";
 import { getTargetForDate } from "./targets-manager";
@@ -20,17 +21,31 @@ function generateMacroSummary(
 	const targetFat = targetCalories * target.proportionFat / CALORIES_PER_G_FAT;
 	const targetProtein = targetCalories * target.proportionProtein / CALORIES_PER_G_PROTEIN;
 
-	const totalCalories = diaryEntries
-			.map((e) => e.foodItem.caloriesPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
+	// reduce each entry to an array of macros
+	const nutritionAmounts = diaryEntries
+			.map((e) => {
+				const totalMeasurement = getTotalDiaryEntryMeasurement(e);
+				const baseAmount = getNutritionBaseAmount(e.foodItem);
+
+				return [
+					e.foodItem.caloriesPerBaseAmount * totalMeasurement / baseAmount,
+					e.foodItem.carbohydratePerBaseAmount * totalMeasurement / baseAmount,
+					e.foodItem.fatPerBaseAmount * totalMeasurement / baseAmount,
+					e.foodItem.proteinPerBaseAmount * totalMeasurement / baseAmount,
+				];
+			});
+
+	const totalCalories = nutritionAmounts
+			.map((a) => a[0])
 			.reduce((a, b) => a + b, 0);
-	const totalCarbohydrates = diaryEntries
-			.map((e) => e.foodItem.carbohydratePer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
+	const totalCarbohydrates = nutritionAmounts
+			.map((a) => a[1])
 			.reduce((a, b) => a + b, 0);
-	const totalFat = diaryEntries
-			.map((e) => e.foodItem.fatPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
+	const totalFat = nutritionAmounts
+			.map((a) => a[2])
 			.reduce((a, b) => a + b, 0);
-	const totalProtein = diaryEntries
-			.map((e) => e.foodItem.proteinPer100 * e.servingQty * (e.servingSize ? e.servingSize.measurement : 1) / 100)
+	const totalProtein = nutritionAmounts
+			.map((a) => a[3])
 			.reduce((a, b) => a + b, 0);
 
 	return {

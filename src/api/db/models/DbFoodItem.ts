@@ -21,29 +21,29 @@ class DbFoodItem extends BaseModel implements IFoodItem {
 	@Column({ type: "character varying" })
 	public measurementUnit: FoodMeasurementUnit;
 
-	@Column({ type: "double precision" })
-	public caloriesPer100: number;
+	@Column({ name: "calories_per_100", type: "double precision" })
+	public caloriesPerBaseAmount: number;
 
-	@Column({ type: "double precision" })
-	public fatPer100: number;
+	@Column({ name: "fat_per_100", type: "double precision" })
+	public fatPerBaseAmount: number;
 
-	@Column({ type: "double precision" })
-	public satFatPer100: number;
+	@Column({ name: "sat_fat_per_100", type: "double precision" })
+	public satFatPerBaseAmount: number;
 
-	@Column({ type: "double precision" })
-	public carbohydratePer100: number;
+	@Column({ name: "carbohydrate_per_100", type: "double precision" })
+	public carbohydratePerBaseAmount: number;
 
-	@Column({ type: "double precision" })
-	public sugarPer100: number;
+	@Column({ name: "sugar_per_100", type: "double precision" })
+	public sugarPerBaseAmount: number;
 
-	@Column({ type: "double precision" })
-	public fibrePer100: number;
+	@Column({ name: "fibre_per_100", type: "double precision" })
+	public fibrePerBaseAmount: number;
 
-	@Column({ type: "double precision" })
-	public proteinPer100: number;
+	@Column({ name: "protein_per_100", type: "double precision" })
+	public proteinPerBaseAmount: number;
 
-	@Column({ type: "double precision" })
-	public saltPer100: number;
+	@Column({ name: "salt_per_100", type: "double precision" })
+	public saltPerBaseAmount: number;
 
 	@OneToMany(
 			/* istanbul ignore next */

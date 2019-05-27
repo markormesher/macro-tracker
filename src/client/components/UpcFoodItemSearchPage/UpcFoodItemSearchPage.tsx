@@ -7,7 +7,7 @@ import { Dispatch } from "redux";
 import { IFoodItem } from "../../../commons/models/IFoodItem";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
-import { formatLargeNumber, formatMeasurement } from "../../helpers/formatters";
+import { formatLargeNumber, formatMeasurement, renderNutritionBaseSize } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { setEditorResult, startSaveFoodItem } from "../../redux/food-items";
 import { ActionResult } from "../../redux/helpers/ActionResult";
@@ -201,25 +201,25 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 
 				infoChunks.push((
 						<span key={`info-chunk-calories`}>
-							{formatLargeNumber(fi.caloriesPer100)} kcal
+							{formatLargeNumber(fi.caloriesPerBaseAmount)} kcal
 						</span>
 				));
 
 				infoChunks.push((
 						<span key={`info-chunk-fat`}>
-							{formatMeasurement(fi.fatPer100, "g")} fat
+							{formatMeasurement(fi.fatPerBaseAmount, "g")} fat
 						</span>
 				));
 
 				infoChunks.push((
 						<span key={`info-chunk-carbohydrates`}>
-							{formatMeasurement(fi.carbohydratePer100, "g")} carbs
+							{formatMeasurement(fi.carbohydratePerBaseAmount, "g")} carbs
 						</span>
 				));
 
 				infoChunks.push((
 						<span key={`info-chunk-protein`}>
-							{formatMeasurement(fi.proteinPer100, "g")} protein
+							{formatMeasurement(fi.proteinPerBaseAmount, "g")} protein
 						</span>
 				));
 
@@ -271,7 +271,7 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 									</span>
 									<br/>
 									<span className={combine(bs.textMuted, bs.small)}>
-										Per {formatMeasurement(100, fi.measurementUnit)}: {infoChunks}
+										Per {renderNutritionBaseSize(fi)}: {infoChunks}
 									</span>
 								</p>
 								<div

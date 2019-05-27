@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { FoodMeasurementUnit, Meal } from "../../commons/enums";
 import { IFoodItem } from "../../commons/models/IFoodItem";
 import { utcMoment } from "../../commons/utils/dates";
+import { getNutritionBaseAmount } from "../../commons/utils/helpers";
 import * as bs from "../global-styles/Bootstrap.scss";
 import { combine } from "./style-helpers";
 
@@ -80,6 +81,14 @@ function getMealTitle(meal: Meal): string {
 	return "";
 }
 
+function renderNutritionBaseSize(foodItem: IFoodItem): string {
+	if (foodItem.measurementUnit === "single_serving") {
+		return "serving";
+	} else {
+		return formatMeasurement(getNutritionBaseAmount(foodItem), foodItem.measurementUnit);
+	}
+}
+
 function renderFoodItemSummary(
 		foodItem: IFoodItem,
 		pClass?: string,
@@ -89,25 +98,25 @@ function renderFoodItemSummary(
 
 	infoChunks.push((
 			<span key={`info-chunk-calories`}>
-				{formatLargeNumber(foodItem.caloriesPer100)} kcal
+				{formatLargeNumber(foodItem.caloriesPerBaseAmount)} kcal
 			</span>
 	));
 
 	infoChunks.push((
 			<span key={`info-chunk-fat`}>
-				{formatMeasurement(foodItem.fatPer100, "g")} fat
+				{formatMeasurement(foodItem.fatPerBaseAmount, "g")} fat
 			</span>
 	));
 
 	infoChunks.push((
 			<span key={`info-chunk-carbohydrates`}>
-				{formatMeasurement(foodItem.carbohydratePer100, "g")} carbs
+				{formatMeasurement(foodItem.carbohydratePerBaseAmount, "g")} carbs
 			</span>
 	));
 
 	infoChunks.push((
 			<span key={`info-chunk-protein`}>
-				{formatMeasurement(foodItem.proteinPer100, "g")} protein
+				{formatMeasurement(foodItem.proteinPerBaseAmount, "g")} protein
 			</span>
 	));
 
@@ -128,7 +137,7 @@ function renderFoodItemSummary(
 				</span>
 				<br/>
 				<span className={combine(bs.textMuted, bs.small)}>
-					Per {formatMeasurement(100, foodItem.measurementUnit)}: {infoChunks}
+					Per {renderNutritionBaseSize(foodItem)}: {infoChunks}
 				</span>
 			</p>
 	);
@@ -141,5 +150,6 @@ export {
 	formatMeasurement,
 	formatDate,
 	getMealTitle,
+	renderNutritionBaseSize,
 	renderFoodItemSummary,
 };

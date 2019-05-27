@@ -21,12 +21,13 @@ class ServingPicker extends PureComponent<IServingPickerProps> {
 	constructor(props: IServingPickerProps, context: any) {
 		super(props, context);
 
+		this.renderServingSizeSelector = this.renderServingSizeSelector.bind(this);
 		this.handleServingQtyChange = this.handleServingQtyChange.bind(this);
 		this.handleServingSizeChange = this.handleServingSizeChange.bind(this);
 	}
 
 	public render(): ReactNode {
-		const { foodItem, servingQty, servingSize, disabled } = this.props;
+		const { foodItem, servingQty, disabled } = this.props;
 
 		return (
 				<div className={bs.row}>
@@ -45,27 +46,52 @@ class ServingPicker extends PureComponent<IServingPickerProps> {
 						/>
 					</div>
 					<div className={bs.col6}>
-						<ControlledSelectInput
-								id={"servingSize"}
-								label={null}
-								value={servingSize ? servingSize.id : ""}
-								onValueChange={this.handleServingSizeChange}
-								disabled={disabled || !foodItem}
-						>
-							{foodItem && foodItem.servingSizes.sort(servingSizeComparator).map((ss) => (
-									<option value={ss.id} key={ss.id}>
-										{ss.label} ({formatMeasurement(ss.measurement, foodItem.measurementUnit)})
-									</option>
-							))}
-							{foodItem && (
-									<option value={""}>
-										{formatMeasurementUnit(foodItem.measurementUnit)}
-									</option>
-							)}
-						</ControlledSelectInput>
+						{this.renderServingSizeSelector()}
 					</div>
 				</div>
 		);
+	}
+
+	private renderServingSizeSelector(): ReactNode {
+		const { foodItem, servingSize, disabled } = this.props;
+
+		if (!foodItem) {
+			return null;
+		}
+
+		if (foodItem.measurementUnit === "single_serving") {
+			return (
+					<ControlledSelectInput
+							id={"servingSize"}
+							label={null}
+							value={""}
+							disabled={true}
+					>
+						<option>serving</option>
+					</ControlledSelectInput>
+			);
+		} else {
+			return (
+					<ControlledSelectInput
+							id={"servingSize"}
+							label={null}
+							value={servingSize ? servingSize.id : ""}
+							onValueChange={this.handleServingSizeChange}
+							disabled={disabled || !foodItem}
+					>
+						{foodItem && foodItem.servingSizes.sort(servingSizeComparator).map((ss) => (
+								<option value={ss.id} key={ss.id}>
+									{ss.label} ({formatMeasurement(ss.measurement, foodItem.measurementUnit)})
+								</option>
+						))}
+						{foodItem && (
+								<option value={""}>
+									{formatMeasurementUnit(foodItem.measurementUnit)}
+								</option>
+						)}
+					</ControlledSelectInput>
+			);
+		}
 	}
 
 	private handleServingQtyChange(value: string): void {

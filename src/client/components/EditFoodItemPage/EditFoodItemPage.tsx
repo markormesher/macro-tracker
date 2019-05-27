@@ -15,7 +15,7 @@ import {
 } from "../../../commons/models/IFoodItem";
 import { getDefaultServingSize, IServingSize } from "../../../commons/models/IServingSize";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { formatMeasurement, formatMeasurementUnit } from "../../helpers/formatters";
+import { formatMeasurementUnit, renderNutritionBaseSize } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { setEditorResult, startLoadAllFoodItems, startLoadFoodItem, startSaveFoodItem } from "../../redux/food-items";
 import { ActionResult } from "../../redux/helpers/ActionResult";
@@ -99,14 +99,14 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 		this.handleNameChange = this.handleNameChange.bind(this);
 		this.handleUpcChange = this.handleUpcChange.bind(this);
 		this.handleMeasurementUnitChange = this.handleMeasurementUnitChange.bind(this);
-		this.handleCaloriesPer100Change = this.handleCaloriesPer100Change.bind(this);
-		this.handleFatPer100Change = this.handleFatPer100Change.bind(this);
-		this.handleSatFatPer100Change = this.handleSatFatPer100Change.bind(this);
-		this.handleCarbohydratePer100Change = this.handleCarbohydratePer100Change.bind(this);
-		this.handleSugarPer100Change = this.handleSugarPer100Change.bind(this);
-		this.handleFibrePer100Change = this.handleFibrePer100Change.bind(this);
-		this.handleProteinPer100Change = this.handleProteinPer100Change.bind(this);
-		this.handleSaltPer100Change = this.handleSaltPer100Change.bind(this);
+		this.handleCaloriesPerBaseAmountChange = this.handleCaloriesPerBaseAmountChange.bind(this);
+		this.handleFatPerBaseAmountChange = this.handleFatPerBaseAmountChange.bind(this);
+		this.handleSatFatPerBaseAmountChange = this.handleSatFatPerBaseAmountChange.bind(this);
+		this.handleCarbohydratePerBaseAmountChange = this.handleCarbohydratePerBaseAmountChange.bind(this);
+		this.handleSugarPerBaseAmountChange = this.handleSugarPerBaseAmountChange.bind(this);
+		this.handleFibrePerBaseAmountChange = this.handleFibrePerBaseAmountChange.bind(this);
+		this.handleProteinPerBaseAmountChange = this.handleProteinPerBaseAmountChange.bind(this);
+		this.handleSaltPerBaseAmountChange = this.handleSaltPerBaseAmountChange.bind(this);
 		this.handleServingSizeLabelChange = this.handleServingSizeLabelChange.bind(this);
 		this.handleServingSizeMeasurementChange = this.handleServingSizeMeasurementChange.bind(this);
 		this.updateServingSizes = this.updateServingSizes.bind(this);
@@ -253,7 +253,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<label>Measurement Unit</label>
 										<div className={bs.row}>
-											<div className={bs.col6}>
+											<div className={bs.col4}>
 												<ControlledRadioInput
 														id={"measurementUnit_g"}
 														name={"measurementUnit"}
@@ -264,7 +264,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 														disabled={editorBusy}
 												/>
 											</div>
-											<div className={bs.col6}>
+											<div className={bs.col4}>
 												<ControlledRadioInput
 														id={"measurementUnit_ml"}
 														name={"measurementUnit"}
@@ -275,17 +275,28 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 														disabled={editorBusy}
 												/>
 											</div>
+											<div className={bs.col4}>
+												<ControlledRadioInput
+														id={"measurementUnit_single_serving"}
+														name={"measurementUnit"}
+														label={"serving"}
+														checked={currentValue.measurementUnit === "single_serving"}
+														value={"single_serving"}
+														onValueChange={this.handleMeasurementUnitChange}
+														disabled={editorBusy}
+												/>
+											</div>
 										</div>
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
-												id={"caloriesPer100"}
-												label={`Calories per ${formatMeasurement(100, currentValue.measurementUnit)}`}
+												id={"caloriesPerBaseAmount"}
+												label={`Calories per ${renderNutritionBaseSize(currentValue)}`}
 												placeholder={"Calories"}
-												value={ControlledTextInput.safeNumericValue(currentValue.caloriesPer100)}
-												onValueChange={this.handleCaloriesPer100Change}
+												value={ControlledTextInput.safeNumericValue(currentValue.caloriesPerBaseAmount)}
+												onValueChange={this.handleCaloriesPerBaseAmountChange}
 												disabled={editorBusy}
-												error={errors.caloriesPer100}
+												error={errors.caloriesPerBaseAmount}
 												inputProps={{
 													type: "number",
 												}}
@@ -293,13 +304,13 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
-												id={"fatPer100"}
-												label={`Fat per ${formatMeasurement(100, currentValue.measurementUnit)}`}
+												id={"fatPerBaseAmount"}
+												label={`Fat per ${renderNutritionBaseSize(currentValue)}`}
 												placeholder={"Fat"}
-												value={ControlledTextInput.safeNumericValue(currentValue.fatPer100)}
-												onValueChange={this.handleFatPer100Change}
+												value={ControlledTextInput.safeNumericValue(currentValue.fatPerBaseAmount)}
+												onValueChange={this.handleFatPerBaseAmountChange}
 												disabled={editorBusy}
-												error={errors.fatPer100}
+												error={errors.fatPerBaseAmount}
 												inputProps={{
 													type: "number",
 												}}
@@ -307,13 +318,13 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
-												id={"satFatPer100"}
-												label={`Sat. Fat per ${formatMeasurement(100, currentValue.measurementUnit)}`}
+												id={"satFatPerBaseAmount"}
+												label={`Sat. Fat per ${renderNutritionBaseSize(currentValue)}`}
 												placeholder={"Sat. Fat"}
-												value={ControlledTextInput.safeNumericValue(currentValue.satFatPer100)}
-												onValueChange={this.handleSatFatPer100Change}
+												value={ControlledTextInput.safeNumericValue(currentValue.satFatPerBaseAmount)}
+												onValueChange={this.handleSatFatPerBaseAmountChange}
 												disabled={editorBusy}
-												error={errors.satFatPer100}
+												error={errors.satFatPerBaseAmount}
 												inputProps={{
 													type: "number",
 												}}
@@ -321,13 +332,13 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
-												id={"carbohydratesPer100"}
-												label={`Carbohydrates per ${formatMeasurement(100, currentValue.measurementUnit)}`}
+												id={"carbohydratesPerBaseAmount"}
+												label={`Carbohydrates per ${renderNutritionBaseSize(currentValue)}`}
 												placeholder={"Carbohydrates"}
-												value={ControlledTextInput.safeNumericValue(currentValue.carbohydratePer100)}
-												onValueChange={this.handleCarbohydratePer100Change}
+												value={ControlledTextInput.safeNumericValue(currentValue.carbohydratePerBaseAmount)}
+												onValueChange={this.handleCarbohydratePerBaseAmountChange}
 												disabled={editorBusy}
-												error={errors.carbohydratePer100}
+												error={errors.carbohydratePerBaseAmount}
 												inputProps={{
 													type: "number",
 												}}
@@ -335,13 +346,13 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
-												id={"sugarPer100"}
-												label={`Sugar per ${formatMeasurement(100, currentValue.measurementUnit)}`}
+												id={"sugarPerBaseAmount"}
+												label={`Sugar per ${renderNutritionBaseSize(currentValue)}`}
 												placeholder={"Sugar"}
-												value={ControlledTextInput.safeNumericValue(currentValue.sugarPer100)}
-												onValueChange={this.handleSugarPer100Change}
+												value={ControlledTextInput.safeNumericValue(currentValue.sugarPerBaseAmount)}
+												onValueChange={this.handleSugarPerBaseAmountChange}
 												disabled={editorBusy}
-												error={errors.sugarPer100}
+												error={errors.sugarPerBaseAmount}
 												inputProps={{
 													type: "number",
 												}}
@@ -349,13 +360,13 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
-												id={"fibrePer100"}
-												label={`Fibre per ${formatMeasurement(100, currentValue.measurementUnit)}`}
+												id={"fibrePerBaseAmount"}
+												label={`Fibre per ${renderNutritionBaseSize(currentValue)}`}
 												placeholder={"Fibre"}
-												value={ControlledTextInput.safeNumericValue(currentValue.fibrePer100)}
-												onValueChange={this.handleFibrePer100Change}
+												value={ControlledTextInput.safeNumericValue(currentValue.fibrePerBaseAmount)}
+												onValueChange={this.handleFibrePerBaseAmountChange}
 												disabled={editorBusy}
-												error={errors.fibrePer100}
+												error={errors.fibrePerBaseAmount}
 												inputProps={{
 													type: "number",
 												}}
@@ -363,13 +374,13 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
-												id={"proteinPer100"}
-												label={`Protein per ${formatMeasurement(100, currentValue.measurementUnit)}`}
+												id={"proteinPerBaseAmount"}
+												label={`Protein per ${renderNutritionBaseSize(currentValue)}`}
 												placeholder={"Protein"}
-												value={ControlledTextInput.safeNumericValue(currentValue.proteinPer100)}
-												onValueChange={this.handleProteinPer100Change}
+												value={ControlledTextInput.safeNumericValue(currentValue.proteinPerBaseAmount)}
+												onValueChange={this.handleProteinPerBaseAmountChange}
 												disabled={editorBusy}
-												error={errors.proteinPer100}
+												error={errors.proteinPerBaseAmount}
 												inputProps={{
 													type: "number",
 												}}
@@ -377,22 +388,27 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
-												id={"saltPer100"}
-												label={`Salt per ${formatMeasurement(100, currentValue.measurementUnit)}`}
+												id={"saltPerBaseAmount"}
+												label={`Salt per ${renderNutritionBaseSize(currentValue)}`}
 												placeholder={"Salt"}
-												value={ControlledTextInput.safeNumericValue(currentValue.saltPer100)}
-												onValueChange={this.handleSaltPer100Change}
+												value={ControlledTextInput.safeNumericValue(currentValue.saltPerBaseAmount)}
+												onValueChange={this.handleSaltPerBaseAmountChange}
 												disabled={editorBusy}
-												error={errors.saltPer100}
+												error={errors.saltPerBaseAmount}
 												inputProps={{
 													type: "number",
 												}}
 										/>
 									</div>
-									<div className={combine(bs.col12, bs.formGroup)}>
-										<label>Serving Sizes</label>
-										{this.renderServingSizeInputs()}
-									</div>
+									{
+										currentValue.measurementUnit !== "single_serving"
+										&& <>
+											<div className={combine(bs.col12, bs.formGroup)}>
+												<label>Serving Sizes</label>
+												{this.renderServingSizeInputs()}
+											</div>
+										</>
+									}
 								</div>
 								<div className={bs.row}>
 									<div className={combine(bs.col12, bs.formGroup)}>
@@ -485,36 +501,36 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 		this.updateModel({ measurementUnit });
 	}
 
-	private handleCaloriesPer100Change(value: string): void {
-		this.updateModel({ caloriesPer100: value === "" ? null : parseFloat(value) });
+	private handleCaloriesPerBaseAmountChange(value: string): void {
+		this.updateModel({ caloriesPerBaseAmount: value === "" ? null : parseFloat(value) });
 	}
 
-	private handleFatPer100Change(value: string): void {
-		this.updateModel({ fatPer100: value === "" ? null : parseFloat(value) });
+	private handleFatPerBaseAmountChange(value: string): void {
+		this.updateModel({ fatPerBaseAmount: value === "" ? null : parseFloat(value) });
 	}
 
-	private handleSatFatPer100Change(value: string): void {
-		this.updateModel({ satFatPer100: value === "" ? null : parseFloat(value) });
+	private handleSatFatPerBaseAmountChange(value: string): void {
+		this.updateModel({ satFatPerBaseAmount: value === "" ? null : parseFloat(value) });
 	}
 
-	private handleCarbohydratePer100Change(value: string): void {
-		this.updateModel({ carbohydratePer100: value === "" ? null : parseFloat(value) });
+	private handleCarbohydratePerBaseAmountChange(value: string): void {
+		this.updateModel({ carbohydratePerBaseAmount: value === "" ? null : parseFloat(value) });
 	}
 
-	private handleSugarPer100Change(value: string): void {
-		this.updateModel({ sugarPer100: value === "" ? null : parseFloat(value) });
+	private handleSugarPerBaseAmountChange(value: string): void {
+		this.updateModel({ sugarPerBaseAmount: value === "" ? null : parseFloat(value) });
 	}
 
-	private handleFibrePer100Change(value: string): void {
-		this.updateModel({ fibrePer100: value === "" ? null : parseFloat(value) });
+	private handleFibrePerBaseAmountChange(value: string): void {
+		this.updateModel({ fibrePerBaseAmount: value === "" ? null : parseFloat(value) });
 	}
 
-	private handleProteinPer100Change(value: string): void {
-		this.updateModel({ proteinPer100: value === "" ? null : parseFloat(value) });
+	private handleProteinPerBaseAmountChange(value: string): void {
+		this.updateModel({ proteinPerBaseAmount: value === "" ? null : parseFloat(value) });
 	}
 
-	private handleSaltPer100Change(value: string): void {
-		this.updateModel({ saltPer100: value === "" ? null : parseFloat(value) });
+	private handleSaltPerBaseAmountChange(value: string): void {
+		this.updateModel({ saltPerBaseAmount: value === "" ? null : parseFloat(value) });
 	}
 
 	private handleServingSizeLabelChange(value: string, inputId: string): void {

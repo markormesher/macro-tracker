@@ -7,7 +7,7 @@ interface IControlledSelectInputProps {
 	readonly id: string;
 	readonly label: string | ReactElement<void>;
 	readonly value: string;
-	readonly onValueChange: (newValue: string, id: string) => void;
+	readonly onValueChange?: (newValue: string, id: string) => void;
 	readonly disabled?: boolean;
 	readonly error?: string;
 	readonly selectProps?: Partial<SelectHTMLAttributes<HTMLSelectElement>>;
@@ -59,7 +59,9 @@ class ControlledSelectInput extends PureComponent<IControlledSelectInputProps, I
 	}
 
 	private handleChange(event: FormEvent<HTMLSelectElement>): void {
-		this.props.onValueChange((event.target as HTMLSelectElement).value, this.props.id);
+		if (this.props.onValueChange) {
+			this.props.onValueChange((event.target as HTMLSelectElement).value, this.props.id);
+		}
 	}
 }
 

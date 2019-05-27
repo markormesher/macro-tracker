@@ -1,4 +1,4 @@
-type FoodMeasurementUnit = "g" | "ml";
+type FoodMeasurementUnit = "g" | "ml" | "single_serving";
 
 type Meal = "snacks_1"
 		| "breakfast"
