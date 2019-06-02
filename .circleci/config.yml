@@ -65,8 +65,8 @@ jobs:
       - run:
           name: Maybe Deploy
           command: |
-            # deploy on all master commits for now, not just tagged commits
-            # if ! git describe --exact-match HEAD > /dev/null 2>&1; then echo "Not on tagged commit - nothing to do"; exit 0; fi
+            # deploy tagged commits only
+            if ! git describe --exact-match HEAD > /dev/null 2>&1; then echo "Not on tagged commit - nothing to do"; exit 0; fi
             mkdir -p ~/.ssh
             touch ~/.ssh/known_hosts
             ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
