@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from "axios";
 import * as https from "https";
-import { FoodMeasurementUnit } from "../../commons/enums";
 import { getDefaultFoodItem, IFoodItem } from "../../commons/models/IFoodItem";
 import { ITescoProduct } from "../../commons/models/ITescoProduct";
 import { ITescoUpcSearchResponse } from "../../commons/models/ITescoUpcSearchResponse";
@@ -58,16 +57,14 @@ function mapFoodItemFromTescoApi(product?: ITescoProduct, upc?: string): IFoodIt
 
 	if (product.calcNutrition) {
 		// work out the measurement unit
-		let measurementUnit: FoodMeasurementUnit = "g";
 		if (product.calcNutrition.per100Header) {
 			if (product.calcNutrition.per100Header.indexOf("g") >= 0) {
-				measurementUnit = "g";
+				foodItem = { ...foodItem, measurementUnit: "g" };
 			} else if (product.calcNutrition.per100Header.indexOf("g") >= 0) {
-				measurementUnit = "ml";
+				foodItem = { ...foodItem, measurementUnit: "ml" };
 			} else {
 				logger.debug(`Could not handle per-100 header: ${product.calcNutrition.per100Header}`, { product });
 			}
-			foodItem = { ...foodItem, measurementUnit };
 		}
 
 		// work out nutrition components

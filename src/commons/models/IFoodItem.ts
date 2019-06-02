@@ -13,6 +13,7 @@ interface IFoodItem extends IBaseModel {
 	readonly name: string;
 	readonly upc: string;
 	readonly apiSource: ApiSource;
+	readonly apiId: string;
 	readonly measurementUnit: FoodMeasurementUnit;
 	readonly caloriesPerBaseAmount: number;
 	readonly fatPerBaseAmount: number;
@@ -59,6 +60,7 @@ function mapFoodItemFromJson(json?: IJsonObject): IFoodItem {
 		name: cleanString(json.name as string),
 		upc: cleanString(json.upc as string),
 		apiSource: cleanString(json.apiSource as string) as ApiSource,
+		apiId: cleanString(json.apiId as string),
 		measurementUnit: cleanString(json.measurementUnit as string) as FoodMeasurementUnit,
 		caloriesPerBaseAmount: parseFloat(json.caloriesPerBaseAmount as string),
 		fatPerBaseAmount: parseFloat(json.fatPerBaseAmount as string),
@@ -85,6 +87,7 @@ function mapFoodItemToJson(foodItem?: IFoodItem): IJsonObject {
 		name: foodItem.name,
 		upc: foodItem.upc,
 		apiSource: foodItem.apiSource,
+		apiId: foodItem.apiId,
 		measurementUnit: foodItem.measurementUnit,
 		caloriesPerBaseAmount: foodItem.caloriesPerBaseAmount,
 		fatPerBaseAmount: foodItem.fatPerBaseAmount,
@@ -191,6 +194,7 @@ function getDefaultFoodItem(): IFoodItem {
 		name: null,
 		upc: null,
 		apiSource: null,
+		apiId: null,
 		measurementUnit: "g",
 		caloriesPerBaseAmount: 0,
 		fatPerBaseAmount: 0,

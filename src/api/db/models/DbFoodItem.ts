@@ -21,6 +21,9 @@ class DbFoodItem extends BaseModel implements IFoodItem {
 	@Column({ nullable: true, type: "character varying" })
 	public apiSource: ApiSource;
 
+	@Column({ nullable: true })
+	public apiId: string;
+
 	@Column({ type: "character varying" })
 	public measurementUnit: FoodMeasurementUnit;
 

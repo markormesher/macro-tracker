@@ -10,64 +10,78 @@ import * as gs from "../../global-styles/Global.scss";
 import { formatLargeNumber, formatMeasurement, renderNutritionBaseSize } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { setEditorResult, startSaveFoodItem } from "../../redux/food-items";
-import { startSearchFoodItemByUpc } from "../../redux/food-search-api";
+import { startSearchFoodItemByKeyword, startSearchFoodItemByUpc } from "../../redux/food-search-api";
 import { ActionResult } from "../../redux/helpers/ActionResult";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { IRootState } from "../../redux/root";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { ControlledBarcodeInput } from "../_ui/ControlledBarcodeInput/ControlledBarcodeInput";
+import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 
-interface IUpcFoodItemSearchPageProps {
+interface IFoodItemSearchPageProps {
 	readonly upcSearchBusy?: boolean;
+	readonly keywordSearchBusy?: boolean;
 	readonly searchedFoodItemsByUpc?: { readonly [key: string]: IFoodItem[] };
+	readonly searchedFoodItemsByKeyword?: { readonly [key: string]: IFoodItem[] };
 	readonly editorResult?: ActionResult;
 	readonly lastFoodItemSaved?: IFoodItem;
 	readonly actions?: {
 		readonly resetEditorResult: () => PayloadAction;
 		readonly searchFoodItemByUpc: (upc: string) => PayloadAction;
+		readonly searchFoodItemByKeyword: (keyword: string) => PayloadAction;
 		readonly startSaveFoodItem: (foodItem: IFoodItem) => PayloadAction;
 	};
 }
 
-interface IUpcFoodItemSearchPageState {
+interface IFoodItemSearchPageState {
+	readonly lastSearchMode?: "upc" | "keyword";
 	readonly upcEntered?: string;
+	readonly keywordEntered?: string;
 	readonly upcSearched?: string;
+	readonly keywordSearched?: string;
 }
 
-function mapStateToProps(state: IRootState, props: IUpcFoodItemSearchPageProps): IUpcFoodItemSearchPageProps {
+function mapStateToProps(state: IRootState, props: IFoodItemSearchPageProps): IFoodItemSearchPageProps {
 	return {
 		...props,
 		upcSearchBusy: state.foodSearchApi.upcSearchBusy,
+		keywordSearchBusy: state.foodSearchApi.keywordSearchBusy,
 		searchedFoodItemsByUpc: state.foodSearchApi.searchedFoodItemsByUpc,
+		searchedFoodItemsByKeyword: state.foodSearchApi.searchedFoodItemsByKeyword,
 		editorResult: state.foodItems.editorResult,
 		lastFoodItemSaved: state.foodItems.lastFoodItemSaved,
 	};
 }
 
-function mapDispatchToProps(dispatch: Dispatch, props: IUpcFoodItemSearchPageProps): IUpcFoodItemSearchPageProps {
+function mapDispatchToProps(dispatch: Dispatch, props: IFoodItemSearchPageProps): IFoodItemSearchPageProps {
 	return {
 		...props,
 		actions: {
 			resetEditorResult: () => dispatch(setEditorResult(undefined)),
 			searchFoodItemByUpc: (upc: string) => dispatch(startSearchFoodItemByUpc(upc)),
+			searchFoodItemByKeyword: (keyword: string) => dispatch(startSearchFoodItemByKeyword(keyword)),
 			startSaveFoodItem: (foodItem) => dispatch(startSaveFoodItem(foodItem)),
 		},
 	};
 }
 
-class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps, IUpcFoodItemSearchPageState> {
+class UCFoodItemSearchPage extends PureComponent<IFoodItemSearchPageProps, IFoodItemSearchPageState> {
 
-	constructor(props: IUpcFoodItemSearchPageProps, context: any) {
+	constructor(props: IFoodItemSearchPageProps, context: any) {
 		super(props, context);
 
 		this.state = {
+			lastSearchMode: null,
 			upcEntered: null,
+			keywordEntered: null,
 			upcSearched: null,
+			keywordSearched: null,
 		};
 
 		this.renderSearchResults = this.renderSearchResults.bind(this);
 		this.handleUpcChange = this.handleUpcChange.bind(this);
+		this.handleKeywordChange = this.handleKeywordChange.bind(this);
 		this.handleSearch = this.handleSearch.bind(this);
 		this.createFoodItem = this.createFoodItem.bind(this);
 	}
@@ -77,8 +91,11 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 	}
 
 	public render(): ReactNode {
-		const { upcSearchBusy, editorResult } = this.props;
-		const { upcEntered } = this.state;
+		const { upcSearchBusy, keywordSearchBusy, editorResult } = this.props;
+		const { upcEntered, keywordEntered } = this.state;
+
+		const searchBusy = keywordSearchBusy || upcSearchBusy;
+		const searchBlocked = (!upcEntered && !keywordEntered) || (!!upcEntered && !!keywordEntered);
 
 		let statusMsg: ReactNode = null;
 		if (editorResult === "success") {
@@ -137,7 +154,7 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 					{statusMsg}
 					<div className={bs.row}>
 						<div className={bs.col}>
-							<h1>Food Item UPC Search</h1>
+							<h1>Food Item Search</h1>
 						</div>
 					</div>
 					<div className={bs.row}>
@@ -157,19 +174,31 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 					</div>
 					<div className={bs.row}>
 						<div className={combine(bs.col12, bs.formGroup)}>
+							<ControlledTextInput
+									id={"keyword"}
+									label={"Keyword"}
+									placeholder={"Keyword"}
+									value={keywordEntered || ""}
+									onValueChange={this.handleKeywordChange}
+									disabled={keywordSearchBusy}
+							/>
+						</div>
+					</div>
+					<div className={bs.row}>
+						<div className={combine(bs.col12, bs.formGroup)}>
 							<IconBtn
-									icon={upcSearchBusy ? faCircleNotch : faSearch}
+									icon={searchBusy ? faCircleNotch : faSearch}
 									text={"Search"}
 									onClick={this.handleSearch}
 									btnProps={{
 										className: bs.btnOutlinePrimary,
-										disabled: upcSearchBusy || !upcEntered,
+										disabled: searchBusy || searchBlocked,
 										style: {
 											width: "100%",
 										},
 									}}
 									iconProps={{
-										spin: upcSearchBusy,
+										spin: searchBusy,
 									}}
 							/>
 						</div>
@@ -180,12 +209,19 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 	}
 
 	private renderSearchResults(): ReactNode {
-		const { searchedFoodItemsByUpc, upcSearchBusy } = this.props;
-		const { upcSearched } = this.state;
+		const { searchedFoodItemsByUpc, searchedFoodItemsByKeyword, upcSearchBusy, keywordSearchBusy } = this.props;
+		const { lastSearchMode, upcSearched, keywordSearched } = this.state;
 
-		const searchResults = searchedFoodItemsByUpc[upcSearched];
+		const searchBusy = upcSearchBusy || keywordSearchBusy;
 
-		if (upcSearchBusy || !searchResults) {
+		let searchResults = null;
+		if (lastSearchMode === "upc") {
+			searchResults = searchedFoodItemsByUpc[upcSearched];
+		} else if (lastSearchMode === "keyword") {
+			searchResults = searchedFoodItemsByKeyword[keywordSearched];
+		}
+
+		if (searchBusy || !searchResults) {
 			return null;
 		} else if (searchResults.length === 0) {
 			return (
@@ -246,7 +282,7 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 							</Link>
 					);
 				} else {
-					// item came from remote API
+					// item came from remote API and has nutrition data already
 					btn = (
 							<IconBtn
 									icon={faPlus}
@@ -281,10 +317,15 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 									<span className={combine(bs.textMuted, bs.small)}>
 										{fi.brand}
 									</span>
-									<br/>
-									<span className={combine(bs.textMuted, bs.small)}>
-										Per {renderNutritionBaseSize(fi)}: {infoChunks}
-									</span>
+									{
+										fi.caloriesPerBaseAmount > 0
+										&& <>
+											<br/>
+											<span className={combine(bs.textMuted, bs.small)}>
+												Per {renderNutritionBaseSize(fi)}: {infoChunks}
+											</span>
+										</>
+									}
 								</p>
 								<div
 										className={combine(bs.dInlineBlock, bs.btnGroup, bs.btnGroupSm, bs.flexGrow0, bs.myAuto)}
@@ -303,11 +344,29 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 		this.setState({ upcEntered: upcEntered ? upcEntered.trim() : null });
 	}
 
+	private handleKeywordChange(keywordEntered: string): void {
+		this.setState({ keywordEntered: keywordEntered ? keywordEntered.trim() : null });
+	}
+
 	private handleSearch(): void {
 		const upcEntered = this.state.upcEntered;
+		const keywordEntered = this.state.keywordEntered;
 
-		this.setState({ upcSearched: upcEntered });
-		this.props.actions.searchFoodItemByUpc(upcEntered);
+		if (!!upcEntered) {
+			// search by UPC
+			this.setState({
+				upcSearched: upcEntered,
+				lastSearchMode: "upc",
+			});
+			this.props.actions.searchFoodItemByUpc(upcEntered);
+		} else if (!!keywordEntered) {
+			// search by keyword
+			this.setState({
+				keywordSearched: keywordEntered,
+				lastSearchMode: "keyword",
+			});
+			this.props.actions.searchFoodItemByKeyword(keywordEntered);
+		}
 	}
 
 	private createFoodItem(foodItem: IFoodItem): void {
@@ -315,4 +374,4 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 	}
 }
 
-export const UpcFoodItemSearchPage = connect(mapStateToProps, mapDispatchToProps)(UCUpcFoodItemSearchPage);
+export const FoodItemSearchPage = connect(mapStateToProps, mapDispatchToProps)(UCFoodItemSearchPage);
