@@ -1,6 +1,6 @@
 import { Entity, OneToMany } from "typeorm";
 import { Column } from "typeorm/decorator/columns/Column";
-import { FoodMeasurementUnit } from "../../../commons/enums";
+import { ApiSource, FoodMeasurementUnit } from "../../../commons/enums";
 import { IFoodItem } from "../../../commons/models/IFoodItem";
 import { BaseModel } from "./BaseModel";
 import { DbDiaryEntry } from "./DbDiaryEntry";
@@ -17,6 +17,9 @@ class DbFoodItem extends BaseModel implements IFoodItem {
 
 	@Column({ nullable: true })
 	public upc: string;
+
+	@Column({ nullable: true, type: "character varying" })
+	public apiSource: ApiSource;
 
 	@Column({ type: "character varying" })
 	public measurementUnit: FoodMeasurementUnit;

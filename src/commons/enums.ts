@@ -1,3 +1,5 @@
+type ApiSource = "tesco" | "nutritionix";
+
 type FoodMeasurementUnit = "g" | "ml" | "single_serving";
 
 type Meal = "snacks_1"
@@ -19,6 +21,7 @@ const ALL_MEAL_VALUES: Meal[] = [
 ];
 
 export {
+	ApiSource,
 	FoodMeasurementUnit,
 	Meal,
 	ALL_MEAL_VALUES,

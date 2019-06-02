@@ -15,8 +15,8 @@ async function getFoodItemsFromNutritionixByUpc(upc: string): Promise<IFoodItem[
 	});
 
 	const headers = {
-		"x-app-id": getSecret("nutritionix.app.id"),
-		"x-app-key": getSecret("nutritionix.app.key"),
+		"x-app-id": getSecret("nutritionix-api.id"),
+		"x-app-key": getSecret("nutritionix-api.key"),
 		"x-user-id": 0,
 	};
 
@@ -73,6 +73,7 @@ function mapFoodItemFromNutritionixApi(foodItem?: INutritionixFoodItem, upc?: st
 		brand: foodItem.brand_name,
 		name: foodItem.food_name,
 		upc,
+		apiSource: "nutritionix",
 		measurementUnit,
 		caloriesPerBaseAmount: roundToDp(foodItem.nf_calories * conversionFactor, 1),
 		fatPerBaseAmount: roundToDp(foodItem.nf_total_fat * conversionFactor, 1),

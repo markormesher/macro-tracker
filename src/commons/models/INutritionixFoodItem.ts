@@ -20,7 +20,7 @@ export {
 };
 
 /*
-Example response:
+Example:
 
 {
   "food_name": "High Protein Shake, Carb Killa, Peanut Nutter",

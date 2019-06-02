@@ -5,8 +5,9 @@ import { diaryEntriesRouter } from "../controllers/diary-entry-controller";
 import { exerciseEntriesRouter } from "../controllers/exercise-entry-controller";
 import { foodItemsRouter } from "../controllers/food-item-controller";
 import { macroSummaryRouter } from "../controllers/macro-summary-controller";
-import { nutritionixRouter } from "../controllers/nutritionix-controller";
+import { nutritionixApiRouter } from "../controllers/nutritionix-api-controller";
 import { targetsRouter } from "../controllers/targets-controller";
+import { tescoApiRouter } from "../controllers/tesco-api-controller";
 
 function setupApiRoutes(app: Express): void {
 	app.use("/api/auth", authRouter);
@@ -15,8 +16,9 @@ function setupApiRoutes(app: Express): void {
 	app.use("/api/exercise-entries", exerciseEntriesRouter);
 	app.use("/api/food-items", foodItemsRouter);
 	app.use("/api/macro-summary", macroSummaryRouter);
-	app.use("/api/nutritionix", nutritionixRouter);
+	app.use("/api/nutritionix-api", nutritionixApiRouter);
 	app.use("/api/targets", targetsRouter);
+	app.use("/api/tesco-api", tescoApiRouter);
 }
 
 export {

@@ -8,50 +8,50 @@ import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { IRootState } from "./root";
 
-interface INutritionixState {
+interface IFoodSearchApiState {
 	readonly upcSearchBusy: boolean;
 	readonly searchedFoodItemsByUpc: { readonly [key: string]: IFoodItem[] };
 }
 
-const initialState: INutritionixState = {
+const initialState: IFoodSearchApiState = {
 	upcSearchBusy: false,
 	searchedFoodItemsByUpc: {},
 };
 
-enum NutritionixActions {
-	SET_UPC_SEARCH_BUSY = "NutritionixActions.SET_UPC_SEARCH_BUSY",
-	SET_FOOD_ITEMS_BY_UPC = "NutritionixActions.SET_FOOD_ITEMS_BY_UPC",
+enum FoodSearchApiActions {
+	SET_UPC_SEARCH_BUSY = "FoodSearchApiActions.SET_UPC_SEARCH_BUSY",
+	SET_FOOD_ITEMS_BY_UPC = "FoodSearchApiActions.SET_FOOD_ITEMS_BY_UPC",
 
-	START_SEARCH_FOOD_ITEMS_BY_UPC = "NutritionixActions.START_SEARCH_FOOD_ITEMS_BY_UPC",
+	START_SEARCH_FOOD_ITEMS_BY_UPC = "FoodSearchApiActions.START_SEARCH_FOOD_ITEMS_BY_UPC",
 }
 
 function setUpcSearchBusy(upcSearchBusy: boolean): PayloadAction {
 	return {
-		type: NutritionixActions.SET_UPC_SEARCH_BUSY,
+		type: FoodSearchApiActions.SET_UPC_SEARCH_BUSY,
 		payload: { upcSearchBusy },
 	};
 }
 
 function setFoodItemsByUpc(upc: string, foodItems: IFoodItem[]): PayloadAction {
 	return {
-		type: NutritionixActions.SET_FOOD_ITEMS_BY_UPC,
+		type: FoodSearchApiActions.SET_FOOD_ITEMS_BY_UPC,
 		payload: { upc, foodItems },
 	};
 }
 
 function startSearchFoodItemByUpc(upc: string): PayloadAction {
 	return {
-		type: NutritionixActions.START_SEARCH_FOOD_ITEMS_BY_UPC,
+		type: FoodSearchApiActions.START_SEARCH_FOOD_ITEMS_BY_UPC,
 		payload: { upc },
 	};
 }
 
 function*searchFoodItemByUpcSaga(): Generator {
-	yield takeEvery(NutritionixActions.START_SEARCH_FOOD_ITEMS_BY_UPC, function*(action: PayloadAction): Generator {
+	yield takeEvery(FoodSearchApiActions.START_SEARCH_FOOD_ITEMS_BY_UPC, function*(action: PayloadAction): Generator {
 		const upc: string = action.payload.upc;
 
 		const existingResults: IFoodItem[] = yield select((state: IRootState) => {
-			return state.nutritionix.searchedFoodItemsByUpc[upc];
+			return state.foodSearchApi.searchedFoodItemsByUpc[upc];
 		});
 		if (existingResults !== undefined) {
 			return;
@@ -71,9 +71,18 @@ function*searchFoodItemByUpcSaga(): Generator {
 					put(setUpcSearchBusy(false)),
 				]);
 			} else {
-				const foodItems: IFoodItem[] = yield call(() => axios
-						.get(`/api/nutritionix/search-upc/${upc}`)
+				const tescoFoodItems: IFoodItem[] = yield call(() => axios
+						.get(`/api/tesco-api/search-upc/${upc}`)
 						.then((res) => safeMapEntities(mapFoodItemFromJson, res.data as IJsonArray)));
+
+				const nutritionixFoodItems: IFoodItem[] = yield call(() => axios
+						.get(`/api/nutritionix-api/search-upc/${upc}`)
+						.then((res) => safeMapEntities(mapFoodItemFromJson, res.data as IJsonArray)));
+
+				const foodItems = [
+					...tescoFoodItems,
+					...nutritionixFoodItems,
+				];
 
 				yield all([
 					put(setFoodItemsByUpc(upc, foodItems)),
@@ -86,22 +95,22 @@ function*searchFoodItemByUpcSaga(): Generator {
 	});
 }
 
-function*nutritionixSagas(): Generator {
+function*foodSearchApiSagas(): Generator {
 	yield all([
 		searchFoodItemByUpcSaga(),
 	]);
 }
 
-function nutritionixReducer(state = initialState, action: PayloadAction): INutritionixState {
+function foodSearchApiReducer(state = initialState, action: PayloadAction): IFoodSearchApiState {
 	switch (action.type) {
 
-		case NutritionixActions.SET_UPC_SEARCH_BUSY:
+		case FoodSearchApiActions.SET_UPC_SEARCH_BUSY:
 			return {
 				...state,
 				upcSearchBusy: action.payload.upcSearchBusy,
 			};
 
-		case NutritionixActions.SET_FOOD_ITEMS_BY_UPC:
+		case FoodSearchApiActions.SET_FOOD_ITEMS_BY_UPC:
 			return (() => {
 				let newState = state;
 
@@ -126,9 +135,9 @@ function nutritionixReducer(state = initialState, action: PayloadAction): INutri
 }
 
 export {
-	INutritionixState,
-	nutritionixReducer,
-	nutritionixSagas,
+	IFoodSearchApiState,
+	foodSearchApiReducer,
+	foodSearchApiSagas,
 	setUpcSearchBusy,
 	startSearchFoodItemByUpc,
 };

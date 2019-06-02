@@ -1,4 +1,4 @@
-import { FoodMeasurementUnit } from "../enums";
+import { ApiSource, FoodMeasurementUnit } from "../enums";
 import { cleanUuid, safeMapEntities } from "../utils/entities";
 import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
@@ -12,6 +12,7 @@ interface IFoodItem extends IBaseModel {
 	readonly brand: string;
 	readonly name: string;
 	readonly upc: string;
+	readonly apiSource: ApiSource;
 	readonly measurementUnit: FoodMeasurementUnit;
 	readonly caloriesPerBaseAmount: number;
 	readonly fatPerBaseAmount: number;
@@ -57,6 +58,7 @@ function mapFoodItemFromJson(json?: IJsonObject): IFoodItem {
 		brand: cleanString(json.brand as string),
 		name: cleanString(json.name as string),
 		upc: cleanString(json.upc as string),
+		apiSource: cleanString(json.apiSource as string) as ApiSource,
 		measurementUnit: cleanString(json.measurementUnit as string) as FoodMeasurementUnit,
 		caloriesPerBaseAmount: parseFloat(json.caloriesPerBaseAmount as string),
 		fatPerBaseAmount: parseFloat(json.fatPerBaseAmount as string),
@@ -82,6 +84,7 @@ function mapFoodItemToJson(foodItem?: IFoodItem): IJsonObject {
 		brand: foodItem.brand,
 		name: foodItem.name,
 		upc: foodItem.upc,
+		apiSource: foodItem.apiSource,
 		measurementUnit: foodItem.measurementUnit,
 		caloriesPerBaseAmount: foodItem.caloriesPerBaseAmount,
 		fatPerBaseAmount: foodItem.fatPerBaseAmount,
@@ -187,6 +190,7 @@ function getDefaultFoodItem(): IFoodItem {
 		brand: null,
 		name: null,
 		upc: null,
+		apiSource: null,
 		measurementUnit: "g",
 		caloriesPerBaseAmount: 0,
 		fatPerBaseAmount: 0,

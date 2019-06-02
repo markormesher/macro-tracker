@@ -10,9 +10,9 @@ import * as gs from "../../global-styles/Global.scss";
 import { formatLargeNumber, formatMeasurement, renderNutritionBaseSize } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { setEditorResult, startSaveFoodItem } from "../../redux/food-items";
+import { startSearchFoodItemByUpc } from "../../redux/food-search-api";
 import { ActionResult } from "../../redux/helpers/ActionResult";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
-import { startSearchFoodItemByUpc } from "../../redux/nutritionix";
 import { IRootState } from "../../redux/root";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { ControlledBarcodeInput } from "../_ui/ControlledBarcodeInput/ControlledBarcodeInput";
@@ -38,8 +38,8 @@ interface IUpcFoodItemSearchPageState {
 function mapStateToProps(state: IRootState, props: IUpcFoodItemSearchPageProps): IUpcFoodItemSearchPageProps {
 	return {
 		...props,
-		upcSearchBusy: state.nutritionix.upcSearchBusy,
-		searchedFoodItemsByUpc: state.nutritionix.searchedFoodItemsByUpc,
+		upcSearchBusy: state.foodSearchApi.upcSearchBusy,
+		searchedFoodItemsByUpc: state.foodSearchApi.searchedFoodItemsByUpc,
 		editorResult: state.foodItems.editorResult,
 		lastFoodItemSaved: state.foodItems.lastFoodItemSaved,
 	};
@@ -262,9 +262,21 @@ class UCUpcFoodItemSearchPage extends PureComponent<IUpcFoodItemSearchPageProps,
 
 				return (
 						<div className={bs.row} key={idx}>
-							<div className={combine(bs.col, bs.dFlex)}>
+							<div className={combine(bs.col, bs.dFlex, bs.mb2)}>
 								<p className={combine(bs.flexGrow1, bs.mb1)}>
-									{fi.name} {fi.id && " (already added)"}
+									{fi.name}
+									{
+										fi.id
+										&& <span className={bs.textMuted}> (already added)</span>
+									}
+									{
+										fi.apiSource === "nutritionix"
+										&& <span className={bs.textMuted}> (via Nutritionix API)</span>
+									}
+									{
+										fi.apiSource === "tesco"
+										&& <span className={bs.textMuted}> (via Tesco API)</span>
+									}
 									<br/>
 									<span className={combine(bs.textMuted, bs.small)}>
 										{fi.brand}

@@ -41,10 +41,11 @@ services:
     secrets:
       - google.client.id
       - google.client.secret
-      - nutritionix.app.id
-      - nutritionix.app.key
+      - nutritionix-api.id
+      - nutritionix-api.key
       - postgres.password
       - session.secret
+      - tesco-api.key
     environment:
       - NPM_EXECPATH=yarn
       - npm_execpath=yarn
@@ -117,13 +118,15 @@ secrets:
     file: ./src/api/config/secrets/google.client.id
   google.client.secret:
     file: ./src/api/config/secrets/google.client.secret
-  nutritionix.app.id:
-    file: ./src/api/config/secrets/nutritionix.app.id
-  nutritionix.app.key:
-    file: ./src/api/config/secrets/nutritionix.app.key
+  nutritionix-api.id:
+    file: ./src/api/config/secrets/nutritionix-api.id
+  nutritionix-api.key:
+    file: ./src/api/config/secrets/nutritionix-api.key
   postgres.password:
     file: ./src/api/config/secrets/postgres.password
   postgres-rep.password:
     file: ./src/api/config/secrets/postgres-rep.password
   session.secret:
     file: ./src/api/config/secrets/session.secret
+  tesco-api.key:
+    file: ./src/api/config/secrets/tesco-api.key
