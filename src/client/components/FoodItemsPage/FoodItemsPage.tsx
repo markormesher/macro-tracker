@@ -1,4 +1,4 @@
-import { faBarcodeAlt, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
+import { faBarcodeAlt, faLink, faPencil, faPlug, faPlus } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
@@ -115,41 +115,76 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
 	}
 
 	private tableRowRenderer(foodItem: IFoodItem): ReactElement<void> {
-		let sizeList: ReactNode = null;
+		const infoChunks: ReactNode[] = [];
+
+		infoChunks.push((
+				<span key={`info-chunk-brand`}>
+					{foodItem.brand}
+				</span>
+		));
+
 		if (foodItem.measurementUnit !== "single_serving") {
 			const sizes = (foodItem.servingSizes || [])
 					.filter((ss) => !ss.deleted)
 					.sort(servingSizeComparator)
 					.map((ss) => `${ss.label} (${formatMeasurement(ss.measurement, foodItem.measurementUnit)})`);
 			if (sizes.length > 0) {
-				sizeList = (
-						<span className={combine(bs.textMuted, bs.dNone, bs.dMdInlineBlock)}>
-						<span className={combine(bs.small, bs.textMuted, bs.mx1)}>
-							&bull;
-						</span>
-						<span className={combine(bs.small, bs.textMuted)}>
+				infoChunks.push((
+						<span key={`info-chunk-sizes`}>
 							{sizes.join(", ")}
 						</span>
-					</span>
-				);
+				));
 			}
+		}
+
+		if (foodItem.upc) {
+			infoChunks.push((
+					<span key={`info-chunk-upc`}>
+						<FontAwesomeIcon
+								icon={faBarcodeAlt}
+						/>
+					</span>
+			));
+		}
+
+		if (foodItem.apiSource === "tesco") {
+			infoChunks.push((
+					<span key={`info-chunk-api`}>
+						<FontAwesomeIcon
+								icon={faLink}
+								className={bs.mr1}
+						/>
+						Tesco
+					</span>
+			));
+		} else if (foodItem.apiSource === "nutritionix") {
+			infoChunks.push((
+					<span key={`info-chunk-api`}>
+						<FontAwesomeIcon
+								icon={faPlug}
+								className={bs.mr1}
+						/>
+						Nutritionix
+					</span>
+			));
+		}
+
+		for (let i = 1; i < infoChunks.length; i += 2) {
+			infoChunks.splice(i, 0, (
+					<span key={`spacer-${i}`} className={bs.mx1}>
+					&bull;
+				</span>
+			));
 		}
 
 		return (
 				<tr key={foodItem.id}>
 					<td>
 						{foodItem.name}
-						{foodItem.upc && (
-								<FontAwesomeIcon
-										icon={faBarcodeAlt}
-										className={combine(bs.ml1, bs.textMuted, bs.dNone, bs.dMdInlineBlock)}
-								/>
-						)}
 						<br/>
-						<span className={combine(bs.small, bs.textMuted)}>
-							{foodItem.brand}
+						<span className={combine(bs.textMuted, bs.small)}>
+							{infoChunks}
 						</span>
-						{sizeList}
 					</td>
 					<td style={{ verticalAlign: "middle" }}>
 						{this.generateActionButtons(foodItem)}
