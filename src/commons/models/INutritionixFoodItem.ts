@@ -5,14 +5,10 @@ interface INutritionixFoodItem {
 	readonly serving_qty: number;
 	readonly serving_unit: string;
 	readonly serving_weight_grams: number;
-	readonly nf_calories: number;
-	readonly nf_total_fat: number;
-	readonly nf_saturated_fat: number;
-	readonly nf_total_carbohydrate: number;
-	readonly nf_sugars: number;
-	readonly nf_dietary_fiber: number;
-	readonly nf_protein: number;
-	readonly nf_sodium: number;
+	readonly full_nutrients: Array<{
+		readonly attr_id: number,
+		readonly value: number,
+	}>;
 }
 
 export {

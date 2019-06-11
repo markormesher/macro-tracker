@@ -224,12 +224,27 @@ const allMigrations: IDbMigration[] = [
 		migrationNumber: 7,
 		up: (qr: QueryRunner) => {
 			return qr.query(`
-				ALTER TABLE db_food_item ADD COLUMN api_source CHARACTER VARYING;
+                ALTER TABLE db_food_item ADD COLUMN api_source CHARACTER VARYING;
 			`);
 		},
 		down: (qr: QueryRunner) => {
 			return qr.query(`
-				ALTER TABLE db_food_item DROP COLUMN api_source;
+                ALTER TABLE db_food_item DROP COLUMN api_source;
+			`);
+		},
+	},
+
+	// add food item API ID
+	{
+		migrationNumber: 8,
+		up: (qr: QueryRunner) => {
+			return qr.query(`
+				ALTER TABLE db_food_item ADD COLUMN api_id CHARACTER VARYING;
+			`);
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query(`
+				ALTER TABLE db_food_item DROP COLUMN api_id;
 			`);
 		},
 	},

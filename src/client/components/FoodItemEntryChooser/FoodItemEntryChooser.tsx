@@ -19,10 +19,10 @@ class FoodItemEntryChooser extends PureComponent {
 					</div>
 					<div className={bs.row}>
 						<div className={bs.col6}>
-							<Link to={"/food-items/from-upc"}>
+							<Link to={"/food-items/search"}>
 								<IconBtn
 										icon={faBarcodeScan}
-										text={"Scan UPC"}
+										text={"Search"}
 										btnProps={{
 											className: combine(bs.btnOutlineDark, bs.mb1),
 											style: {
