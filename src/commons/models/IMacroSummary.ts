@@ -39,14 +39,16 @@ function calculateTotalMacroSummary(summaries: IMacroSummary[]): IMacroSummary {
 	let targetProtein = 0;
 
 	summaries.forEach((summary) => {
-		totalCalories += summary.totalCalories;
-		targetCalories += summary.targetCalories;
-		totalCarbohydrates += summary.totalCarbohydrates;
-		targetCarbohydrates += summary.targetCarbohydrates;
-		totalFat += summary.totalFat;
-		targetFat += summary.targetFat;
-		totalProtein += summary.totalProtein;
-		targetProtein += summary.targetProtein;
+		if (summary.totalCalories > 0) {
+			totalCalories += summary.totalCalories;
+			targetCalories += summary.targetCalories;
+			totalCarbohydrates += summary.totalCarbohydrates;
+			targetCarbohydrates += summary.targetCarbohydrates;
+			totalFat += summary.totalFat;
+			targetFat += summary.targetFat;
+			totalProtein += summary.totalProtein;
+			targetProtein += summary.targetProtein;
+		}
 	});
 
 	return {

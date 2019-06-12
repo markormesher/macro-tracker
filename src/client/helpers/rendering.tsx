@@ -22,10 +22,10 @@ function renderMacroSummary(summary: IMacroSummary): ReactNode {
 		targetFat, totalFat, targetProtein, totalProtein,
 	} = summary;
 
-	const percentCalories = totalCalories / targetCalories;
-	const percentCarbohydrates = totalCarbohydrates / targetCarbohydrates;
-	const percentFat = totalFat / targetFat;
-	const percentProtein = totalProtein / targetProtein;
+	const percentCalories = targetCalories > 0 ? totalCalories / targetCalories : 0;
+	const percentCarbohydrates = targetCarbohydrates > 0 ? totalCarbohydrates / targetCarbohydrates : 0;
+	const percentFat = targetFat > 0 ? totalFat / targetFat : 0;
+	const percentProtein = targetProtein > 0 ? totalProtein / targetProtein : 0;
 
 	return (
 			<>
