@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ReactNode } from "react";
 import { IFoodItem } from "../../commons/models/IFoodItem";
-import renderNutritionBaseSize, { formatLargeNumber, formatMeasurement } from "../../commons/utils/formatters";
+import { formatLargeNumber, formatMeasurement, formatNutritionBaseSize } from "../../commons/utils/formatters";
 import * as bs from "../global-styles/Bootstrap.scss";
 import { combine } from "./style-helpers";
 
@@ -53,7 +53,7 @@ function renderFoodItemSummary(
 				</span>
 				<br/>
 				<span className={combine(bs.textMuted, bs.small)}>
-					Per {renderNutritionBaseSize(foodItem)}: {infoChunks}
+					Per {formatNutritionBaseSize(foodItem)}: {infoChunks}
 				</span>
 			</p>
 	);
@@ -61,4 +61,4 @@ function renderFoodItemSummary(
 
 export {
 	renderFoodItemSummary,
-	};
+};
