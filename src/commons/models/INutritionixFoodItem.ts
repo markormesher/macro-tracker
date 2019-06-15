@@ -1,5 +1,6 @@
 interface INutritionixFoodItem {
 	readonly nix_item_id: string;
+	readonly tag_id: string;
 	readonly food_name: string;
 	readonly brand_name: string;
 	readonly serving_qty: number;

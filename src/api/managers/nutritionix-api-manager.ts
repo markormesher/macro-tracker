@@ -87,7 +87,7 @@ function mapFoodItemFromNutritionixFoodItem(nutritionixFoodItem?: INutritionixFo
 		name: nutritionixFoodItem.food_name,
 		upc,
 		apiSource: "nutritionix",
-		apiId: nutritionixFoodItem.nix_item_id,
+		apiId: nutritionixFoodItem.nix_item_id ? nutritionixFoodItem.nix_item_id : nutritionixFoodItem.tag_id,
 	};
 
 	// work out what to multiply the per-serving nutrition values by
