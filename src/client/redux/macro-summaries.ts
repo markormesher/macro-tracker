@@ -11,6 +11,7 @@ import { foodItemsCacheKeys } from "./food-items";
 import { setError } from "./global";
 import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
+import { targetsCacheKeys } from "./targets";
 
 interface IMacroSummariesState {
 	readonly loadedMacroSummariesByDate: { readonly [key: string]: IMacroSummary };
@@ -48,12 +49,13 @@ function*loadMacroSummaryForDateSaga(): Generator {
 	yield takeEvery(MacroSummariesActions.START_LOAD_MACRO_SUMMARY_FOR_DATE, function*(action: PayloadAction): Generator {
 		const date: Moment.Moment = action.payload.date;
 
-		// the summary must be newer than all diary, exercise and food item changes
+		// the summary must be newer than all diary, exercise, food item and target changes
 		const summaryKey = macroSummariesCacheKeys.forDate(date);
 		const dependencyKeys = [
 			diaryEntriesCacheKeys.latestUpdate,
 			exerciseEntriesCacheKeys.latestUpdate,
 			foodItemsCacheKeys.latestUpdate,
+			targetsCacheKeys.latestUpdate,
 		];
 
 		if (KeyCache.keyIsValid(summaryKey, dependencyKeys)) {

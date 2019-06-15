@@ -345,7 +345,7 @@ class UCFoodItemSearchPage extends PureComponent<IFoodItemSearchPageProps, IFood
 	}
 
 	private handleKeywordChange(keywordEntered: string): void {
-		this.setState({ keywordEntered: keywordEntered ? keywordEntered.trim() : null });
+		this.setState({ keywordEntered });
 	}
 
 	private handleSearch(): void {

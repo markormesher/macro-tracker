@@ -6,10 +6,10 @@ import * as bs from "../global-styles/Bootstrap.scss";
 
 function getClassesForProgressBar(percent: number): string {
 	if (percent < 0.6) {
-		return bs.bgWarning;
-	} else if (percent <= 1.05) {
+		return bs.bgInfo;
+	} else if (percent <= 1.1) {
 		return bs.bgSuccess;
-	} else if (percent <= 1.15) {
+	} else if (percent <= 1.2) {
 		return bs.bgWarning;
 	} else {
 		return bs.bgDanger;

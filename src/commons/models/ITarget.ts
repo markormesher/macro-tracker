@@ -167,6 +167,18 @@ function validateTarget(target: Partial<ITarget>): ITargetValidationResult {
 		};
 	}
 
+	if (target.proportionCarbohydrates + target.proportionFat + target.proportionProtein !== 1) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				proportionCarbohydrates: "The proportions must add up to one",
+				proportionFat: "The proportions must add up to one",
+				proportionProtein: "The proportions must add up to one",
+			},
+		};
+	}
+
 	if (!target.startDate) {
 		result = {
 			isValid: false,
@@ -188,7 +200,7 @@ function getDefaultTarget(): ITarget {
 		proportionCarbohydrates: 0.4,
 		proportionProtein: 0.3,
 		proportionFat: 0.3,
-		startDate: undefined,
+		startDate: utcMoment(),
 	};
 }
 

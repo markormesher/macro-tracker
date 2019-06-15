@@ -9,7 +9,7 @@ import { Meal } from "../../../commons/enums";
 import { IDiaryEntry } from "../../../commons/models/IDiaryEntry";
 import { IExerciseEntry } from "../../../commons/models/IExerciseEntry";
 import { IMacroSummary } from "../../../commons/models/IMacroSummary";
-import { momentToDateKey, momentToUrlString, urlStringToMoment } from "../../../commons/utils/dates";
+import { momentToDateKey, momentToUrlString, urlStringToMoment, utcMoment } from "../../../commons/utils/dates";
 import { formatLargeNumber, formatMeasurement, getMealTitle } from "../../../commons/utils/formatters";
 import { getNutritionBaseAmount, getTotalDiaryEntryMeasurement } from "../../../commons/utils/helpers";
 import * as bs from "../../global-styles/Bootstrap.scss";
@@ -52,7 +52,7 @@ interface IDiaryPageProps {
 }
 
 function mapStateToProps(state: IRootState, props: IDiaryPageProps): IDiaryPageProps {
-	const date = props.match.params.date ? urlStringToMoment(props.match.params.date) : Moment();
+	const date = props.match.params.date ? urlStringToMoment(props.match.params.date) : utcMoment();
 
 	return {
 		...props,
