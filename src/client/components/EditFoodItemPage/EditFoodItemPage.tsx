@@ -14,6 +14,7 @@ import {
 	validateFoodItem,
 } from "../../../commons/models/IFoodItem";
 import { getDefaultServingSize, IServingSize } from "../../../commons/models/IServingSize";
+import { getFoodItemDataWarnings } from "../../../commons/utils/helpers";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { formatMeasurementUnit, renderNutritionBaseSize } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
@@ -95,6 +96,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 		};
 
 		this.renderServingSizeInputs = this.renderServingSizeInputs.bind(this);
+		this.renderInaccurateDataWarning = this.renderInaccurateDataWarning.bind(this);
 		this.handleBrandChange = this.handleBrandChange.bind(this);
 		this.handleNameChange = this.handleNameChange.bind(this);
 		this.handleUpcChange = this.handleUpcChange.bind(this);
@@ -410,6 +412,9 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 										</>
 									}
 								</div>
+
+								{this.renderInaccurateDataWarning()}
+
 								<div className={bs.row}>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<IconBtn
@@ -483,6 +488,28 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 					</div>
 				</div>
 		));
+	}
+
+	private renderInaccurateDataWarning(): ReactNode {
+		const { currentValue } = this.state;
+		const warnings: string[] = getFoodItemDataWarnings(currentValue);
+
+		if (warnings.length > 0) {
+			return (
+					<div className={bs.row}>
+						<div className={bs.col}>
+							<div className={combine(bs.alert, bs.alertDanger)}>
+								<h5>Are you sure?</h5>
+								<ul className={bs.mb0}>
+									{warnings.map((w, idx) => <li key={`warning-${idx}`}>{w}</li>)}
+								</ul>
+							</div>
+						</div>
+					</div>
+			);
+		} else {
+			return null;
+		}
 	}
 
 	private handleBrandChange(brand: string): void {
