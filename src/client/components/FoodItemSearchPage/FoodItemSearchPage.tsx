@@ -5,9 +5,9 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
 import { IFoodItem } from "../../../commons/models/IFoodItem";
+import { formatLargeNumber, formatMeasurement, formatNutritionBaseSize } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
-import { formatLargeNumber, formatMeasurement, renderNutritionBaseSize } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { setEditorResult, startSaveFoodItem } from "../../redux/food-items";
 import { startSearchFoodItemByKeyword, startSearchFoodItemByUpc } from "../../redux/food-search-api";
@@ -322,7 +322,7 @@ class UCFoodItemSearchPage extends PureComponent<IFoodItemSearchPageProps, IFood
 										&& <>
 											<br/>
 											<span className={combine(bs.textMuted, bs.small)}>
-												Per {renderNutritionBaseSize(fi)}: {infoChunks}
+												Per {formatNutritionBaseSize(fi)}: {infoChunks}
 											</span>
 										</>
 									}

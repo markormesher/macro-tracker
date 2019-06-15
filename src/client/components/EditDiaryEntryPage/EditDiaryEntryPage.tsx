@@ -1,7 +1,7 @@
 import { faCalendarDay, faCircleNotch, faRedoAlt, faSave } from "@fortawesome/pro-light-svg-icons";
 import * as Moment from "moment";
-import * as React from "react";
 import { PureComponent, ReactNode } from "react";
+import * as React from "react";
 import { connect } from "react-redux";
 import { match as Match } from "react-router";
 import { Link } from "react-router-dom";
@@ -16,8 +16,8 @@ import {
 import { IFoodItem } from "../../../commons/models/IFoodItem";
 import { IServingSize, servingSizeComparator } from "../../../commons/models/IServingSize";
 import { momentToUrlString, urlStringToMoment } from "../../../commons/utils/dates";
+import { formatDate, getMealTitle } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { formatDate, getMealTitle } from "../../helpers/formatters";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
 import { setEditorResult, startLoadDiaryEntry, startSaveDiaryEntry } from "../../redux/diary-entries";

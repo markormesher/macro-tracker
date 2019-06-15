@@ -13,8 +13,8 @@ import {
 	validateCloneMealRequest,
 } from "../../../commons/models/ICloneMealRequest";
 import { momentToUrlString, urlStringToMoment } from "../../../commons/utils/dates";
+import { formatDate, getMealTitle } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { formatDate, getMealTitle } from "../../helpers/formatters";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
 import { ActionResult } from "../../redux/helpers/ActionResult";

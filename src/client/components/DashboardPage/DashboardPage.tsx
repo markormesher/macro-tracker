@@ -1,16 +1,16 @@
 import { ChartDataSets, ChartLegendLabelItem } from "chart.js";
 import * as Moment from "moment";
-import * as React from "react";
 import { PureComponent, ReactNode } from "react";
+import * as React from "react";
 import { Line, LinearComponentProps } from "react-chartjs-2";
 import { connect } from "react-redux";
 import { match as Match } from "react-router";
 import { Dispatch } from "redux";
 import { calculateTotalMacroSummary, IMacroSummary } from "../../../commons/models/IMacroSummary";
 import { momentToDateKey, utcMoment } from "../../../commons/utils/dates";
+import { formatDate, formatPercent } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { chartColours, defaultDatasetProps } from "../../helpers/charts";
-import { formatDate, formatPercent } from "../../helpers/formatters";
 import { renderMacroSummary } from "../../helpers/rendering";
 import { combine } from "../../helpers/style-helpers";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";

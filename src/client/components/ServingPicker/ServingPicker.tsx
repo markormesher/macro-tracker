@@ -2,8 +2,8 @@ import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { IFoodItem } from "../../../commons/models/IFoodItem";
 import { IServingSize, servingSizeComparator } from "../../../commons/models/IServingSize";
+import { formatMeasurement, formatMeasurementUnit } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { formatMeasurement, formatMeasurementUnit } from "../../helpers/formatters";
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 

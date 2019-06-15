@@ -14,9 +14,9 @@ import {
 	validateFoodItem,
 } from "../../../commons/models/IFoodItem";
 import { getDefaultServingSize, IServingSize } from "../../../commons/models/IServingSize";
+import { formatMeasurementUnit, formatNutritionBaseSize } from "../../../commons/utils/formatters";
 import { getFoodItemDataWarnings } from "../../../commons/utils/helpers";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { formatMeasurementUnit, renderNutritionBaseSize } from "../../helpers/formatters";
 import { combine } from "../../helpers/style-helpers";
 import { setEditorResult, startLoadAllFoodItems, startLoadFoodItem, startSaveFoodItem } from "../../redux/food-items";
 import { ActionResult } from "../../redux/helpers/ActionResult";
@@ -293,7 +293,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
 												id={"caloriesPerBaseAmount"}
-												label={`Calories per ${renderNutritionBaseSize(currentValue)}`}
+												label={`Calories per ${formatNutritionBaseSize(currentValue)}`}
 												placeholder={"Calories"}
 												value={ControlledTextInput.safeNumericValue(currentValue.caloriesPerBaseAmount)}
 												onValueChange={this.handleCaloriesPerBaseAmountChange}
@@ -307,7 +307,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
 												id={"fatPerBaseAmount"}
-												label={`Fat per ${renderNutritionBaseSize(currentValue)}`}
+												label={`Fat per ${formatNutritionBaseSize(currentValue)}`}
 												placeholder={"Fat"}
 												value={ControlledTextInput.safeNumericValue(currentValue.fatPerBaseAmount)}
 												onValueChange={this.handleFatPerBaseAmountChange}
@@ -321,7 +321,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
 												id={"satFatPerBaseAmount"}
-												label={`Sat. Fat per ${renderNutritionBaseSize(currentValue)}`}
+												label={`Sat. Fat per ${formatNutritionBaseSize(currentValue)}`}
 												placeholder={"Sat. Fat"}
 												value={ControlledTextInput.safeNumericValue(currentValue.satFatPerBaseAmount)}
 												onValueChange={this.handleSatFatPerBaseAmountChange}
@@ -335,7 +335,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
 												id={"carbohydratesPerBaseAmount"}
-												label={`Carbohydrates per ${renderNutritionBaseSize(currentValue)}`}
+												label={`Carbohydrates per ${formatNutritionBaseSize(currentValue)}`}
 												placeholder={"Carbohydrates"}
 												value={ControlledTextInput.safeNumericValue(currentValue.carbohydratePerBaseAmount)}
 												onValueChange={this.handleCarbohydratePerBaseAmountChange}
@@ -349,7 +349,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
 												id={"sugarPerBaseAmount"}
-												label={`Sugar per ${renderNutritionBaseSize(currentValue)}`}
+												label={`Sugar per ${formatNutritionBaseSize(currentValue)}`}
 												placeholder={"Sugar"}
 												value={ControlledTextInput.safeNumericValue(currentValue.sugarPerBaseAmount)}
 												onValueChange={this.handleSugarPerBaseAmountChange}
@@ -363,7 +363,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
 												id={"fibrePerBaseAmount"}
-												label={`Fibre per ${renderNutritionBaseSize(currentValue)}`}
+												label={`Fibre per ${formatNutritionBaseSize(currentValue)}`}
 												placeholder={"Fibre"}
 												value={ControlledTextInput.safeNumericValue(currentValue.fibrePerBaseAmount)}
 												onValueChange={this.handleFibrePerBaseAmountChange}
@@ -377,7 +377,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
 												id={"proteinPerBaseAmount"}
-												label={`Protein per ${renderNutritionBaseSize(currentValue)}`}
+												label={`Protein per ${formatNutritionBaseSize(currentValue)}`}
 												placeholder={"Protein"}
 												value={ControlledTextInput.safeNumericValue(currentValue.proteinPerBaseAmount)}
 												onValueChange={this.handleProteinPerBaseAmountChange}
@@ -391,7 +391,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
 												id={"saltPerBaseAmount"}
-												label={`Salt per ${renderNutritionBaseSize(currentValue)}`}
+												label={`Salt per ${formatNutritionBaseSize(currentValue)}`}
 												placeholder={"Salt"}
 												value={ControlledTextInput.safeNumericValue(currentValue.saltPerBaseAmount)}
 												onValueChange={this.handleSaltPerBaseAmountChange}

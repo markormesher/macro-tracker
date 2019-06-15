@@ -4,7 +4,7 @@ import { all, call, put, takeEvery } from "redux-saga/effects";
 import { IJsonObject } from "../../commons/models/IJsonObject";
 import { IMacroSummary, mapMacroSummaryFromJson } from "../../commons/models/IMacroSummary";
 import { momentToDateKey, momentToUrlString } from "../../commons/utils/dates";
-import { formatDate } from "../helpers/formatters";
+import { formatDate } from "../../commons/utils/formatters";
 import { diaryEntriesCacheKeys } from "./diary-entries";
 import { exerciseEntriesCacheKeys } from "./exercise-entries";
 import { foodItemsCacheKeys } from "./food-items";

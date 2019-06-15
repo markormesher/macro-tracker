@@ -4,7 +4,7 @@ import * as Moment from "moment";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { utcMoment } from "../../../commons/utils/dates";
-import { formatDate } from "../../helpers/formatters";
+import { formatDate } from "../../../commons/utils/formatters";
 import { combine } from "../../helpers/style-helpers";
 import * as style from "./DateScroller.scss";
 

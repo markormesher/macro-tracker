@@ -1,8 +1,8 @@
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { FoodMeasurementUnit } from "../../../../commons/enums";
+import { formatLargeNumber, formatMeasurement, formatPercent } from "../../../../commons/utils/formatters";
 import * as bs from "../../../global-styles/Bootstrap.scss";
-import { formatLargeNumber, formatMeasurement, formatPercent } from "../../../helpers/formatters";
 import { combine } from "../../../helpers/style-helpers";
 
 interface IProgressBarProps {

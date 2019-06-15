@@ -1,7 +1,7 @@
-import { formatLargeNumber, formatMeasurement, renderNutritionBaseSize } from "../../client/helpers/formatters";
 import { CALORIES_PER_G_CARBOHYDRATES, CALORIES_PER_G_FAT, CALORIES_PER_G_PROTEIN } from "../constants";
 import { IDiaryEntry } from "../models/IDiaryEntry";
 import { IFoodItem } from "../models/IFoodItem";
+import { formatLargeNumber, formatMeasurement, formatNutritionBaseSize } from "./formatters";
 
 function getTotalDiaryEntryMeasurement(diaryEntry: IDiaryEntry): number {
 	if (diaryEntry.foodItem.measurementUnit === "single_serving" || !diaryEntry.servingSize) {
@@ -41,7 +41,7 @@ function getFoodItemDataWarnings(foodItem: IFoodItem): string[] {
 	const calorieErrorMargin = actualCalories > 0 ? Math.abs((expectedCalories - actualCalories) / actualCalories) : 0;
 	if (expectedCalories > 1 && calorieErrorMargin >= 0.2) {
 		warnings.push(`
-		This food has ${formatLargeNumber(actualCalories)} calories per ${renderNutritionBaseSize(foodItem)},
+		This food has ${formatLargeNumber(actualCalories)} calories per ${formatNutritionBaseSize(foodItem)},
 		but it should have approx. ${formatLargeNumber(expectedCalories)} according to the macros entered.
 		`);
 	}
@@ -49,7 +49,7 @@ function getFoodItemDataWarnings(foodItem: IFoodItem): string[] {
 	if (foodItem.satFatPerBaseAmount > foodItem.fatPerBaseAmount) {
 		warnings.push(`
 		This food has ${formatMeasurement(foodItem.satFatPerBaseAmount, "g")} of sat. fat per
-		${renderNutritionBaseSize(foodItem)} but only
+		${formatNutritionBaseSize(foodItem)} but only
 		${formatMeasurement(foodItem.fatPerBaseAmount, "g")} total fat.
 		`);
 	}
@@ -57,7 +57,7 @@ function getFoodItemDataWarnings(foodItem: IFoodItem): string[] {
 	if (foodItem.sugarPerBaseAmount > foodItem.carbohydratePerBaseAmount) {
 		warnings.push(`
 		This food has ${formatMeasurement(foodItem.sugarPerBaseAmount, "g")} of sugar per
-		${renderNutritionBaseSize(foodItem)} but only
+		${formatNutritionBaseSize(foodItem)} but only
 		${formatMeasurement(foodItem.carbohydratePerBaseAmount, "g")} total carbohydrates.
 		`);
 	}
