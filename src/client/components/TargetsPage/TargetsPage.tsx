@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
 import { ITarget, mapTargetFromJson } from "../../../commons/models/ITarget";
-import { formatDate, formatPercent } from "../../../commons/utils/formatters";
+import { formatDate, formatLargeNumber, formatPercent } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { history } from "../../helpers/single-history";
@@ -114,6 +114,12 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
 
 	private tableRowRenderer(target: ITarget): ReactElement<void> {
 		const infoChunks: ReactNode[] = [];
+
+		infoChunks.push((
+				<span key={`info-chunk-calories`}>
+					{formatLargeNumber(target.baselineCaloriesPerDay)} kcal
+				</span>
+		));
 
 		infoChunks.push((
 				<span key={`info-chunk-carbohydrates`}>

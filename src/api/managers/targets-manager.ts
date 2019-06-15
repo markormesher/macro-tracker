@@ -23,6 +23,7 @@ async function getTargetForDate(date: Moment.Moment): Promise<DbTarget> {
 			.where("target.deleted = FALSE")
 			.andWhere("target.startDate <= :date")
 			.setParameter("date", MomentDateTransformer.toDbFormat(date))
+			.orderBy("target.startDate", "DESC")
 			.getOne();
 }
 

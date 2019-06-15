@@ -13,6 +13,7 @@ import { DiaryPage } from "../DiaryPage/DiaryPage";
 import { EditDiaryEntryPage } from "../EditDiaryEntryPage/EditDiaryEntryPage";
 import { EditExerciseEntryPage } from "../EditExerciseEntryPage/EditExerciseEntryPage";
 import { EditFoodItemPage } from "../EditFoodItemPage/EditFoodItemPage";
+import { EditTargetPage } from "../EditTargetPage/EditTargetPage";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { FoodItemEntryChooser } from "../FoodItemEntryChooser/FoodItemEntryChooser";
 import { FoodItemSearchPage } from "../FoodItemSearchPage/FoodItemSearchPage";
@@ -115,6 +116,7 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
 						<Route path={"/food-items/edit/:foodItemId?"} component={EditFoodItemPage}/>
 						<Route path={"/food-items"} component={FoodItemsPage}/>
 
+						<Route path={"/targets/edit/:targetId?"} component={EditTargetPage}/>
 						<Route path={"/targets"} component={TargetsPage}/>
 
 						{/* Adding a new route? Keep it above this one! */}
