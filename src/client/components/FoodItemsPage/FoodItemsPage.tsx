@@ -1,4 +1,11 @@
-import { faBarcodeAlt, faLink, faPencil, faPlug, faPlus } from "@fortawesome/pro-light-svg-icons";
+import {
+	faBarcodeAlt,
+	faExclamationTriangle,
+	faLink,
+	faPencil,
+	faPlug,
+	faPlus,
+} from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactElement, ReactNode } from "react";
@@ -7,6 +14,7 @@ import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
 import { IFoodItem, mapFoodItemFromJson } from "../../../commons/models/IFoodItem";
 import { servingSizeComparator } from "../../../commons/models/IServingSize";
+import { getFoodItemDataWarnings } from "../../../commons/utils/helpers";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { formatMeasurement } from "../../helpers/formatters";
@@ -165,6 +173,19 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
 								className={bs.mr1}
 						/>
 						Nutritionix
+					</span>
+			));
+		}
+
+		const warnings = getFoodItemDataWarnings(foodItem);
+		if (warnings.length > 0) {
+			infoChunks.push((
+					<span key={`info-chunk-warning`} className={bs.textDanger}>
+						<FontAwesomeIcon
+								icon={faExclamationTriangle}
+								className={bs.mr1}
+						/>
+						{warnings.length} warning{warnings.length > 1 ? "s" : ""}
 					</span>
 			));
 		}

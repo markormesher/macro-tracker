@@ -31,7 +31,7 @@ function getFoodItemDataWarnings(foodItem: IFoodItem): string[] {
 	const expectedCalories = getExpectedCalories(foodItem);
 	const actualCalories = foodItem.caloriesPerBaseAmount;
 
-	if (expectedCalories > 0 && actualCalories === 0) {
+	if (expectedCalories > 1 && actualCalories === 0) {
 		warnings.push(`
 		This food has zero calories but it should have approx.
 		${formatLargeNumber(expectedCalories)} according to the macros entered.
@@ -39,7 +39,7 @@ function getFoodItemDataWarnings(foodItem: IFoodItem): string[] {
 	}
 
 	const calorieErrorMargin = actualCalories > 0 ? Math.abs((expectedCalories - actualCalories) / actualCalories) : 0;
-	if (calorieErrorMargin >= 0.2) {
+	if (expectedCalories > 1 && calorieErrorMargin >= 0.2) {
 		warnings.push(`
 		This food has ${formatLargeNumber(actualCalories)} calories per ${renderNutritionBaseSize(foodItem)},
 		but it should have approx. ${formatLargeNumber(expectedCalories)} according to the macros entered.
