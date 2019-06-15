@@ -18,10 +18,10 @@ const targetsRouter = Express.Router();
 
 targetsRouter.get("/table", requireUser, (req: Request, res: Response, next: NextFunction) => {
 	const totalQuery = getTargetQueryBuilder()
-			.where("food_item.deleted = FALSE");
+			.where("target.deleted = FALSE");
 
 	const filteredQuery = getTargetQueryBuilder()
-			.where("food_item.deleted = FALSE");
+			.where("target.deleted = FALSE");
 
 	getDataForTable(DbTarget, req, totalQuery, filteredQuery)
 			.then((response) => res.json(response))

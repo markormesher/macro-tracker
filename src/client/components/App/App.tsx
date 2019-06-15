@@ -19,6 +19,7 @@ import { FoodItemSearchPage } from "../FoodItemSearchPage/FoodItemSearchPage";
 import { FoodItemsPage } from "../FoodItemsPage/FoodItemsPage";
 import { LoginPage } from "../Login/LoginPage";
 import { Nav } from "../Nav/Nav";
+import { TargetsPage } from "../TargetsPage/TargetsPage";
 
 interface IAppProps {
 	readonly waitingFor?: string[];
@@ -113,6 +114,8 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
 						<Route path={"/food-items/search"} component={FoodItemSearchPage}/>
 						<Route path={"/food-items/edit/:foodItemId?"} component={EditFoodItemPage}/>
 						<Route path={"/food-items"} component={FoodItemsPage}/>
+
+						<Route path={"/targets"} component={TargetsPage}/>
 
 						{/* Adding a new route? Keep it above this one! */}
 						<Route render={this.render404Error}/>
