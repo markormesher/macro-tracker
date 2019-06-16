@@ -17,8 +17,6 @@ import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import * as style from "./FoodItemPicker.scss";
 
-// TODO: show recent items
-
 interface IFoodItemPickerProps {
 	// from props
 	readonly value?: IFoodItem;
