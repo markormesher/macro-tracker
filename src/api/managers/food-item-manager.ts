@@ -35,6 +35,15 @@ async function getFoodItemByUpc(upc: string, options: IFoodItemQueryBuilderOptio
 			.getOne();
 }
 
+async function getFoodItemsByKeyword(keyword: string, options: IFoodItemQueryBuilderOptions = {}):
+		Promise<DbFoodItem[]> {
+	return getFoodItemQueryBuilder(options)
+			.where("food_item.deleted = FALSE")
+			.andWhere("food_item.brand % :keyword OR food_item.name % :keyword")
+			.setParameter("keyword", keyword)
+			.getMany();
+}
+
 async function getAllFoodItems(): Promise<DbFoodItem[]> {
 	return getFoodItemQueryBuilder({ includeServingSizes: true })
 			.where("food_item.deleted = FALSE")
@@ -93,6 +102,7 @@ export {
 	getFoodItemQueryBuilder,
 	getFoodItem,
 	getFoodItemByUpc,
+	getFoodItemsByKeyword,
 	getAllFoodItems,
 	saveFoodItem,
 	deleteFoodItem,

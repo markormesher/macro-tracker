@@ -13,6 +13,7 @@ import {
 	getFoodItem,
 	getFoodItemByUpc,
 	getFoodItemQueryBuilder,
+	getFoodItemsByKeyword,
 	saveFoodItem,
 } from "../managers/food-item-manager";
 import { requireUser } from "../middleware/auth-middleware";
@@ -52,6 +53,13 @@ foodItemsRouter.get("/by-upc/:upc", requireUser, (req: Request, res: Response, n
 	const upc: string = cleanString(req.params.upc);
 	getFoodItemByUpc(upc, { includeServingSizes: true })
 			.then((foodItem) => res.json(foodItem))
+			.catch(next);
+});
+
+foodItemsRouter.get("/by-keyword/:keyword", requireUser, (req: Request, res: Response, next: NextFunction) => {
+	const keyword: string = cleanString(req.params.keyword);
+	getFoodItemsByKeyword(keyword, { includeServingSizes: true })
+			.then((foodItems) => res.json(foodItems))
 			.catch(next);
 });
 
