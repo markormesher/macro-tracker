@@ -7,13 +7,13 @@ import { generateMacroSummary } from "../../../commons/models/IMacroSummary";
 import { IServingSize } from "../../../commons/models/IServingSize";
 import { getDefaultTarget } from "../../../commons/models/ITarget";
 import { formatLargeNumber, formatMeasurement } from "../../../commons/utils/formatters";
-import { getNutritionBaseAmount, getTotalDiaryEntryMeasurement } from "../../../commons/utils/helpers";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
+import { DiaryEntryFoodItemSummary } from "../DiaryEntryFoodItemSummary/DiaryEntryFoodItemSummary";
 import { FoodItemPicker } from "../FoodItemPicker/FoodItemPicker";
 import { ServingPicker } from "../ServingPicker/ServingPicker";
 import * as style from "./MealSketchPage.scss";
@@ -127,10 +127,8 @@ class MealSketchPage extends PureComponent<any, IMealSketchPageState> {
 	}
 
 	private renderDiaryEntry(entry: IDiaryEntry, index: number): ReactNode {
-		// TODO: de-dupe code between here and diary page
-
 		const { activeEditPositions } = this.state;
-		const { foodItem, servingSize } = entry;
+		const { foodItem } = entry;
 
 		if (activeEditPositions.indexOf(index) >= 0) {
 			return (
@@ -161,55 +159,10 @@ class MealSketchPage extends PureComponent<any, IMealSketchPageState> {
 					</div>
 			);
 		} else {
-			const totalMeasurement = getTotalDiaryEntryMeasurement(entry);
-			const infoChunks: ReactNode[] = [];
-
-			infoChunks.push((
-					<span key={`info-chunk-brand`} className={combine(bs.textMuted, bs.small)}>
-					{foodItem.brand}
-				</span>
-			));
-
-			if (foodItem.measurementUnit === "single_serving") {
-				infoChunks.push((
-						<span key={`info-chunk-serving-size`} className={combine(bs.textMuted, bs.small)}>
-						{entry.servingQty} serving
-					</span>
-				));
-			} else if (servingSize) {
-				infoChunks.push((
-						<span key={`info-chunk-serving-size`} className={combine(bs.textMuted, bs.small)}>
-						{entry.servingQty} {servingSize.label}
-					</span>
-				));
-			} else {
-				infoChunks.push((
-						<span key={`info-chunk-serving-measurement`} className={combine(bs.textMuted, bs.small)}>
-					{formatMeasurement(totalMeasurement, foodItem.measurementUnit)}
-				</span>
-				));
-			}
-
-			infoChunks.push((
-					<span key={`info-chunk-calories`} className={combine(bs.textMuted, bs.small)}>
-					{formatLargeNumber(totalMeasurement * foodItem.caloriesPerBaseAmount / getNutritionBaseAmount(foodItem))} kcal
-				</span>
-			));
-
-			for (let i = 1; i < infoChunks.length; i += 2) {
-				infoChunks.splice(i, 0, (
-						<span key={`spacer-${i}`} className={combine(bs.textMuted, bs.small, bs.mx1)}>
-						&bull;
-					</span>
-				));
-			}
-
 			return (
 					<div className={bs.dFlex} key={index}>
 						<p className={combine(bs.flexGrow1, bs.mb1)}>
-							{foodItem.name}
-							<br/>
-							{infoChunks}
+							<DiaryEntryFoodItemSummary diaryEntry={entry}/>
 						</p>
 						<div
 								className={combine(bs.dInlineBlock, bs.btnGroup, bs.btnGroupSm, bs.flexGrow0, bs.myAuto)}

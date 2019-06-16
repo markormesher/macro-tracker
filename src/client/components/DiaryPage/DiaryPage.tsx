@@ -1,7 +1,7 @@
 import { faCopy, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import * as Moment from "moment";
-import { PureComponent, ReactNode } from "react";
 import * as React from "react";
+import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { match as Match } from "react-router-dom";
 import { Dispatch } from "redux";
@@ -10,8 +10,7 @@ import { IDiaryEntry } from "../../../commons/models/IDiaryEntry";
 import { IExerciseEntry } from "../../../commons/models/IExerciseEntry";
 import { IMacroSummary } from "../../../commons/models/IMacroSummary";
 import { momentToDateKey, momentToUrlString, urlStringToMoment, utcMoment } from "../../../commons/utils/dates";
-import { formatLargeNumber, formatMeasurement, getMealTitle } from "../../../commons/utils/formatters";
-import { getNutritionBaseAmount, getTotalDiaryEntryMeasurement } from "../../../commons/utils/helpers";
+import { formatLargeNumber, getMealTitle } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { renderMacroSummary } from "../../helpers/rendering";
@@ -32,6 +31,7 @@ import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import { DateScroller } from "../DateScroller/DateScroller";
+import { DiaryEntryFoodItemSummary } from "../DiaryEntryFoodItemSummary/DiaryEntryFoodItemSummary";
 
 interface IDiaryPageProps {
 	readonly updateTime: number;
@@ -348,58 +348,10 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 	}
 
 	private renderDiaryEntry(entry: IDiaryEntry): ReactNode {
-		const { foodItem, servingSize } = entry;
-
-		const totalMeasurement = getTotalDiaryEntryMeasurement(entry);
-
-		const infoChunks: ReactNode[] = [];
-
-		infoChunks.push((
-				<span key={`info-chunk-brand`} className={combine(bs.textMuted, bs.small)}>
-					{foodItem.brand}
-				</span>
-		));
-
-		if (foodItem.measurementUnit === "single_serving") {
-			infoChunks.push((
-					<span key={`info-chunk-serving-size`} className={combine(bs.textMuted, bs.small)}>
-						{entry.servingQty} serving
-					</span>
-			));
-		} else if (servingSize) {
-			infoChunks.push((
-					<span key={`info-chunk-serving-size`} className={combine(bs.textMuted, bs.small)}>
-						{entry.servingQty} {servingSize.label}
-					</span>
-			));
-		} else {
-			infoChunks.push((
-					<span key={`info-chunk-serving-measurement`} className={combine(bs.textMuted, bs.small)}>
-					{formatMeasurement(totalMeasurement, foodItem.measurementUnit)}
-				</span>
-			));
-		}
-
-		infoChunks.push((
-				<span key={`info-chunk-calories`} className={combine(bs.textMuted, bs.small)}>
-					{formatLargeNumber(totalMeasurement * foodItem.caloriesPerBaseAmount / getNutritionBaseAmount(foodItem))} kcal
-				</span>
-		));
-
-		for (let i = 1; i < infoChunks.length; i += 2) {
-			infoChunks.splice(i, 0, (
-					<span key={`spacer-${i}`} className={combine(bs.textMuted, bs.small, bs.mx1)}>
-						&bull;
-					</span>
-			));
-		}
-
 		return (
 				<div className={bs.dFlex} key={entry.id}>
 					<p className={combine(bs.flexGrow1, bs.mb1)}>
-						{foodItem.name}
-						<br/>
-						{infoChunks}
+						<DiaryEntryFoodItemSummary diaryEntry={entry}/>
 					</p>
 					<div
 							className={combine(bs.dInlineBlock, bs.btnGroup, bs.btnGroupSm, bs.flexGrow0, bs.myAuto)}
