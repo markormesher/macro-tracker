@@ -40,11 +40,7 @@ class IconBtn<Payload = {}> extends PureComponent<IIconBtnProps<Payload>> {
 	private handleClick(): void {
 		const { onClick, payload } = this.props;
 		if (onClick) {
-			if (payload) {
-				onClick(payload);
-			} else {
-				onClick();
-			}
+			onClick(payload);
 		}
 	}
 }

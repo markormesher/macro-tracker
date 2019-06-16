@@ -19,6 +19,7 @@ import { FoodItemEntryChooser } from "../FoodItemEntryChooser/FoodItemEntryChoos
 import { FoodItemSearchPage } from "../FoodItemSearchPage/FoodItemSearchPage";
 import { FoodItemsPage } from "../FoodItemsPage/FoodItemsPage";
 import { LoginPage } from "../Login/LoginPage";
+import { MealSketchPage } from "../MealSketchPage/MealSketchPage";
 import { Nav } from "../Nav/Nav";
 import { TargetsPage } from "../TargetsPage/TargetsPage";
 
@@ -115,6 +116,8 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
 						<Route path={"/food-items/search"} component={FoodItemSearchPage}/>
 						<Route path={"/food-items/edit/:foodItemId?"} component={EditFoodItemPage}/>
 						<Route path={"/food-items"} component={FoodItemsPage}/>
+
+						<Route path={"/meal-sketch"} component={MealSketchPage}/>
 
 						<Route path={"/targets/edit/:targetId?"} component={EditTargetPage}/>
 						<Route path={"/targets"} component={TargetsPage}/>

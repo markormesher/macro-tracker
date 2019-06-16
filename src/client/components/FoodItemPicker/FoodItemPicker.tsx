@@ -149,7 +149,7 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps, IFoodItemPick
 						<div className={bs.col6}>
 							<IconBtn
 									icon={faSearch}
-									text={"Search"}
+									text={"Search Food"}
 									onClick={this.openSearch}
 									btnProps={{
 										style: {

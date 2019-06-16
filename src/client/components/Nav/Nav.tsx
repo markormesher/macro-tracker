@@ -1,4 +1,10 @@
-import { faAppleAlt, faBullseyeArrow, faCalendarDay, faChartPie, faEllipsisH } from "@fortawesome/pro-light-svg-icons";
+import {
+	faAppleAlt,
+	faBullseyeArrow,
+	faCalendarDay,
+	faChartPie,
+	faDraftingCompass,
+} from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
@@ -25,6 +31,12 @@ class Nav extends PureComponent {
 					<Link to={"/food-items"} className={style.navItem}>
 						<FontAwesomeIcon
 								icon={faAppleAlt}
+								fixedWidth={true}
+						/>
+					</Link>
+					<Link to={"/meal-sketch"} className={style.navItem}>
+						<FontAwesomeIcon
+								icon={faDraftingCompass}
 								fixedWidth={true}
 						/>
 					</Link>
