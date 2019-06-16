@@ -1,6 +1,8 @@
 import { faCheck, faPencil, faSave } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
+import { connect } from "react-redux";
+import { AnyAction, Dispatch } from "redux";
 import { ALL_MEAL_VALUES, Meal } from "../../../commons/enums";
 import { getDefaultDiaryEntry, IDiaryEntry } from "../../../commons/models/IDiaryEntry";
 import { IFoodItem } from "../../../commons/models/IFoodItem";
@@ -11,6 +13,8 @@ import { formatLargeNumber, formatMeasurement, getMealTitle } from "../../../com
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
+import { startSaveDiaryEntry } from "../../redux/diary-entries";
+import { IRootState } from "../../redux/root";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
@@ -20,15 +24,34 @@ import { FoodItemPicker } from "../FoodItemPicker/FoodItemPicker";
 import { ServingPicker } from "../ServingPicker/ServingPicker";
 import * as style from "./MealSketchPage.scss";
 
+interface IMealSketchPageProps {
+	readonly actions?: {
+		readonly startSaveDiaryEntry: (diaryEntry: IDiaryEntry) => AnyAction;
+	};
+}
+
 interface IMealSketchPageState {
 	readonly diaryEntries: IDiaryEntry[];
 	readonly activeEditPositions: number[];
 	readonly selectedMeal?: Meal;
 }
 
-class MealSketchPage extends PureComponent<any, IMealSketchPageState> {
+function mapStateToProps(state: IRootState, props: IMealSketchPageProps): IMealSketchPageProps {
+	return { ...props };
+}
 
-	constructor(props: any, context: any) {
+function mapDispatchToProps(dispatch: Dispatch, props: IMealSketchPageProps): IMealSketchPageProps {
+	return {
+		...props,
+		actions: {
+			startSaveDiaryEntry: (diaryEntry: IDiaryEntry) => dispatch(startSaveDiaryEntry(diaryEntry)),
+		},
+	};
+}
+
+class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPageState> {
+
+	constructor(props: IMealSketchPageProps, context: any) {
 		super(props, context);
 
 		this.state = {
@@ -308,6 +331,4 @@ class MealSketchPage extends PureComponent<any, IMealSketchPageState> {
 	}
 }
 
-export {
-	MealSketchPage,
-};
+export const MealSketchPage = connect(mapStateToProps, mapDispatchToProps)(UCMealSketchPage);
