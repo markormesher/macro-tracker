@@ -117,13 +117,11 @@ class MealSketchPage extends PureComponent<any, IMealSketchPageState> {
 	private renderPicker(): ReactNode {
 		return (
 				<div className={style.pickerWrapper}>
-					<div className={bs.containerFluid}>
-						<div className={bs.my3}>
-							<FoodItemPicker
-									onValueChange={this.handleAddFoodItem}
-							/>
-						</div>
-					</div>
+					<ContentWrapper disableBottomPadding={true}>
+						<FoodItemPicker
+								onValueChange={this.handleAddFoodItem}
+						/>
+					</ContentWrapper>
 				</div>
 		);
 	}
