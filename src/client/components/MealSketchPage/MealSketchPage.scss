@@ -15,6 +15,7 @@ $border-color: $gray-500;
 	border-bottom: 1px solid $border-color;
 	display: flex;
 	flex-grow: 0;
+	flex-wrap: wrap;
 
 	.summary-item {
 		flex-grow: 1;

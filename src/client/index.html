@@ -6,7 +6,13 @@
 	<title>Macro Tracker</title>
 	<style type="text/css">
 		#root {
-			display: flex; flex-direction: column; height: 100vh;
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+			/*noinspection CssInvalidPropertyValue*/
+			min-height: -moz-available;
+			/*noinspection CssInvalidPropertyValue*/
+			min-height: -webkit-fill-available;
 		}
 	</style>
 </head>

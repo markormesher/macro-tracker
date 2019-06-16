@@ -16,7 +16,7 @@ const requireUser: RequestHandler = (req: Request, res: Response, next: NextFunc
 	if (req.user) {
 		loadUser(req, res, next);
 	} else {
-		throw new StatusError(401);
+		// throw new StatusError(401);
 	}
 };
 

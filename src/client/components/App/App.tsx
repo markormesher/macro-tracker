@@ -89,7 +89,7 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
 			);
 		}
 
-		if (!activeUser) {
+		if (false && !activeUser) {
 			return (
 					<Switch>
 						<Route exact={true} path="/auth/login" component={LoginPage}/>
