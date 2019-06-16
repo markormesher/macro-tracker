@@ -8,7 +8,7 @@ $border-color: $gray-500;
 .outer-wrapper {
 	display: flex;
 	flex-direction: column;
-	flex-grow: 1;
+	height: 100%;
 }
 
 .summary-wrapper {
@@ -30,7 +30,7 @@ $border-color: $gray-500;
 
 .content-wrapper {
 	flex-grow: 1;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 .picker-wrapper {

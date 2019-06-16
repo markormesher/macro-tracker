@@ -1,16 +1,18 @@
-import { faCheck, faPencil } from "@fortawesome/pro-light-svg-icons";
+import { faCheck, faPencil, faSave } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
+import { ALL_MEAL_VALUES, Meal } from "../../../commons/enums";
 import { getDefaultDiaryEntry, IDiaryEntry } from "../../../commons/models/IDiaryEntry";
 import { IFoodItem } from "../../../commons/models/IFoodItem";
 import { generateMacroSummary } from "../../../commons/models/IMacroSummary";
 import { IServingSize } from "../../../commons/models/IServingSize";
 import { getDefaultTarget } from "../../../commons/models/ITarget";
-import { formatLargeNumber, formatMeasurement } from "../../../commons/utils/formatters";
+import { formatLargeNumber, formatMeasurement, getMealTitle } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
+import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { DiaryEntryFoodItemSummary } from "../DiaryEntryFoodItemSummary/DiaryEntryFoodItemSummary";
@@ -21,6 +23,7 @@ import * as style from "./MealSketchPage.scss";
 interface IMealSketchPageState {
 	readonly diaryEntries: IDiaryEntry[];
 	readonly activeEditPositions: number[];
+	readonly selectedMeal?: Meal;
 }
 
 class MealSketchPage extends PureComponent<any, IMealSketchPageState> {
@@ -29,6 +32,7 @@ class MealSketchPage extends PureComponent<any, IMealSketchPageState> {
 		super(props, context);
 
 		this.state = {
+			selectedMeal: null,
 			diaryEntries: [],
 			activeEditPositions: [],
 		};
@@ -42,6 +46,7 @@ class MealSketchPage extends PureComponent<any, IMealSketchPageState> {
 		this.handleDeleteFoodItem = this.handleDeleteFoodItem.bind(this);
 		this.handleServingQtyChange = this.handleServingQtyChange.bind(this);
 		this.handleServingSizeChange = this.handleServingSizeChange.bind(this);
+		this.handleMealChange = this.handleMealChange.bind(this);
 	}
 
 	public render(): ReactNode {
@@ -63,27 +68,31 @@ class MealSketchPage extends PureComponent<any, IMealSketchPageState> {
 		return (
 				<div className={style.summaryWrapper}>
 					<div className={style.summaryItem}>
-						<span className={bs.mr2}>
+						<span>
 							{formatLargeNumber(summary.totalCalories)}
 						</span>
-						calories
+						<br/>
+						kcal
 					</div>
 					<div className={style.summaryItem}>
-						<span className={bs.mr2}>
+						<span>
 							{formatMeasurement(summary.totalCarbohydrates, "g")}
 						</span>
-						carbohydrates
+						<br/>
+						carbs
 					</div>
 					<div className={style.summaryItem}>
-						<span className={bs.mr2}>
+						<span>
 							{formatMeasurement(summary.totalFat, "g")}
 						</span>
+						<br/>
 						fat
 					</div>
 					<div className={style.summaryItem}>
-						<span className={bs.mr2}>
+						<span>
 							{formatMeasurement(summary.totalProtein, "g")}
 						</span>
+						<br/>
 						protein
 					</div>
 				</div>
@@ -91,7 +100,7 @@ class MealSketchPage extends PureComponent<any, IMealSketchPageState> {
 	}
 
 	private renderContents(): ReactNode {
-		const { diaryEntries } = this.state;
+		const { diaryEntries, selectedMeal } = this.state;
 
 		if (diaryEntries.length === 0) {
 			return (
@@ -108,6 +117,43 @@ class MealSketchPage extends PureComponent<any, IMealSketchPageState> {
 					<div className={style.contentWrapper}>
 						<ContentWrapper>
 							{diaryEntries.map(this.renderDiaryEntry)}
+							<hr/>
+							<div className={bs.row}>
+								<div className={bs.col6}>
+									<ControlledSelectInput
+											id={"meal"}
+											label={null}
+											value={selectedMeal || ""}
+											onValueChange={this.handleMealChange}
+											disabled={false}
+											selectProps={{
+												style: {
+													width: "100%",
+												},
+											}}
+									>
+										<option value={""}>Select</option>
+										{ALL_MEAL_VALUES.map((m) => (
+												<option value={m} key={m}>
+													{getMealTitle(m)}
+												</option>
+										))}
+									</ControlledSelectInput>
+								</div>
+								<div className={bs.col6}>
+									<IconBtn
+											icon={faSave}
+											text={"Add to Diary"}
+											btnProps={{
+												style: {
+													width: "100%",
+												},
+												disabled: !selectedMeal,
+												className: bs.btnOutlineDark,
+											}}
+									/>
+								</div>
+							</div>
 						</ContentWrapper>
 					</div>
 			);
@@ -120,6 +166,7 @@ class MealSketchPage extends PureComponent<any, IMealSketchPageState> {
 					<ContentWrapper disableBottomPadding={true}>
 						<FoodItemPicker
 								onValueChange={this.handleAddFoodItem}
+								resetSearchOnSelect={true}
 						/>
 					</ContentWrapper>
 				</div>
@@ -191,9 +238,12 @@ class MealSketchPage extends PureComponent<any, IMealSketchPageState> {
 	}
 
 	private handleAddFoodItem(foodItem: IFoodItem): void {
+		const servingSizes = foodItem.servingSizes.filter((s) => !s.deleted);
+
 		const diaryEntry = {
 			...getDefaultDiaryEntry(),
 			foodItem,
+			servingSize: servingSizes.length > 0 ? servingSizes[0] : null,
 		};
 
 		const diaryEntries = [...this.state.diaryEntries, diaryEntry];
@@ -251,6 +301,10 @@ class MealSketchPage extends PureComponent<any, IMealSketchPageState> {
 				}
 			}),
 		});
+	}
+
+	private handleMealChange(meal: string): void {
+		this.setState({ selectedMeal: meal as Meal });
 	}
 }
 

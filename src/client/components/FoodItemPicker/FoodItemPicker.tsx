@@ -23,6 +23,7 @@ interface IFoodItemPickerProps {
 	readonly preSelectedId?: string;
 	readonly onValueChange?: (foodItem?: IFoodItem) => void;
 	readonly disabled?: boolean;
+	readonly resetSearchOnSelect?: boolean;
 
 	// from redux
 	readonly allFoodItems?: IFoodItem[];
@@ -285,6 +286,11 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps, IFoodItemPick
 
 	private handleSearchResultClick(event: MouseEvent<HTMLDivElement>): void {
 		const id = event.currentTarget.attributes.getNamedItem("data-id").value;
+
+		if (this.props.resetSearchOnSelect) {
+			this.handleSearchTermChange("");
+		}
+
 		this.handleIdSelected(id);
 		this.closeSearch();
 	}
