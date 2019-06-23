@@ -6,7 +6,8 @@ import { utcMoment } from "./dates";
 import { getNutritionBaseAmount } from "./helpers";
 
 function formatLargeNumber(amount: number): string {
-	return amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	const safeAmount = isNaN(amount) || amount === null ? 0 : amount;
+	return safeAmount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function formatPercent(amount: number): string {
