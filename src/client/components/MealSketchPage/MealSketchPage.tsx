@@ -1,7 +1,8 @@
-import { faCheck, faPencil, faSave } from "@fortawesome/pro-light-svg-icons";
+import { faAppleAlt, faCalendarDay, faCheck, faCircleNotch, faPencil, faSave } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import { AnyAction, Dispatch } from "redux";
 import { ALL_MEAL_VALUES, Meal } from "../../../commons/enums";
 import { getDefaultDiaryEntry, IDiaryEntry } from "../../../commons/models/IDiaryEntry";
@@ -13,7 +14,8 @@ import { formatLargeNumber, formatMeasurement, getMealTitle } from "../../../com
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
-import { startSaveDiaryEntry } from "../../redux/diary-entries";
+import { startMultiSaveDiaryEntries } from "../../redux/diary-entries";
+import { ActionResult } from "../../redux/helpers/ActionResult";
 import { IRootState } from "../../redux/root";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
@@ -25,8 +27,10 @@ import { ServingPicker } from "../ServingPicker/ServingPicker";
 import * as style from "./MealSketchPage.scss";
 
 interface IMealSketchPageProps {
+	readonly multiSaveEditorBusy?: boolean;
+	readonly multiSaveEditorResult?: ActionResult;
 	readonly actions?: {
-		readonly startSaveDiaryEntry: (diaryEntry: IDiaryEntry) => AnyAction;
+		readonly startSaveDiaryEntries: (diaryEntries: IDiaryEntry[]) => AnyAction;
 	};
 }
 
@@ -37,14 +41,18 @@ interface IMealSketchPageState {
 }
 
 function mapStateToProps(state: IRootState, props: IMealSketchPageProps): IMealSketchPageProps {
-	return { ...props };
+	return {
+		...props,
+		multiSaveEditorBusy: state.diaryEntries.multiSaveEditorBusy,
+		multiSaveEditorResult: state.diaryEntries.multiSaveEditorResult,
+	};
 }
 
 function mapDispatchToProps(dispatch: Dispatch, props: IMealSketchPageProps): IMealSketchPageProps {
 	return {
 		...props,
 		actions: {
-			startSaveDiaryEntry: (diaryEntry: IDiaryEntry) => dispatch(startSaveDiaryEntry(diaryEntry)),
+			startSaveDiaryEntries: (diaryEntries: IDiaryEntry[]) => dispatch(startMultiSaveDiaryEntries(diaryEntries)),
 		},
 	};
 }
@@ -70,6 +78,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
 		this.handleServingQtyChange = this.handleServingQtyChange.bind(this);
 		this.handleServingSizeChange = this.handleServingSizeChange.bind(this);
 		this.handleMealChange = this.handleMealChange.bind(this);
+		this.handleSaveEntries = this.handleSaveEntries.bind(this);
 	}
 
 	public render(): ReactNode {
@@ -83,7 +92,13 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
 	}
 
 	private renderSummary(): ReactNode {
+		const { multiSaveEditorResult } = this.props;
 		const { diaryEntries } = this.state;
+
+		if (multiSaveEditorResult === "success") {
+			// render nothing if we've finished adding entries to the diary
+			return null;
+		}
 
 		// we don't care about the target at this point
 		const summary = generateMacroSummary(diaryEntries, [], getDefaultTarget());
@@ -123,6 +138,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
 	}
 
 	private renderContents(): ReactNode {
+		const { multiSaveEditorBusy, multiSaveEditorResult } = this.props;
 		const { diaryEntries, selectedMeal } = this.state;
 
 		if (diaryEntries.length === 0) {
@@ -136,9 +152,63 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
 					</div>
 			);
 		} else {
+
+			let statusMsg: ReactNode = null;
+			if (multiSaveEditorResult === "success") {
+				return (
+						<ContentWrapper>
+							<div className={bs.row}>
+								<div className={bs.col}>
+									<h1>Done!</h1>
+									<p>{diaryEntries.length} {diaryEntries.length === 1 ? "entry has" : "entries have"} been
+										saved.</p>
+								</div>
+							</div>
+							<div className={bs.row}>
+								<div className={bs.col6}>
+									<Link to={"/food-items"}>
+										<IconBtn
+												icon={faAppleAlt}
+												text={"All Food Items"}
+												btnProps={{
+													className: bs.btnOutlineDark,
+													style: {
+														width: "100%",
+													},
+												}}
+										/>
+									</Link>
+								</div>
+								<div className={bs.col6}>
+									<Link to={"/diary-entries"}>
+										<IconBtn
+												icon={faCalendarDay}
+												text={"Back to the Diary"}
+												btnProps={{
+													className: bs.btnOutlineDark,
+													style: {
+														width: "100%",
+													},
+												}}
+										/>
+									</Link>
+								</div>
+							</div>
+						</ContentWrapper>
+				);
+			} else if (multiSaveEditorResult) {
+				statusMsg = (
+						<div className={combine(bs.alert, bs.alertDanger)}>
+							<h5>Failed!</h5>
+							<p>{multiSaveEditorResult.message}</p>
+						</div>
+				);
+			}
+
 			return (
 					<div className={style.contentWrapper}>
 						<ContentWrapper>
+							{statusMsg}
 							{diaryEntries.map(this.renderDiaryEntry)}
 							<hr/>
 							<div className={bs.row}>
@@ -148,7 +218,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
 											label={null}
 											value={selectedMeal || ""}
 											onValueChange={this.handleMealChange}
-											disabled={false}
+											disabled={multiSaveEditorBusy}
 											selectProps={{
 												style: {
 													width: "100%",
@@ -165,14 +235,18 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
 								</div>
 								<div className={bs.col6}>
 									<IconBtn
-											icon={faSave}
+											icon={multiSaveEditorBusy ? faCircleNotch : faSave}
 											text={"Add to Diary"}
+											onClick={this.handleSaveEntries}
 											btnProps={{
 												style: {
 													width: "100%",
 												},
-												disabled: !selectedMeal,
+												disabled: !selectedMeal || multiSaveEditorBusy,
 												className: bs.btnOutlineDark,
+											}}
+											iconProps={{
+												spin: multiSaveEditorBusy,
 											}}
 									/>
 								</div>
@@ -184,12 +258,20 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
 	}
 
 	private renderPicker(): ReactNode {
+		const { multiSaveEditorBusy, multiSaveEditorResult } = this.props;
+
+		if (multiSaveEditorResult === "success") {
+			// render nothing if we've finished adding entries to the diary
+			return null;
+		}
+
 		return (
 				<div className={style.pickerWrapper}>
 					<ContentWrapper disableBottomPadding={true}>
 						<FoodItemPicker
 								onValueChange={this.handleAddFoodItem}
 								resetSearchOnSelect={true}
+								disabled={multiSaveEditorBusy}
 						/>
 					</ContentWrapper>
 				</div>
@@ -197,6 +279,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
 	}
 
 	private renderDiaryEntry(entry: IDiaryEntry, index: number): ReactNode {
+		const { multiSaveEditorBusy } = this.props;
 		const { activeEditPositions } = this.state;
 		const { foodItem } = entry;
 
@@ -245,6 +328,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
 									onClick={this.handleToggleEditFoodItem}
 									btnProps={{
 										className: combine(bs.btnOutlineDark, gs.btnMini),
+										disabled: multiSaveEditorBusy,
 									}}
 							/>
 							<DeleteBtn
@@ -252,6 +336,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
 									onConfirmedClick={this.handleDeleteFoodItem}
 									btnProps={{
 										className: combine(bs.btnOutlineDark, gs.btnMini),
+										disabled: multiSaveEditorBusy,
 									}}
 							/>
 						</div>
@@ -328,6 +413,12 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
 
 	private handleMealChange(meal: string): void {
 		this.setState({ selectedMeal: meal as Meal });
+	}
+
+	private handleSaveEntries(): void {
+		const { diaryEntries, selectedMeal } = this.state;
+		const diaryEntriesWithMeal = diaryEntries.map((d) => ({ ...d, meal: selectedMeal }));
+		this.props.actions.startSaveDiaryEntries(diaryEntriesWithMeal);
 	}
 }
 

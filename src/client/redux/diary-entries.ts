@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import * as Moment from "moment";
-import { all, call, put, takeEvery } from "redux-saga/effects";
+import { all, call, Effect, put, takeEvery } from "redux-saga/effects";
 import { IDiaryEntry, mapDiaryEntryFromJson, mapDiaryEntryToJson } from "../../commons/models/IDiaryEntry";
 import { IJsonArray } from "../../commons/models/IJsonArray";
 import { IJsonObject } from "../../commons/models/IJsonObject";
@@ -14,7 +14,9 @@ import { PayloadAction } from "./helpers/PayloadAction";
 
 interface IDiaryEntriesState {
 	readonly editorBusy?: boolean;
+	readonly multiSaveEditorBusy?: boolean;
 	readonly editorResult?: ActionResult;
+	readonly multiSaveEditorResult?: ActionResult;
 	readonly loadedDiaryEntries: { readonly [key: string]: IDiaryEntry };
 	readonly loadedDiaryEntriesByDate: { readonly [key: string]: IDiaryEntry[] };
 	readonly lastDiaryEntrySaved: IDiaryEntry;
@@ -22,7 +24,9 @@ interface IDiaryEntriesState {
 
 const initialState: IDiaryEntriesState = {
 	editorBusy: false,
+	multiSaveEditorBusy: false,
 	editorResult: undefined,
+	multiSaveEditorResult: undefined,
 	loadedDiaryEntries: {},
 	loadedDiaryEntriesByDate: {},
 	lastDiaryEntrySaved: undefined,
@@ -30,7 +34,9 @@ const initialState: IDiaryEntriesState = {
 
 enum DiaryEntriesActions {
 	SET_EDITOR_BUSY = "DiaryEntriesActions.SET_EDITOR_BUSY",
+	SET_MULTI_SAVE_EDITOR_BUSY = "DiaryEntriesActions.SET_MULTI_SAVE_EDITOR_BUSY",
 	SET_EDITOR_RESULT = "DiaryEntriesActions.SET_EDITOR_RESULT",
+	SET_MULTI_SAVE_EDITOR_RESULT = "DiaryEntriesActions.SET_MULTI_SAVE_EDITOR_RESULT",
 	SET_DIARY_ENTRY = "DiaryEntriesActions.SET_DIARY_ENTRY",
 	SET_DIARY_ENTRIES_FOR_DATE = "DiaryEntriesActions.SET_DIARY_ENTRIES_FOR_DATE",
 	SET_LAST_DIARY_ENTRY_SAVED = "DiaryEntriesActions.SET_LAST_DIARY_ENTRY_SAVED",
@@ -38,6 +44,7 @@ enum DiaryEntriesActions {
 	START_LOAD_DIARY_ENTRY = "DiaryEntriesActions.START_LOAD_DIARY_ENTRY",
 	START_LOAD_DIARY_ENTRIES_FOR_DATE = "DiaryEntriesActions.START_LOAD_DIARY_ENTRIES_FOR_DATE",
 	START_SAVE_DIARY_ENTRY = "DiaryEntriesActions.START_SAVE_DIARY_ENTRY",
+	START_MULTI_SAVE_DIARY_ENTRIES = "DiaryEntriesActions.START_MULTI_SAVE_DIARY_ENTRIES",
 	START_DELETE_DIARY_ENTRY = "DiaryEntriesActions.START_DELETE_DIARY_ENTRY",
 }
 
@@ -54,9 +61,23 @@ function setEditorBusy(editorBusy: boolean): PayloadAction {
 	};
 }
 
+function setMultiSaveEditorBusy(editorBusy: boolean): PayloadAction {
+	return {
+		type: DiaryEntriesActions.SET_MULTI_SAVE_EDITOR_BUSY,
+		payload: { editorBusy },
+	};
+}
+
 function setEditorResult(editorResult: ActionResult): PayloadAction {
 	return {
 		type: DiaryEntriesActions.SET_EDITOR_RESULT,
+		payload: { editorResult },
+	};
+}
+
+function setMultiSaveEditorResult(editorResult: ActionResult): PayloadAction {
+	return {
+		type: DiaryEntriesActions.SET_MULTI_SAVE_EDITOR_RESULT,
 		payload: { editorResult },
 	};
 }
@@ -100,6 +121,13 @@ function startSaveDiaryEntry(diaryEntry: IDiaryEntry): PayloadAction {
 	return {
 		type: DiaryEntriesActions.START_SAVE_DIARY_ENTRY,
 		payload: { diaryEntry },
+	};
+}
+
+function startMultiSaveDiaryEntries(diaryEntries: IDiaryEntry[]): PayloadAction {
+	return {
+		type: DiaryEntriesActions.START_MULTI_SAVE_DIARY_ENTRIES,
+		payload: { diaryEntries },
 	};
 }
 
@@ -187,6 +215,39 @@ function*saveDiaryEntrySaga(): Generator {
 	});
 }
 
+function*multiSaveDiaryEntriesSaga(): Generator {
+	yield takeEvery(DiaryEntriesActions.START_MULTI_SAVE_DIARY_ENTRIES, function*(action: PayloadAction): Generator {
+		const diaryEntries: IDiaryEntry[] = action.payload.diaryEntries;
+		try {
+			yield put(setMultiSaveEditorBusy(true));
+
+			const cacheUpdates: Effect[] = [];
+
+			for (const diaryEntry of diaryEntries) {
+				const diaryEntryId = diaryEntry.id || "";
+				yield call(() => axios
+						.post(`/api/diary-entries/edit/${diaryEntryId}`, mapDiaryEntryToJson(diaryEntry))
+						.then((res) => mapDiaryEntryFromJson(res.data as IJsonObject)));
+				cacheUpdates.push(put(KeyCache.invalidateKey(diaryEntriesCacheKeys.forEntry(diaryEntry.id))));
+				cacheUpdates.push(put(KeyCache.invalidateKey(diaryEntriesCacheKeys.forEntriesByDate(diaryEntry.date))));
+			}
+
+			yield all([
+				put(setMultiSaveEditorBusy(false)),
+				put(setMultiSaveEditorResult("success")),
+				put(KeyCache.updateKey(diaryEntriesCacheKeys.latestUpdate)),
+				...cacheUpdates,
+			]);
+		} catch (rawError) {
+			const error = rawError as AxiosError;
+			yield all([
+				put(setMultiSaveEditorBusy(false)),
+				put(setMultiSaveEditorResult(error.response.data)),
+			]);
+		}
+	});
+}
+
 function*deleteDiaryEntrySaga(): Generator {
 	yield takeEvery(DiaryEntriesActions.START_DELETE_DIARY_ENTRY, function*(action: PayloadAction): Generator {
 		try {
@@ -207,6 +268,7 @@ function*deleteDiaryEntrySaga(): Generator {
 function*diaryEntriesSagas(): Generator {
 	yield all([
 		saveDiaryEntrySaga(),
+		multiSaveDiaryEntriesSaga(),
 		deleteDiaryEntrySaga(),
 		loadDiaryEntrySaga(),
 		loadDiaryEntriesForDateSaga(),
@@ -222,10 +284,22 @@ function diaryEntriesReducer(state = initialState, action: PayloadAction): IDiar
 				editorBusy: action.payload.editorBusy,
 			};
 
+		case DiaryEntriesActions.SET_MULTI_SAVE_EDITOR_BUSY:
+			return {
+				...state,
+				multiSaveEditorBusy: action.payload.editorBusy,
+			};
+
 		case DiaryEntriesActions.SET_EDITOR_RESULT:
 			return {
 				...state,
 				editorResult: action.payload.editorResult,
+			};
+
+		case DiaryEntriesActions.SET_MULTI_SAVE_EDITOR_RESULT:
+			return {
+				...state,
+				multiSaveEditorResult: action.payload.editorResult,
 			};
 
 		case DiaryEntriesActions.SET_DIARY_ENTRY:
@@ -274,6 +348,7 @@ export {
 	setEditorBusy,
 	setEditorResult,
 	startSaveDiaryEntry,
+	startMultiSaveDiaryEntries,
 	startDeleteDiaryEntry,
 	startLoadDiaryEntry,
 	startLoadDiaryEntriesForDate,
