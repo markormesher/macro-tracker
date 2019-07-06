@@ -87,6 +87,14 @@ function getMealTitle(meal: Meal): string {
 	return "";
 }
 
+function uniqueArray<T>(arr: T[]): T[] {
+	if (!arr) {
+		return arr;
+	}
+
+	return arr.filter((v, i, a) => i === a.indexOf(v));
+}
+
 export {
 	formatLargeNumber,
 	formatPercent,
@@ -95,4 +103,5 @@ export {
 	formatDate,
 	formatNutritionBaseSize,
 	getMealTitle,
+	uniqueArray,
 };

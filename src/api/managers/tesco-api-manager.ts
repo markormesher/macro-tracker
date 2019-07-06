@@ -51,7 +51,7 @@ function mapFoodItemFromTescoApi(product?: ITescoProduct, upc?: string): IFoodIt
 		...getDefaultFoodItem(),
 		brand: cleanBrand,
 		name: cleanDescription,
-		upc,
+		upc: [upc],
 		apiSource: "tesco",
 	};
 

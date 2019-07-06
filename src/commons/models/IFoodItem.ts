@@ -11,7 +11,7 @@ import { IValidationResult } from "./IValidationResult";
 interface IFoodItem extends IBaseModel {
 	readonly brand: string;
 	readonly name: string;
-	readonly upc: string;
+	readonly upc: string[];
 	readonly apiSource: ApiSource;
 	readonly apiId: string;
 	readonly measurementUnit: FoodMeasurementUnit;
@@ -58,7 +58,7 @@ function mapFoodItemFromJson(json?: IJsonObject): IFoodItem {
 		deleted: json.deleted as boolean,
 		brand: cleanString(json.brand as string),
 		name: cleanString(json.name as string),
-		upc: cleanString(json.upc as string),
+		upc: safeMapEntities(cleanString, json.upc as string[]),
 		apiSource: cleanString(json.apiSource as string) as ApiSource,
 		apiId: cleanString(json.apiId as string),
 		measurementUnit: cleanString(json.measurementUnit as string) as FoodMeasurementUnit,
@@ -129,12 +129,12 @@ function validateFoodItem(foodItem?: Partial<IFoodItem>): IFoodItemValidationRes
 		};
 	}
 
-	if (foodItem.upc && !(/[0-9]+/).test(foodItem.upc)) {
+	if (foodItem.upc && foodItem.upc.some((upc) => !(/[0-9]+/).test(upc))) {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				upc: "The UPC must contain numbers only",
+				upc: "UPCs must contain numbers only",
 			},
 		};
 	}

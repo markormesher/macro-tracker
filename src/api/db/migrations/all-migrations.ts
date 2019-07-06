@@ -248,6 +248,23 @@ const allMigrations: IDbMigration[] = [
 			`);
 		},
 	},
+
+	// allow food to have multiple UPCs
+	{
+		migrationNumber: 9,
+		up: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_food_item
+                    ALTER COLUMN upc TYPE CHARACTER VARYING[] USING ARRAY[upc];
+			`);
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_food_item
+                    ALTER COLUMN upc TYPE CHARACTER VARYING USING upc[0];
+			`);
+		},
+	},
 ];
 
 export {
