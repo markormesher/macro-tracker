@@ -306,11 +306,11 @@ class UCFoodItemSearchPage extends PureComponent<IFoodItemSearchPageProps, IFood
 										&& <span className={bs.textMuted}> (already added)</span>
 									}
 									{
-										fi.apiSource === "nutritionix"
+										!fi.id && fi.apiSource === "nutritionix"
 										&& <span className={bs.textMuted}> (via Nutritionix API)</span>
 									}
 									{
-										fi.apiSource === "tesco"
+										!fi.id && fi.apiSource === "tesco"
 										&& <span className={bs.textMuted}> (via Tesco API)</span>
 									}
 									<br/>

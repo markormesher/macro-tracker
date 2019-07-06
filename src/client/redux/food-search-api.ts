@@ -138,16 +138,27 @@ function*searchFoodItemByKeywordSaga(): Generator {
 		yield put(setKeywordSearchBusy(true));
 
 		try {
-			// TODO: check our own DB first
-
-			const foodItems: IFoodItem[] = yield call(() => axios
-					.get(`/api/nutritionix-api/search-keyword/${keyword}`)
+			// check our own DB first
+			const existingFoodItems: IFoodItem[] = yield call(() => axios
+					.get(`/api/food-items/by-keyword/${keyword}`)
 					.then((res) => safeMapEntities(mapFoodItemFromJson, res.data as IJsonArray)));
 
-			yield all([
-				put(setFoodItemsByKeyword(keyword, foodItems)),
-				put(setKeywordSearchBusy(false)),
-			]);
+			if (existingFoodItems) {
+				yield all([
+					put(setFoodItemsByKeyword(keyword, existingFoodItems)),
+					put(setKeywordSearchBusy(false)),
+				]);
+			} else {
+
+				const foodItems: IFoodItem[] = yield call(() => axios
+						.get(`/api/nutritionix-api/search-keyword/${keyword}`)
+						.then((res) => safeMapEntities(mapFoodItemFromJson, res.data as IJsonArray)));
+
+				yield all([
+					put(setFoodItemsByKeyword(keyword, foodItems)),
+					put(setKeywordSearchBusy(false)),
+				]);
+			}
 		} catch (err) {
 			yield put(setError(err));
 		}

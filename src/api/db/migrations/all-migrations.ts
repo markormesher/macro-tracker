@@ -180,12 +180,14 @@ const allMigrations: IDbMigration[] = [
 		migrationNumber: 5,
 		up: (qr: QueryRunner) => {
 			return qr.query(`
-				ALTER TABLE db_food_item ADD COLUMN upc CHARACTER VARYING;
+                ALTER TABLE db_food_item
+                    ADD COLUMN upc CHARACTER VARYING;
 			`);
 		},
 		down: (qr: QueryRunner) => {
 			return qr.query(`
-				ALTER TABLE db_food_item DROP COLUMN upc;
+                ALTER TABLE db_food_item
+                    DROP COLUMN upc;
 			`);
 		},
 	},
@@ -195,26 +197,28 @@ const allMigrations: IDbMigration[] = [
 		migrationNumber: 6,
 		up: (qr: QueryRunner) => {
 			return qr.query(`
-				ALTER TABLE db_food_item RENAME COLUMN calories_per_100 TO calories_per_base_amount;
-				ALTER TABLE db_food_item RENAME COLUMN fat_per_100 TO fat_per_base_amount;
-				ALTER TABLE db_food_item RENAME COLUMN sat_fat_per_100 TO sat_fat_per_bASE_AMOUNT;
-				ALTER TABLE db_food_item RENAME COLUMN carbohydrate_per_100 TO carbohydrate_per_bASE_AMOUNT;
-				ALTER TABLE db_food_item RENAME COLUMN sugar_per_100 TO sugar_per_bASE_AMOUNT;
-				ALTER TABLE db_food_item RENAME COLUMN fibre_per_100 TO fibre_per_bASE_AMOUNT;
-				ALTER TABLE db_food_item RENAME COLUMN protein_per_100 TO protein_per_bASE_AMOUNT;
-				ALTER TABLE db_food_item RENAME COLUMN salt_per_100 TO salt_per_bASE_AMOUNT;
+                ALTER TABLE db_food_item
+                    RENAME COLUMN calories_per_100 TO calories_per_base_amount,
+                    RENAME COLUMN fat_per_100 TO fat_per_base_amount,
+                    RENAME COLUMN sat_fat_per_100 TO sat_fat_per_base_amount,
+                    RENAME COLUMN carbohydrate_per_100 TO carbohydrate_per_base_amount,
+                    RENAME COLUMN sugar_per_100 TO sugar_per_base_amount,
+                    RENAME COLUMN fibre_per_100 TO fibre_per_base_amount,
+                    RENAME COLUMN protein_per_100 TO protein_per_base_amount,
+                    RENAME COLUMN salt_per_100 TO salt_per_base_amount;
 			`);
 		},
 		down: (qr: QueryRunner) => {
 			return qr.query(`
-                ALTER TABLE db_food_item RENAME COLUMN calories_per_base_amount TO calories_per_100;
-                ALTER TABLE db_food_item RENAME COLUMN fat_per_base_amount TO fat_per_100;
-                ALTER TABLE db_food_item RENAME COLUMN sat_fat_per_base_amount TO sat_fat_per_100;
-                ALTER TABLE db_food_item RENAME COLUMN carbohydrate_per_base_amount TO carbohydrate_per_100;
-                ALTER TABLE db_food_item RENAME COLUMN sugar_per_base_amount TO sugar_per_100;
-                ALTER TABLE db_food_item RENAME COLUMN fibre_per_base_amount TO fibre_per_100;
-                ALTER TABLE db_food_item RENAME COLUMN protein_per_base_amount TO protein_per_100;
-                ALTER TABLE db_food_item RENAME COLUMN salt_per_base_amount TO salt_per_100;
+                ALTER TABLE db_food_item
+                    RENAME COLUMN calories_per_base_amount TO calories_per_100,
+                    RENAME COLUMN fat_per_base_amount TO fat_per_100,
+                    RENAME COLUMN sat_fat_per_base_amount TO sat_fat_per_100,
+                    RENAME COLUMN carbohydrate_per_base_amount TO carbohydrate_per_100,
+                    RENAME COLUMN sugar_per_base_amount TO sugar_per_100,
+                    RENAME COLUMN fibre_per_base_amount TO fibre_per_100,
+                    RENAME COLUMN protein_per_base_amount TO protein_per_100,
+                    RENAME COLUMN salt_per_base_amount TO salt_per_100;
 			`);
 		},
 	},
@@ -224,12 +228,14 @@ const allMigrations: IDbMigration[] = [
 		migrationNumber: 7,
 		up: (qr: QueryRunner) => {
 			return qr.query(`
-                ALTER TABLE db_food_item ADD COLUMN api_source CHARACTER VARYING;
+                ALTER TABLE db_food_item
+                    ADD COLUMN api_source CHARACTER VARYING;
 			`);
 		},
 		down: (qr: QueryRunner) => {
 			return qr.query(`
-                ALTER TABLE db_food_item DROP COLUMN api_source;
+                ALTER TABLE db_food_item
+                    DROP COLUMN api_source;
 			`);
 		},
 	},
@@ -239,12 +245,14 @@ const allMigrations: IDbMigration[] = [
 		migrationNumber: 8,
 		up: (qr: QueryRunner) => {
 			return qr.query(`
-				ALTER TABLE db_food_item ADD COLUMN api_id CHARACTER VARYING;
+                ALTER TABLE db_food_item
+                    ADD COLUMN api_id CHARACTER VARYING;
 			`);
 		},
 		down: (qr: QueryRunner) => {
 			return qr.query(`
-				ALTER TABLE db_food_item DROP COLUMN api_id;
+                ALTER TABLE db_food_item
+                    DROP COLUMN api_id;
 			`);
 		},
 	},
@@ -254,14 +262,14 @@ const allMigrations: IDbMigration[] = [
 		migrationNumber: 9,
 		up: (qr: QueryRunner) => {
 			return qr.query(`
-				ALTER TABLE db_food_item
-					ALTER COLUMN upc TYPE CHARACTER VARYING[] USING ARRAY[upc];
+                ALTER TABLE db_food_item
+                    ALTER COLUMN upc TYPE CHARACTER VARYING[] USING ARRAY [upc];
 			`);
 		},
 		down: (qr: QueryRunner) => {
 			return qr.query(`
-				ALTER TABLE db_food_item
-					ALTER COLUMN upc TYPE CHARACTER VARYING USING upc[1];
+                ALTER TABLE db_food_item
+                    ALTER COLUMN upc TYPE CHARACTER VARYING USING upc[1];
 			`);
 		},
 	},
@@ -271,12 +279,14 @@ const allMigrations: IDbMigration[] = [
 		migrationNumber: 10,
 		up: (qr: QueryRunner) => {
 			return qr.query(`
-                ALTER TABLE db_food_item RENAME COLUMN upc TO upcs;
+                ALTER TABLE db_food_item
+                    RENAME COLUMN upc TO upcs;
 			`);
 		},
 		down: (qr: QueryRunner) => {
 			return qr.query(`
-                ALTER TABLE db_food_item RENAME COLUMN upcs TO upc;
+                ALTER TABLE db_food_item
+                    RENAME COLUMN upcs TO upc;
 			`);
 		},
 	},
@@ -286,13 +296,26 @@ const allMigrations: IDbMigration[] = [
 		migrationNumber: 11,
 		up: (qr: QueryRunner) => {
 			return qr.query(`
-                UPDATE db_food_item SET upcs = CASE WHEN upcs = '{NULL}' THEN NULL ELSE upcs END;
+                UPDATE db_food_item
+                SET upcs = CASE WHEN upcs = '{NULL}' THEN NULL ELSE upcs END;
 			`);
 		},
 		down: (qr: QueryRunner) => {
 			return qr.query(`
-                UPDATE db_food_item SET upcs = CASE WHEN upcs IS NULL THEN '{NULL}' ELSE upcs END;
+                UPDATE db_food_item
+                SET upcs = CASE WHEN upcs IS NULL THEN '{NULL}' ELSE upcs END;
 			`);
+		},
+	},
+
+	// enable pg_trgm module for fuzzy searching
+	{
+		migrationNumber: 12,
+		up: (qr: QueryRunner) => {
+			return qr.query("CREATE EXTENSION IF NOT EXISTS pg_trgm;");
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query("DROP EXTENSION IF EXISTS pg_trgm;");
 		},
 	},
 ];
