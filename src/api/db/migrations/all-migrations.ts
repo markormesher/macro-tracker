@@ -310,7 +310,7 @@ const allMigrations: IDbMigration[] = [
 
 	// enable pg_trgm module for fuzzy searching
 	{
-		migrationNumber: 9,
+		migrationNumber: 12,
 		up: (qr: QueryRunner) => {
 			return qr.query("CREATE EXTENSION IF NOT EXISTS pg_trgm;");
 		},
