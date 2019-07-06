@@ -261,7 +261,7 @@ const allMigrations: IDbMigration[] = [
 		down: (qr: QueryRunner) => {
 			return qr.query(`
 				ALTER TABLE db_food_item
-					ALTER COLUMN upc TYPE CHARACTER VARYING USING upc[0];
+					ALTER COLUMN upc TYPE CHARACTER VARYING USING upc[1];
 			`);
 		},
 	},

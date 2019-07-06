@@ -692,7 +692,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 		// replace [] with undefined for UPCs
 		updatedFoodItem = {
 			...updatedFoodItem,
-			upc: updatedFoodItem.upc && updatedFoodItem.upc.length === 0 ? [] : updatedFoodItem.upc,
+			upc: updatedFoodItem.upc && updatedFoodItem.upc.length === 0 ? undefined : updatedFoodItem.upc,
 		};
 
 		this.setState({
