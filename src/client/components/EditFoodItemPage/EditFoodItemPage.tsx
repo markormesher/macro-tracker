@@ -247,7 +247,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 										/>
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
-										<div className={combine(bs.dFlex, bs.alignItemsEnd, currentValue.upc && currentValue.upc.length && bs.mb2)}>
+										<div className={combine(bs.dFlex, bs.alignItemsEnd, (currentValue.upcs || []).length && bs.mb2)}>
 											<div className={bs.flexGrow1}>
 												<ControlledBarcodeInput
 														id={"upcs"}
@@ -256,7 +256,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 														value={this.state.upcInput || ""}
 														onValueChange={this.handleUpcInputChanged}
 														disabled={editorBusy}
-														error={errors.upc}
+														error={errors.upcs}
 												/>
 											</div>
 											<div className={bs.flexGrow0}>
@@ -272,7 +272,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 												/>
 											</div>
 										</div>
-										{(currentValue.upc || []).map((upc) => (
+										{(currentValue.upcs || []).map((upc) => (
 												<span
 														key={upc}
 														className={combine(bs.dInlineBlock, bs.mr3)}
@@ -563,17 +563,16 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 	}
 
 	private handleAddUpc(upc: string): void {
-		const originalUpcs = (this.state.currentValue.upc || []);
-		originalUpcs.push(upc);
-		const newUpcs = uniqueArray(originalUpcs);
 		this.setState({ upcInput: "" });
-		this.updateModel({ upc: newUpcs });
+		this.updateModel({
+			upcs: uniqueArray([...(this.state.currentValue.upcs || []), upc]),
+		});
 	}
 
 	private handleRemoveUpc(upc: string): void {
-		const originalUpcs = (this.state.currentValue.upc || []);
-		const newUpcs = originalUpcs.filter((u) => u !== upc);
-		this.updateModel({ upc: newUpcs });
+		this.updateModel({
+			upcs: (this.state.currentValue.upcs || []).filter((u) => u !== upc),
+		});
 	}
 
 	private handleMeasurementUnitChange(measurementUnit: FoodMeasurementUnit): void {
@@ -689,10 +688,10 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 			...foodItem,
 		};
 
-		// replace [] with undefined for UPCs
+		// replace [] with null for UPCs
 		updatedFoodItem = {
 			...updatedFoodItem,
-			upc: updatedFoodItem.upc && updatedFoodItem.upc.length === 0 ? undefined : updatedFoodItem.upc,
+			upcs: (updatedFoodItem.upcs || []).length === 0 ? null : updatedFoodItem.upcs,
 		};
 
 		this.setState({

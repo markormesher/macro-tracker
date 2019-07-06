@@ -30,7 +30,7 @@ async function getFoodItem(id: string, options: IFoodItemQueryBuilderOptions = {
 async function getFoodItemByUpc(upc: string, options: IFoodItemQueryBuilderOptions = {}): Promise<DbFoodItem> {
 	return getFoodItemQueryBuilder(options)
 			.where("food_item.deleted = FALSE")
-			.andWhere(":upc = ANY(food_item.upc)")
+			.andWhere(":upc = ANY(food_item.upcs)")
 			.setParameter("upc", upc)
 			.getOne();
 }

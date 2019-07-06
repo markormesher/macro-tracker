@@ -145,7 +145,7 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
 			}
 		}
 
-		if (foodItem.upc) {
+		if ((foodItem.upcs || []).length > 0) {
 			infoChunks.push((
 					<span key={`info-chunk-upc`}>
 						<FontAwesomeIcon

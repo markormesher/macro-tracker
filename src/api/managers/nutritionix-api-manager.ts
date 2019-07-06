@@ -85,7 +85,7 @@ function mapFoodItemFromNutritionixFoodItem(nutritionixFoodItem?: INutritionixFo
 		...getDefaultFoodItem(),
 		brand: nutritionixFoodItem.brand_name || "Generic",
 		name: nutritionixFoodItem.food_name,
-		upc: [upc],
+		upcs: [upc],
 		apiSource: "nutritionix",
 		apiId: nutritionixFoodItem.nix_item_id ? nutritionixFoodItem.nix_item_id : nutritionixFoodItem.tag_id,
 	};

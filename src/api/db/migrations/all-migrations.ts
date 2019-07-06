@@ -265,6 +265,36 @@ const allMigrations: IDbMigration[] = [
 			`);
 		},
 	},
+
+	// rename upc to upcs
+	{
+		migrationNumber: 10,
+		up: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_food_item RENAME COLUMN upc TO upcs;
+			`);
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_food_item RENAME COLUMN upcs TO upc;
+			`);
+		},
+	},
+
+	// remove UPC = [null] created in migration #9
+	{
+		migrationNumber: 11,
+		up: (qr: QueryRunner) => {
+			return qr.query(`
+                UPDATE db_food_item SET upcs = CASE WHEN upcs = '{NULL}' THEN NULL ELSE upcs END;
+			`);
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query(`
+                UPDATE db_food_item SET upcs = CASE WHEN upcs IS NULL THEN '{NULL}' ELSE upcs END;
+			`);
+		},
+	},
 ];
 
 export {
