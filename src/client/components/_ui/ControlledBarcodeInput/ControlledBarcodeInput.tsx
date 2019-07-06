@@ -58,7 +58,7 @@ class ControlledBarcodeInput extends PureComponent<IControlledBarcodeInputProps,
 								}}
 						/>
 					</div>
-					{error && hasBeenTouched && <div className={bs.invalidFeedback}>{error}</div>}
+					{error && hasBeenTouched && <div className={combine(bs.invalidFeedback, bs.dBlock)}>{error}</div>}
 				</>
 		);
 	}

@@ -278,7 +278,7 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps, IFoodItemPick
 
 	private handleScan(value: string): void {
 		const { allFoodItems, onValueChange } = this.props;
-		const foodItem = (allFoodItems || []).find((fi) => fi.upc === value) || undefined;
+		const foodItem = (allFoodItems || []).find((fi) => (fi.upcs || []).indexOf(value) >= 0) || undefined;
 		if (onValueChange) {
 			onValueChange(foodItem);
 		}
