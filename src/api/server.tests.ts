@@ -7,6 +7,6 @@ import { testGlobals } from "../test-utils/global.tests";
 describe("server.ts", () => {
 
 	it("dummy test", () => {
-	expect(isTest()).to.equal(true);
+		expect(isTest()).to.equal(true);
 	});
 });

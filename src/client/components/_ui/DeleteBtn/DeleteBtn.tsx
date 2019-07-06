@@ -68,11 +68,7 @@ class DeleteBtn<Payload> extends PureComponent<IDeleteBtnProps<Payload>, IDelete
 			clearTimeout(this.triggerExpiryTimeout);
 			this.setState({ running: true });
 			if (onConfirmedClick) {
-				if (payload) {
-					onConfirmedClick(payload);
-				} else {
-					onConfirmedClick();
-				}
+				onConfirmedClick(payload);
 			}
 		}
 	}

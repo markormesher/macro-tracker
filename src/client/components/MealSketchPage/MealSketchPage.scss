@@ -1,0 +1,39 @@
+@import "~bootstrap-scss/functions";
+@import "~bootstrap-scss/variables";
+@import "~bootstrap-scss/mixins/breakpoints";
+@import "../../global-styles/Constants";
+
+$border-color: $gray-500;
+
+.outer-wrapper {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.summary-wrapper {
+	border-bottom: 1px solid $border-color;
+	display: flex;
+	flex-grow: 0;
+	flex-wrap: wrap;
+
+	.summary-item {
+		flex-grow: 1;
+		margin: $spacer #{$spacer / 4};
+		text-align: center;
+
+		span {
+			font-size: 120%;
+		}
+	}
+}
+
+.content-wrapper {
+	flex-grow: 1;
+	overflow-y: auto;
+}
+
+.picker-wrapper {
+	border-top: 1px solid $border-color;
+	flex-grow: 0;
+}

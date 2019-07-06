@@ -7,18 +7,19 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 
-interface IServingPickerProps {
+interface IServingPickerProps<Payload = {}> {
 	readonly foodItem?: IFoodItem;
 	readonly servingQty?: number;
 	readonly servingSize?: IServingSize;
 	readonly disabled?: boolean;
-	readonly onServingQtyChange?: (servingQty?: number) => void;
-	readonly onServingSizeChange?: (servingSize?: IServingSize) => void;
+	readonly payload?: Payload;
+	readonly onServingQtyChange?: (servingQty?: number, payload?: Payload) => void;
+	readonly onServingSizeChange?: (servingSize?: IServingSize, payload?: Payload) => void;
 }
 
-class ServingPicker extends PureComponent<IServingPickerProps> {
+class ServingPicker<Payload = {}> extends PureComponent<IServingPickerProps<Payload>> {
 
-	constructor(props: IServingPickerProps, context: any) {
+	constructor(props: IServingPickerProps<Payload>, context: any) {
 		super(props, context);
 
 		this.renderServingSizeSelector = this.renderServingSizeSelector.bind(this);
@@ -95,19 +96,19 @@ class ServingPicker extends PureComponent<IServingPickerProps> {
 	}
 
 	private handleServingQtyChange(value: string): void {
-		const { onServingQtyChange } = this.props;
+		const { onServingQtyChange, payload } = this.props;
 		if (onServingQtyChange) {
-			onServingQtyChange(value === "" ? null : parseFloat(value));
+			onServingQtyChange(value === "" ? null : parseFloat(value), payload);
 		}
 	}
 
 	private handleServingSizeChange(servingSizeId: string): void {
-		const { onServingSizeChange, foodItem } = this.props;
+		const { onServingSizeChange, foodItem, payload } = this.props;
 		if (foodItem) {
 			const allServingSizes = foodItem.servingSizes;
 			const servingSize = allServingSizes.find((ss) => ss.id === servingSizeId) || null;
 			if (onServingSizeChange) {
-				onServingSizeChange(servingSize);
+				onServingSizeChange(servingSize, payload);
 			}
 		}
 	}

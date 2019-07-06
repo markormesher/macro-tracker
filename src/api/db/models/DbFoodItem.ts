@@ -15,8 +15,8 @@ class DbFoodItem extends BaseModel implements IFoodItem {
 	@Column()
 	public name: string;
 
-	@Column({ nullable: true })
-	public upc: string;
+	@Column({ nullable: true, type: "character varying", array: true })
+	public upcs: string[];
 
 	@Column({ nullable: true, type: "character varying" })
 	public apiSource: ApiSource;

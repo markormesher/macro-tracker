@@ -38,7 +38,7 @@ class BarcodeScannerBtn extends PureComponent<IControlledBarcodeInputProps, ICon
 					{this.renderScanner()}
 					<IconBtn
 							icon={faBarcodeScan}
-							text={"Scan"}
+							text={"Scan Food"}
 							onClick={this.openScanner}
 							btnProps={btnProps}
 					/>

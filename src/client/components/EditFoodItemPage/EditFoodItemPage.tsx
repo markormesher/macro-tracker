@@ -1,4 +1,4 @@
-import { faArrowLeft, faCalendarDay, faCircleNotch, faSave } from "@fortawesome/pro-light-svg-icons";
+import { faArrowLeft, faCalendarDay, faCircleNotch, faPlus, faSave, faTrash } from "@fortawesome/pro-light-svg-icons";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -14,9 +14,10 @@ import {
 	validateFoodItem,
 } from "../../../commons/models/IFoodItem";
 import { getDefaultServingSize, IServingSize } from "../../../commons/models/IServingSize";
-import { formatMeasurementUnit, formatNutritionBaseSize } from "../../../commons/utils/formatters";
+import { formatMeasurementUnit, formatNutritionBaseSize, uniqueArray } from "../../../commons/utils/formatters";
 import { getFoodItemDataWarnings } from "../../../commons/utils/helpers";
 import * as bs from "../../global-styles/Bootstrap.scss";
+import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
 import { setEditorResult, startLoadAllFoodItems, startLoadFoodItem, startSaveFoodItem } from "../../redux/food-items";
 import { ActionResult } from "../../redux/helpers/ActionResult";
@@ -51,6 +52,7 @@ interface IEditFoodItemPageProps {
 interface IEditFoodItemPageState {
 	readonly currentValue: IFoodItem;
 	readonly validationResult: IFoodItemValidationResult;
+	readonly upcInput: string;
 }
 
 function mapStateToProps(state: IRootState, props: IEditFoodItemPageProps): IEditFoodItemPageProps {
@@ -93,13 +95,16 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 		this.state = {
 			currentValue: defaultFoodItem,
 			validationResult: validateFoodItem(defaultFoodItem),
+			upcInput: "",
 		};
 
 		this.renderServingSizeInputs = this.renderServingSizeInputs.bind(this);
 		this.renderInaccurateDataWarning = this.renderInaccurateDataWarning.bind(this);
 		this.handleBrandChange = this.handleBrandChange.bind(this);
 		this.handleNameChange = this.handleNameChange.bind(this);
-		this.handleUpcChange = this.handleUpcChange.bind(this);
+		this.handleUpcInputChanged = this.handleUpcInputChanged.bind(this);
+		this.handleAddUpc = this.handleAddUpc.bind(this);
+		this.handleRemoveUpc = this.handleRemoveUpc.bind(this);
 		this.handleMeasurementUnitChange = this.handleMeasurementUnitChange.bind(this);
 		this.handleCaloriesPerBaseAmountChange = this.handleCaloriesPerBaseAmountChange.bind(this);
 		this.handleFatPerBaseAmountChange = this.handleFatPerBaseAmountChange.bind(this);
@@ -242,15 +247,48 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 										/>
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
-										<ControlledBarcodeInput
-												id={"upc"}
-												label={"UPC"}
-												placeholder={"UPC"}
-												value={currentValue.upc || ""}
-												onValueChange={this.handleUpcChange}
-												disabled={editorBusy}
-												error={errors.upc}
-										/>
+										<div className={combine(bs.dFlex, bs.alignItemsEnd, (currentValue.upcs || []).length && bs.mb2)}>
+											<div className={bs.flexGrow1}>
+												<ControlledBarcodeInput
+														id={"upcs"}
+														label={"UPCs"}
+														placeholder={"Add UPC"}
+														value={this.state.upcInput || ""}
+														onValueChange={this.handleUpcInputChanged}
+														disabled={editorBusy}
+														error={errors.upcs}
+												/>
+											</div>
+											<div className={bs.flexGrow0}>
+												<IconBtn
+														icon={faPlus}
+														text={"Add UPC"}
+														payload={this.state.upcInput}
+														onClick={this.handleAddUpc}
+														btnProps={{
+															disabled: editorBusy || !this.state.upcInput,
+															className: combine(bs.btnOutlineDark, bs.ml1),
+														}}
+												/>
+											</div>
+										</div>
+										{(currentValue.upcs || []).map((upc) => (
+												<span
+														key={upc}
+														className={combine(bs.dInlineBlock, bs.mr3)}
+												>
+													<kbd className={bs.mr2}>{upc}</kbd>
+													<IconBtn
+															icon={faTrash}
+															payload={upc}
+															onClick={this.handleRemoveUpc}
+															btnProps={{
+																disabled: editorBusy,
+																className: combine(bs.btnOutlineDark, gs.btnMini),
+															}}
+													/>
+												</span>
+										))}
 									</div>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<label>Measurement Unit</label>
@@ -520,8 +558,21 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 		this.updateModel({ name });
 	}
 
-	private handleUpcChange(upc: string): void {
-		this.updateModel({ upc });
+	private handleUpcInputChanged(upcInput: string): void {
+		this.setState({ upcInput });
+	}
+
+	private handleAddUpc(upc: string): void {
+		this.setState({ upcInput: "" });
+		this.updateModel({
+			upcs: uniqueArray([...(this.state.currentValue.upcs || []), upc]),
+		});
+	}
+
+	private handleRemoveUpc(upc: string): void {
+		this.updateModel({
+			upcs: (this.state.currentValue.upcs || []).filter((u) => u !== upc),
+		});
 	}
 
 	private handleMeasurementUnitChange(measurementUnit: FoodMeasurementUnit): void {
@@ -632,10 +683,17 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 	}
 
 	private updateModel(foodItem: Partial<IFoodItem>): void {
-		const updatedFoodItem = {
+		let updatedFoodItem = {
 			...this.state.currentValue,
 			...foodItem,
 		};
+
+		// replace [] with null for UPCs
+		updatedFoodItem = {
+			...updatedFoodItem,
+			upcs: (updatedFoodItem.upcs || []).length === 0 ? null : updatedFoodItem.upcs,
+		};
+
 		this.setState({
 			currentValue: updatedFoodItem,
 			validationResult: validateFoodItem(updatedFoodItem),

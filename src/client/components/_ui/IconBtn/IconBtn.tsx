@@ -31,7 +31,12 @@ class IconBtn<Payload = {}> extends PureComponent<IIconBtnProps<Payload>> {
 						type={"button"}
 						{...otherBtnProps}
 				>
-					<FontAwesomeIcon icon={icon} fixedWidth={true} className={bs.mr1} {...iconProps}/>
+					<FontAwesomeIcon
+							icon={icon}
+							fixedWidth={true}
+							className={combine(!!text && bs.mr1)}
+							{...iconProps}
+					/>
 					{text}
 				</button>
 		);
@@ -40,11 +45,7 @@ class IconBtn<Payload = {}> extends PureComponent<IIconBtnProps<Payload>> {
 	private handleClick(): void {
 		const { onClick, payload } = this.props;
 		if (onClick) {
-			if (payload) {
-				onClick(payload);
-			} else {
-				onClick();
-			}
+			onClick(payload);
 		}
 	}
 }

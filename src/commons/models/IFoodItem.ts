@@ -11,7 +11,7 @@ import { IValidationResult } from "./IValidationResult";
 interface IFoodItem extends IBaseModel {
 	readonly brand: string;
 	readonly name: string;
-	readonly upc: string;
+	readonly upcs: string[];
 	readonly apiSource: ApiSource;
 	readonly apiId: string;
 	readonly measurementUnit: FoodMeasurementUnit;
@@ -36,7 +36,7 @@ interface IFoodItemValidationResult extends IValidationResult {
 interface IFoodItemValidationResultErrors {
 	readonly brand?: string;
 	readonly name?: string;
-	readonly upc?: string;
+	readonly upcs?: string;
 	readonly measurementUnit?: string;
 	readonly caloriesPerBaseAmount?: string;
 	readonly fatPerBaseAmount?: string;
@@ -58,7 +58,7 @@ function mapFoodItemFromJson(json?: IJsonObject): IFoodItem {
 		deleted: json.deleted as boolean,
 		brand: cleanString(json.brand as string),
 		name: cleanString(json.name as string),
-		upc: cleanString(json.upc as string),
+		upcs: safeMapEntities(cleanString, json.upcs as string[]),
 		apiSource: cleanString(json.apiSource as string) as ApiSource,
 		apiId: cleanString(json.apiId as string),
 		measurementUnit: cleanString(json.measurementUnit as string) as FoodMeasurementUnit,
@@ -85,7 +85,7 @@ function mapFoodItemToJson(foodItem?: IFoodItem): IJsonObject {
 		deleted: foodItem.deleted,
 		brand: foodItem.brand,
 		name: foodItem.name,
-		upc: foodItem.upc,
+		upcs: foodItem.upcs,
 		apiSource: foodItem.apiSource,
 		apiId: foodItem.apiId,
 		measurementUnit: foodItem.measurementUnit,
@@ -129,12 +129,12 @@ function validateFoodItem(foodItem?: Partial<IFoodItem>): IFoodItemValidationRes
 		};
 	}
 
-	if (foodItem.upc && !(/[0-9]+/).test(foodItem.upc)) {
+	if (foodItem.upcs && foodItem.upcs.some((upc) => !(/[0-9]+/).test(upc))) {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				upc: "The UPC must contain numbers only",
+				upcs: "UPCs must contain numbers only",
 			},
 		};
 	}
@@ -192,7 +192,7 @@ function getDefaultFoodItem(): IFoodItem {
 
 		brand: null,
 		name: null,
-		upc: null,
+		upcs: null,
 		apiSource: null,
 		apiId: null,
 		measurementUnit: "g",

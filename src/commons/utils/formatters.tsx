@@ -6,7 +6,8 @@ import { utcMoment } from "./dates";
 import { getNutritionBaseAmount } from "./helpers";
 
 function formatLargeNumber(amount: number): string {
-	return amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	const safeAmount = isNaN(amount) || amount === null ? 0 : amount;
+	return safeAmount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function formatPercent(amount: number): string {
@@ -86,6 +87,14 @@ function getMealTitle(meal: Meal): string {
 	return "";
 }
 
+function uniqueArray<T>(arr: T[]): T[] {
+	if (!arr) {
+		return arr;
+	}
+
+	return arr.filter((v, i, a) => i === a.indexOf(v));
+}
+
 export {
 	formatLargeNumber,
 	formatPercent,
@@ -94,4 +103,5 @@ export {
 	formatDate,
 	formatNutritionBaseSize,
 	getMealTitle,
+	uniqueArray,
 };

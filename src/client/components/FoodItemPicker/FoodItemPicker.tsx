@@ -17,14 +17,13 @@ import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import * as style from "./FoodItemPicker.scss";
 
-// TODO: show recent items
-
 interface IFoodItemPickerProps {
 	// from props
 	readonly value?: IFoodItem;
 	readonly preSelectedId?: string;
 	readonly onValueChange?: (foodItem?: IFoodItem) => void;
 	readonly disabled?: boolean;
+	readonly resetSearchOnSelect?: boolean;
 
 	// from redux
 	readonly allFoodItems?: IFoodItem[];
@@ -149,7 +148,7 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps, IFoodItemPick
 						<div className={bs.col6}>
 							<IconBtn
 									icon={faSearch}
-									text={"Search"}
+									text={"Search Food"}
 									onClick={this.openSearch}
 									btnProps={{
 										style: {
@@ -279,7 +278,7 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps, IFoodItemPick
 
 	private handleScan(value: string): void {
 		const { allFoodItems, onValueChange } = this.props;
-		const foodItem = (allFoodItems || []).find((fi) => fi.upc === value) || undefined;
+		const foodItem = (allFoodItems || []).find((fi) => (fi.upcs || []).indexOf(value) >= 0) || undefined;
 		if (onValueChange) {
 			onValueChange(foodItem);
 		}
@@ -287,6 +286,11 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps, IFoodItemPick
 
 	private handleSearchResultClick(event: MouseEvent<HTMLDivElement>): void {
 		const id = event.currentTarget.attributes.getNamedItem("data-id").value;
+
+		if (this.props.resetSearchOnSelect) {
+			this.handleSearchTermChange("");
+		}
+
 		this.handleIdSelected(id);
 		this.closeSearch();
 	}

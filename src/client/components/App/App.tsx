@@ -19,8 +19,10 @@ import { FoodItemEntryChooser } from "../FoodItemEntryChooser/FoodItemEntryChoos
 import { FoodItemSearchPage } from "../FoodItemSearchPage/FoodItemSearchPage";
 import { FoodItemsPage } from "../FoodItemsPage/FoodItemsPage";
 import { LoginPage } from "../Login/LoginPage";
+import { MealSketchPage } from "../MealSketchPage/MealSketchPage";
 import { Nav } from "../Nav/Nav";
 import { TargetsPage } from "../TargetsPage/TargetsPage";
+import * as style from "./App.scss";
 
 interface IAppProps {
 	readonly waitingFor?: string[];
@@ -99,29 +101,35 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
 
 		return (
 				<>
-					<Nav/>
-					<Switch>
-						<Route exact={true} path="/" component={DashboardPage}/>
+					<div className={style.navWrapper}>
+						<Nav/>
+					</div>
+					<div className={style.bodyWrapper}>
+						<Switch>
+							<Route exact={true} path="/" component={DashboardPage}/>
 
-						<Route path={"/clone-meal"} component={CloneMealPage}/>
+							<Route path={"/clone-meal"} component={CloneMealPage}/>
 
-						<Route path={"/diary-entries/edit/:diaryEntryId?"} component={EditDiaryEntryPage}/>
-						<Route path={"/diary-entries/:date?"} component={DiaryPage}/>
-						<Route path={"/diary-entries"} component={DiaryPage}/>
+							<Route path={"/diary-entries/edit/:diaryEntryId?"} component={EditDiaryEntryPage}/>
+							<Route path={"/diary-entries/:date?"} component={DiaryPage}/>
+							<Route path={"/diary-entries"} component={DiaryPage}/>
 
-						<Route path={"/exercise-entries/edit/:exerciseEntryId?"} component={EditExerciseEntryPage}/>
+							<Route path={"/exercise-entries/edit/:exerciseEntryId?"} component={EditExerciseEntryPage}/>
 
-						<Route path={"/food-items/entry-chooser"} component={FoodItemEntryChooser}/>
-						<Route path={"/food-items/search"} component={FoodItemSearchPage}/>
-						<Route path={"/food-items/edit/:foodItemId?"} component={EditFoodItemPage}/>
-						<Route path={"/food-items"} component={FoodItemsPage}/>
+							<Route path={"/food-items/entry-chooser"} component={FoodItemEntryChooser}/>
+							<Route path={"/food-items/search"} component={FoodItemSearchPage}/>
+							<Route path={"/food-items/edit/:foodItemId?"} component={EditFoodItemPage}/>
+							<Route path={"/food-items"} component={FoodItemsPage}/>
 
-						<Route path={"/targets/edit/:targetId?"} component={EditTargetPage}/>
-						<Route path={"/targets"} component={TargetsPage}/>
+							<Route path={"/meal-sketch"} component={MealSketchPage}/>
 
-						{/* Adding a new route? Keep it above this one! */}
-						<Route render={this.render404Error}/>
-					</Switch>
+							<Route path={"/targets/edit/:targetId?"} component={EditTargetPage}/>
+							<Route path={"/targets"} component={TargetsPage}/>
+
+							{/* Adding a new route? Keep it above this one! */}
+							<Route render={this.render404Error}/>
+						</Switch>
+					</div>
 				</>
 		);
 	}
