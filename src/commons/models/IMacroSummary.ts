@@ -40,7 +40,7 @@ function generateMacroSummary(
 ): IMacroSummary {
 
 	const totalCaloriesBurned = exerciseEntries.map((ee) => ee.caloriesBurned).reduce((a, b) => a + b, 0);
-	const targetCalories = (target.baselineCaloriesPerDay * target.calorieAdjustment) + totalCaloriesBurned;
+	const targetCalories = (target.maintenanceCalories * target.calorieAdjustment) + totalCaloriesBurned;
 	const targetCarbohydrates = targetCalories * target.proportionCarbohydrates / CALORIES_PER_G_CARBOHYDRATES;
 	const targetFat = targetCalories * target.proportionFat / CALORIES_PER_G_FAT;
 	const targetProtein = targetCalories * target.proportionProtein / CALORIES_PER_G_PROTEIN;

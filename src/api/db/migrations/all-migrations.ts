@@ -335,6 +335,23 @@ const allMigrations: IDbMigration[] = [
 			`);
 		},
 	},
+
+	// rename baseline calories to maintenance calories
+	{
+		migrationNumber: 14,
+		up: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_target
+                    RENAME COLUMN baseline_calories_per_day TO maintenance_calories;
+			`);
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_target
+                    RENAME COLUMN maintenance_calories TO baseline_calories_per_day;
+			`);
+		},
+	},
 ];
 
 export {

@@ -15,7 +15,7 @@ class DbTarget extends BaseModel implements ITarget {
 	public deleted: boolean;
 
 	@Column({ type: "double precision" })
-	public baselineCaloriesPerDay: number;
+	public maintenanceCalories: number;
 
 	@Column({ type: "double precision" })
 	public calorieAdjustment: number;

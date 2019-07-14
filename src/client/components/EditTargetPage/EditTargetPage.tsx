@@ -73,7 +73,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 
 		this.resetEditor = this.resetEditor.bind(this);
 		this.handleStartDateChange = this.handleStartDateChange.bind(this);
-		this.handleBaselineCaloriesPerDayChange = this.handleBaselineCaloriesPerDayChange.bind(this);
+		this.handleMaintenanceCaloriesChange = this.handleMaintenanceCaloriesChange.bind(this);
 		this.handleCalorieAdjustmentChange = this.handleCalorieAdjustmentChange.bind(this);
 		this.handleProportionCarbohydratesChange = this.handleProportionCarbohydratesChange.bind(this);
 		this.handleProportionFatChange = this.handleProportionFatChange.bind(this);
@@ -187,23 +187,21 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 									</div>
 								</div>
 								<div className={bs.row}>
-									<div className={combine(bs.col12, bs.formGroup)}>
+									<div className={combine(bs.col6, bs.formGroup)}>
 										<ControlledTextInput
-												id={"baselineCalories"}
-												label={"Maintenance Calories per Day"}
-												placeholder={"Maintenance Calories per Day"}
-												value={ControlledTextInput.safeNumericValue(currentValue.baselineCaloriesPerDay)}
-												onValueChange={this.handleBaselineCaloriesPerDayChange}
+												id={"maintenanceCalories"}
+												label={"Maintenance Calories"}
+												placeholder={"Maintenance Calories"}
+												value={ControlledTextInput.safeNumericValue(currentValue.maintenanceCalories)}
+												onValueChange={this.handleMaintenanceCaloriesChange}
 												disabled={editorBusy}
-												error={errors.baselineCaloriesPerDay}
+												error={errors.maintenanceCalories}
 												inputProps={{
 													type: "number",
 												}}
 										/>
 									</div>
-								</div>
-								<div className={bs.row}>
-									<div className={combine(bs.col12, bs.formGroup)}>
+									<div className={combine(bs.col6, bs.formGroup)}>
 										<ControlledSelectInput
 												id={"calorieAdjustment"}
 												label={"Calorie Adjustment"}
@@ -332,8 +330,8 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 		this.updateModel({ startDate: startDate.startOf("day") });
 	}
 
-	private handleBaselineCaloriesPerDayChange(value: string): void {
-		this.updateModel({ baselineCaloriesPerDay: value === "" ? null : parseFloat(value) });
+	private handleMaintenanceCaloriesChange(value: string): void {
+		this.updateModel({ maintenanceCalories: value === "" ? null : parseFloat(value) });
 	}
 
 	private handleCalorieAdjustmentChange(value: string): void {

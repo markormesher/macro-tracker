@@ -7,7 +7,7 @@ import { IJsonObject } from "./IJsonObject";
 import { IValidationResult } from "./IValidationResult";
 
 interface ITarget extends IBaseModel {
-	readonly baselineCaloriesPerDay: number;
+	readonly maintenanceCalories: number;
 	readonly calorieAdjustment: number;
 	readonly proportionCarbohydrates: number;
 	readonly proportionProtein: number;
@@ -17,7 +17,7 @@ interface ITarget extends IBaseModel {
 
 interface ITargetValidationResult extends IValidationResult {
 	readonly errors: {
-		readonly baselineCaloriesPerDay?: string;
+		readonly maintenanceCalories?: string;
 		readonly calorieAdjustment?: string;
 		readonly proportionCarbohydrates?: string;
 		readonly proportionProtein?: string;
@@ -34,7 +34,7 @@ function mapTargetFromJson(json?: IJsonObject): ITarget {
 	return {
 		id: cleanUuid(json.id as string),
 		deleted: json.deleted as boolean,
-		baselineCaloriesPerDay: parseFloat(json.baselineCaloriesPerDay as string),
+		maintenanceCalories: parseFloat(json.maintenanceCalories as string),
 		calorieAdjustment: parseFloat(json.calorieAdjustment as string),
 		proportionCarbohydrates: parseFloat(json.proportionCarbohydrates as string),
 		proportionFat: parseFloat(json.proportionFat as string),
@@ -51,7 +51,7 @@ function mapTargetToJson(target?: ITarget): IJsonObject {
 	return {
 		id: target.id,
 		deleted: target.deleted,
-		baselineCaloriesPerDay: target.baselineCaloriesPerDay,
+		maintenanceCalories: target.maintenanceCalories,
 		calorieAdjustment: target.calorieAdjustment,
 		proportionCarbohydrates: target.proportionCarbohydrates,
 		proportionFat: target.proportionFat,
@@ -67,28 +67,28 @@ function validateTarget(target: Partial<ITarget>): ITargetValidationResult {
 
 	let result: ITargetValidationResult = { isValid: true, errors: {} };
 
-	if (!target.baselineCaloriesPerDay && target.baselineCaloriesPerDay !== 0) {
+	if (!target.maintenanceCalories && target.maintenanceCalories !== 0) {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				baselineCaloriesPerDay: "The baseline calories must be entered",
+				maintenanceCalories: "The maintenance calories must be entered",
 			},
 		};
-	} else if (isNaN(target.baselineCaloriesPerDay)) {
+	} else if (isNaN(target.maintenanceCalories)) {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				baselineCaloriesPerDay: "The baseline calories must be numeric",
+				maintenanceCalories: "The maintenance calories must be numeric",
 			},
 		};
-	} else if (target.baselineCaloriesPerDay <= 0) {
+	} else if (target.maintenanceCalories <= 0) {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				baselineCaloriesPerDay: "The baseline calories must greater than zero",
+				maintenanceCalories: "The maintenance calories must greater than zero",
 			},
 		};
 	}
@@ -226,7 +226,7 @@ function getDefaultTarget(): ITarget {
 	return {
 		id: undefined,
 		deleted: false,
-		baselineCaloriesPerDay: 0,
+		maintenanceCalories: 0,
 		calorieAdjustment: 1,
 		proportionCarbohydrates: 0.4,
 		proportionProtein: 0.3,

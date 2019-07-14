@@ -118,7 +118,7 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
 		if (target.calorieAdjustment === 1) {
 			infoChunks.push((
 					<span key={`info-chunk-calories`}>
-						{formatLargeNumber(target.baselineCaloriesPerDay)} kcal
+						{formatLargeNumber(target.maintenanceCalories)} kcal
 					</span>
 			));
 		} else {
@@ -126,11 +126,11 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
 			const percentAdjustment = Math.abs(target.calorieAdjustment - 1) * 100;
 			infoChunks.push((
 					<span key={`info-chunk-calories`}>
-						{formatLargeNumber(target.baselineCaloriesPerDay)} kcal
+						{formatLargeNumber(target.maintenanceCalories)} kcal
 						{" "}
 						{symbol} {formatPercent(percentAdjustment)} =
 						{" "}
-						{formatLargeNumber(target.baselineCaloriesPerDay * target.calorieAdjustment)} kcal
+						{formatLargeNumber(target.maintenanceCalories * target.calorieAdjustment)} kcal
 					</span>
 			));
 		}
