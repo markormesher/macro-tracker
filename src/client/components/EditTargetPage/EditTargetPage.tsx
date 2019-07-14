@@ -6,8 +6,15 @@ import { connect } from "react-redux";
 import { match as Match } from "react-router";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
-import { getDefaultTarget, ITarget, ITargetValidationResult, validateTarget } from "../../../commons/models/ITarget";
-import { formatDate } from "../../../commons/utils/formatters";
+import { generateMacroSummary } from "../../../commons/models/IMacroSummary";
+import {
+	getDefaultTarget,
+	ITarget,
+	ITargetValidationResult,
+	TargetMode,
+	validateTarget,
+} from "../../../commons/models/ITarget";
+import { formatDate, formatLargeNumber, formatMeasurement, formatPercent } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
@@ -18,6 +25,7 @@ import { setEditorResult, startLoadTarget, startSaveTarget } from "../../redux/t
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ControlledDateInput } from "../_ui/ControlledInputs/ControlledDateInput";
+import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
@@ -71,11 +79,18 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 		this.resetEditor(true);
 
 		this.resetEditor = this.resetEditor.bind(this);
+		this.renderMacroTargetInput = this.renderMacroTargetInput.bind(this);
+		this.renderTargetSummary = this.renderTargetSummary.bind(this);
 		this.handleStartDateChange = this.handleStartDateChange.bind(this);
-		this.handleBaselineCaloriesPerDayChange = this.handleBaselineCaloriesPerDayChange.bind(this);
-		this.handleProportionCarbohydratesChange = this.handleProportionCarbohydratesChange.bind(this);
-		this.handleProportionFatChange = this.handleProportionFatChange.bind(this);
-		this.handleProportionProteinChange = this.handleProportionProteinChange.bind(this);
+		this.handleBodyWeightChange = this.handleBodyWeightChange.bind(this);
+		this.handleMaintenanceCaloriesChange = this.handleMaintenanceCaloriesChange.bind(this);
+		this.handleCalorieAdjustmentChange = this.handleCalorieAdjustmentChange.bind(this);
+		this.handleCarbohydratesTargetModeChange = this.handleCarbohydratesTargetModeChange.bind(this);
+		this.handleCarbohydratesTargetValueChange = this.handleCarbohydratesTargetValueChange.bind(this);
+		this.handleProteinTargetModeChange = this.handleProteinTargetModeChange.bind(this);
+		this.handleProteinTargetValueChange = this.handleProteinTargetValueChange.bind(this);
+		this.handleFatTargetModeChange = this.handleFatTargetModeChange.bind(this);
+		this.handleFatTargetValueChange = this.handleFatTargetValueChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.updateModel = this.updateModel.bind(this);
 	}
@@ -173,7 +188,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 									onSubmit={this.handleSubmit}
 							>
 								<div className={bs.row}>
-									<div className={combine(bs.col12, bs.formGroup)}>
+									<div className={combine(bs.col6, bs.formGroup)}>
 										<ControlledDateInput
 												id={"startDate"}
 												label={"Start Date"}
@@ -183,17 +198,15 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 												error={errors.startDate}
 										/>
 									</div>
-								</div>
-								<div className={bs.row}>
-									<div className={combine(bs.col12, bs.formGroup)}>
+									<div className={combine(bs.col6, bs.formGroup)}>
 										<ControlledTextInput
-												id={"baselineCalories"}
-												label={"Baseline Calories per Day"}
-												placeholder={"Baseline Calories per Day"}
-												value={ControlledTextInput.safeNumericValue(currentValue.baselineCaloriesPerDay)}
-												onValueChange={this.handleBaselineCaloriesPerDayChange}
+												id={"bodyWeightKg"}
+												label={"Body Weight (kg)"}
+												placeholder={"Body Weight (kg)"}
+												value={ControlledTextInput.safeNumericValue(currentValue.bodyWeightKg)}
+												onValueChange={this.handleBodyWeightChange}
 												disabled={editorBusy}
-												error={errors.baselineCaloriesPerDay}
+												error={errors.bodyWeightKg}
 												inputProps={{
 													type: "number",
 												}}
@@ -201,62 +214,76 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 									</div>
 								</div>
 								<div className={bs.row}>
-									<div className={combine(bs.col12, bs.formGroup)}>
+									<div className={combine(bs.col6, bs.formGroup)}>
 										<ControlledTextInput
-												id={"proportionCarbohydrates"}
-												label={"Carbohydrates Proportion"}
-												placeholder={"Carbohydrates Proportion"}
-												value={ControlledTextInput.safeNumericValue(currentValue.proportionCarbohydrates)}
-												onValueChange={this.handleProportionCarbohydratesChange}
+												id={"maintenanceCalories"}
+												label={"Maintenance Calories"}
+												placeholder={"Maintenance Calories"}
+												value={ControlledTextInput.safeNumericValue(currentValue.maintenanceCalories)}
+												onValueChange={this.handleMaintenanceCaloriesChange}
 												disabled={editorBusy}
-												error={errors.proportionCarbohydrates}
+												error={errors.maintenanceCalories}
 												inputProps={{
 													type: "number",
-													step: 0.1,
-													min: 0,
-													max: 1,
 												}}
 										/>
 									</div>
-								</div>
-								<div className={bs.row}>
-									<div className={combine(bs.col12, bs.formGroup)}>
-										<ControlledTextInput
-												id={"proportionFat"}
-												label={"Fat Proportion"}
-												placeholder={"Fat Proportion"}
-												value={ControlledTextInput.safeNumericValue(currentValue.proportionFat)}
-												onValueChange={this.handleProportionFatChange}
+									<div className={combine(bs.col6, bs.formGroup)}>
+										<ControlledSelectInput
+												id={"calorieAdjustment"}
+												label={"Calorie Adjustment"}
+												value={ControlledTextInput.safeNumericValue(currentValue.calorieAdjustment)}
+												onValueChange={this.handleCalorieAdjustmentChange}
 												disabled={editorBusy}
-												error={errors.proportionFat}
-												inputProps={{
-													type: "number",
-													step: 0.1,
-													min: 0,
-													max: 1,
-												}}
-										/>
+												error={errors.calorieAdjustment}
+										>
+											<option value={"0.9"}>-10%</option>
+											<option value={"0.95"}>-5%</option>
+											<option value={"1"}>0%</option>
+											<option value={"1.05"}>+5%</option>
+											<option value={"1.1"}>+10%</option>
+										</ControlledSelectInput>
 									</div>
 								</div>
-								<div className={bs.row}>
-									<div className={combine(bs.col12, bs.formGroup)}>
-										<ControlledTextInput
-												id={"proportionProtein"}
-												label={"Protein Proportion"}
-												placeholder={"Protein Proportion"}
-												value={ControlledTextInput.safeNumericValue(currentValue.proportionProtein)}
-												onValueChange={this.handleProportionProteinChange}
-												disabled={editorBusy}
-												error={errors.proportionProtein}
-												inputProps={{
-													type: "number",
-													step: 0.1,
-													min: 0,
-													max: 1,
-												}}
-										/>
-									</div>
-								</div>
+								{this.renderMacroTargetInput(
+										"Carbohydrates",
+										currentValue.carbohydratesTargetMode,
+										currentValue.carbohydratesTargetValue,
+										errors.carbohydratesTargetMode,
+										errors.carbohydratesTargetValue,
+										this.handleCarbohydratesTargetModeChange,
+										this.handleCarbohydratesTargetValueChange,
+								)}
+								{this.renderMacroTargetInput(
+										"Fat",
+										currentValue.fatTargetMode,
+										currentValue.fatTargetValue,
+										errors.fatTargetMode,
+										errors.fatTargetValue,
+										this.handleFatTargetModeChange,
+										this.handleFatTargetValueChange,
+								)}
+								{this.renderMacroTargetInput(
+										"Protein",
+										currentValue.proteinTargetMode,
+										currentValue.proteinTargetValue,
+										errors.proteinTargetMode,
+										errors.proteinTargetValue,
+										this.handleProteinTargetModeChange,
+										this.handleProteinTargetValueChange,
+								)}
+								{this.renderTargetSummary()}
+								{
+									errors.overallTarget && <>
+										<div className={bs.row}>
+											<div className={bs.col}>
+												<div className={combine(bs.alert, bs.alertDanger)}>
+													<p className={bs.mb0}>{errors.overallTarget}</p>
+												</div>
+											</div>
+										</div>
+									</>
+								}
 								<div className={bs.row}>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<IconBtn
@@ -280,6 +307,98 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 						</div>
 					</div>
 				</ContentWrapper>
+		);
+	}
+
+	private renderMacroTargetInput(
+			macroName: string,
+			mode: TargetMode, value: number,
+			modeError: string, valueError: string,
+			handleModeChange: (mode: string) => void, handleValueChange: (value: string) => void,
+	): ReactNode {
+		const { editorBusy } = this.props;
+
+		return (
+				<div className={bs.row}>
+					<div className={combine(bs.col6, bs.formGroup)}>
+						<ControlledSelectInput
+								id={`${macroName}TargetMode`}
+								label={`${macroName} Target Mode`}
+								value={mode}
+								onValueChange={handleModeChange}
+								disabled={editorBusy}
+								error={modeError}
+						>
+							<option value={TargetMode.PERCENTAGE_OF_CALORIES}>
+								Percentage of calories
+							</option>
+							<option value={TargetMode.G_PER_KG_OF_BODY_WEIGHT}>
+								Grams per KG of body weight
+							</option>
+							<option value={TargetMode.ABSOLUTE}>
+								Absolute value
+							</option>
+							<option value={TargetMode.REMAINDER_OF_CALORIES}>
+								Remainder of calories
+							</option>
+						</ControlledSelectInput>
+					</div>
+					<div className={combine(bs.col6, bs.formGroup)}>
+						<ControlledTextInput
+								id={`${macroName}TargetValue`}
+								label={`${macroName} Target Value`}
+								value={mode === TargetMode.REMAINDER_OF_CALORIES ? "" : ControlledTextInput.safeNumericValue(value)}
+								onValueChange={handleValueChange}
+								disabled={editorBusy || mode === TargetMode.REMAINDER_OF_CALORIES}
+								error={valueError}
+								inputProps={{
+									type: "number",
+									step: 0.1,
+									min: 0,
+									max: 1,
+								}}
+						/>
+					</div>
+				</div>
+		);
+	}
+
+	private renderTargetSummary(): ReactNode {
+		const { currentValue } = this.state;
+		const macroSummary = generateMacroSummary([], [], { ...getDefaultTarget(), ...currentValue });
+
+		return (
+				<div className={bs.row}>
+					<div className={bs.col}>
+						<h3>Computed Targets</h3>
+						<table className={combine(bs.table, bs.tableBordered)}>
+							<tbody>
+							<tr>
+								<td>Carbohydrates</td>
+								<td>{formatMeasurement(macroSummary.targetCarbohydrates, "g")}</td>
+								<td>{formatPercent(macroSummary.targetCaloriesFromCarbohydrates / macroSummary.targetCalories * 100)}</td>
+								<td>{formatLargeNumber(macroSummary.targetCaloriesFromCarbohydrates)} kcal</td>
+							</tr>
+							<tr>
+								<td>Fat</td>
+								<td>{formatMeasurement(macroSummary.targetFat, "g")}</td>
+								<td>{formatPercent(macroSummary.targetCaloriesFromFat / macroSummary.targetCalories * 100)}</td>
+								<td>{formatLargeNumber(macroSummary.targetCaloriesFromFat)} kcal</td>
+							</tr>
+							<tr>
+								<td>Protein</td>
+								<td>{formatMeasurement(macroSummary.targetProtein, "g")}</td>
+								<td>{formatPercent(macroSummary.targetCaloriesFromProtein / macroSummary.targetCalories * 100)}</td>
+								<td>{formatLargeNumber(macroSummary.targetCaloriesFromProtein)} kcal</td>
+							</tr>
+							<tr>
+								<td colSpan={3}><strong>Total Calories</strong></td>
+								<td><strong>{formatLargeNumber(macroSummary.targetCalories)} kcal</strong></td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
 		);
 	}
 
@@ -312,20 +431,40 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 		this.updateModel({ startDate: startDate.startOf("day") });
 	}
 
-	private handleBaselineCaloriesPerDayChange(value: string): void {
-		this.updateModel({ baselineCaloriesPerDay: value === "" ? null : parseFloat(value) });
+	private handleBodyWeightChange(value: string): void {
+		this.updateModel({ bodyWeightKg: value === "" ? null : parseFloat(value) });
 	}
 
-	private handleProportionCarbohydratesChange(value: string): void {
-		this.updateModel({ proportionCarbohydrates: value === "" ? null : parseFloat(value) });
+	private handleMaintenanceCaloriesChange(value: string): void {
+		this.updateModel({ maintenanceCalories: value === "" ? null : parseFloat(value) });
 	}
 
-	private handleProportionFatChange(value: string): void {
-		this.updateModel({ proportionFat: value === "" ? null : parseFloat(value) });
+	private handleCalorieAdjustmentChange(value: string): void {
+		this.updateModel({ calorieAdjustment: value === null ? 1 : parseFloat(value) });
 	}
 
-	private handleProportionProteinChange(value: string): void {
-		this.updateModel({ proportionProtein: value === "" ? null : parseFloat(value) });
+	private handleCarbohydratesTargetModeChange(value: string): void {
+		this.updateModel({ carbohydratesTargetMode: value as TargetMode });
+	}
+
+	private handleCarbohydratesTargetValueChange(value: string): void {
+		this.updateModel({ carbohydratesTargetValue: value === "" ? null : parseFloat(value) });
+	}
+
+	private handleFatTargetModeChange(value: string): void {
+		this.updateModel({ fatTargetMode: value as TargetMode });
+	}
+
+	private handleFatTargetValueChange(value: string): void {
+		this.updateModel({ fatTargetValue: value === "" ? null : parseFloat(value) });
+	}
+
+	private handleProteinTargetModeChange(value: string): void {
+		this.updateModel({ proteinTargetMode: value as TargetMode });
+	}
+
+	private handleProteinTargetValueChange(value: string): void {
+		this.updateModel({ proteinTargetValue: value === "" ? null : parseFloat(value) });
 	}
 
 	private handleSubmit(): void {

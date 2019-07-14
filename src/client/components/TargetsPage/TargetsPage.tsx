@@ -4,8 +4,8 @@ import { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
-import { ITarget, mapTargetFromJson } from "../../../commons/models/ITarget";
-import { formatDate, formatLargeNumber, formatPercent } from "../../../commons/utils/formatters";
+import { ITarget, mapTargetFromJson, TargetMode } from "../../../commons/models/ITarget";
+import { formatDate, formatLargeNumber, formatMeasurement, formatPercent } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { history } from "../../helpers/single-history";
@@ -47,6 +47,22 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
 
 	private static startEditTarget(target: ITarget): void {
 		history.push(`/targets/edit/${target.id}`);
+	}
+
+	private static formatSingleMacroTarget(mode: TargetMode, value: number): string {
+		switch (mode) {
+			case TargetMode.PERCENTAGE_OF_CALORIES:
+				return formatPercent(value * 100) + " of kcals";
+
+			case TargetMode.G_PER_KG_OF_BODY_WEIGHT:
+				return formatMeasurement(value, "g", 1) + " per kg weight";
+
+			case TargetMode.ABSOLUTE:
+				return formatMeasurement(value, "g");
+
+			case TargetMode.REMAINDER_OF_CALORIES:
+				return "remaining kcals";
+		}
 	}
 
 	private tableColumns: IColumn[] = [
@@ -113,35 +129,40 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
 	}
 
 	private tableRowRenderer(target: ITarget): ReactElement<void> {
+		let calorieRequirement: ReactNode;
+		if (target.calorieAdjustment === 1) {
+			calorieRequirement = `${formatLargeNumber(target.maintenanceCalories)} kcal`;
+		} else {
+			const symbol = target.calorieAdjustment < 1 ? "-" : "+";
+			const percentAdjustment = Math.abs(target.calorieAdjustment - 1) * 100;
+			calorieRequirement = `${formatLargeNumber(target.maintenanceCalories)} kcal`
+					+ `${symbol} ${formatPercent(percentAdjustment)} =`
+					+ `${formatLargeNumber(target.maintenanceCalories * target.calorieAdjustment)} kcal`;
+		}
+
 		const infoChunks: ReactNode[] = [];
 
 		infoChunks.push((
-				<span key={`info-chunk-calories`}>
-					{formatLargeNumber(target.baselineCaloriesPerDay)} kcal
-				</span>
-		));
-
-		infoChunks.push((
 				<span key={`info-chunk-carbohydrates`}>
-					{formatPercent(target.proportionCarbohydrates * 100)} carbs
+					Carbs: {UCTargetsPage.formatSingleMacroTarget(target.carbohydratesTargetMode, target.carbohydratesTargetValue)}
 				</span>
 		));
 
 		infoChunks.push((
 				<span key={`info-chunk-fat`}>
-					{formatPercent(target.proportionFat * 100)} fat
+					Fat: {UCTargetsPage.formatSingleMacroTarget(target.fatTargetMode, target.fatTargetValue)}
 				</span>
 		));
 
 		infoChunks.push((
 				<span key={`info-chunk-protein`}>
-					{formatPercent(target.proportionProtein * 100)} protein
+					Protein: {UCTargetsPage.formatSingleMacroTarget(target.proteinTargetMode, target.proteinTargetValue)}
 				</span>
 		));
 
 		for (let i = 1; i < infoChunks.length; i += 2) {
 			infoChunks.splice(i, 0, (
-					<span key={`spacer-${i}`} className={bs.mx1}>
+				<span key={`spacer-${i}`} className={bs.mx1}>
 					&bull;
 				</span>
 			));
@@ -151,6 +172,10 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
 				<tr key={target.id}>
 					<td>
 						{formatDate(target.startDate)}
+						<br/>
+						<span className={combine(bs.textMuted, bs.small)}>
+							{calorieRequirement}
+						</span>
 						<br/>
 						<span className={combine(bs.textMuted, bs.small)}>
 							{infoChunks}

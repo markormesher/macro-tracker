@@ -198,26 +198,40 @@ const allMigrations: IDbMigration[] = [
 		up: (qr: QueryRunner) => {
 			return qr.query(`
                 ALTER TABLE db_food_item
-                    RENAME COLUMN calories_per_100 TO calories_per_base_amount,
-                    RENAME COLUMN fat_per_100 TO fat_per_base_amount,
-                    RENAME COLUMN sat_fat_per_100 TO sat_fat_per_base_amount,
-                    RENAME COLUMN carbohydrate_per_100 TO carbohydrate_per_base_amount,
-                    RENAME COLUMN sugar_per_100 TO sugar_per_base_amount,
-                    RENAME COLUMN fibre_per_100 TO fibre_per_base_amount,
-                    RENAME COLUMN protein_per_100 TO protein_per_base_amount,
+                    RENAME COLUMN calories_per_100 TO calories_per_base_amount;
+                ALTER TABLE db_food_item
+                    RENAME COLUMN fat_per_100 TO fat_per_base_amount;
+                ALTER TABLE db_food_item
+                    RENAME COLUMN sat_fat_per_100 TO sat_fat_per_base_amount;
+                ALTER TABLE db_food_item
+                    RENAME COLUMN carbohydrate_per_100 TO carbohydrate_per_base_amount;
+                ALTER TABLE db_food_item
+                    RENAME COLUMN sugar_per_100 TO sugar_per_base_amount;
+                ALTER TABLE db_food_item
+                    RENAME COLUMN fibre_per_100 TO fibre_per_base_amount;
+                ALTER TABLE db_food_item
+                    RENAME COLUMN protein_per_100 TO protein_per_base_amount;
+                ALTER TABLE db_food_item
                     RENAME COLUMN salt_per_100 TO salt_per_base_amount;
 			`);
 		},
 		down: (qr: QueryRunner) => {
 			return qr.query(`
                 ALTER TABLE db_food_item
-                    RENAME COLUMN calories_per_base_amount TO calories_per_100,
-                    RENAME COLUMN fat_per_base_amount TO fat_per_100,
-                    RENAME COLUMN sat_fat_per_base_amount TO sat_fat_per_100,
-                    RENAME COLUMN carbohydrate_per_base_amount TO carbohydrate_per_100,
-                    RENAME COLUMN sugar_per_base_amount TO sugar_per_100,
-                    RENAME COLUMN fibre_per_base_amount TO fibre_per_100,
-                    RENAME COLUMN protein_per_base_amount TO protein_per_100,
+                    RENAME COLUMN calories_per_base_amount TO calories_per_100;
+                ALTER TABLE db_food_item
+                    RENAME COLUMN fat_per_base_amount TO fat_per_100;
+                ALTER TABLE db_food_item
+                    RENAME COLUMN sat_fat_per_base_amount TO sat_fat_per_100;
+                ALTER TABLE db_food_item
+                    RENAME COLUMN carbohydrate_per_base_amount TO carbohydrate_per_100;
+                ALTER TABLE db_food_item
+                    RENAME COLUMN sugar_per_base_amount TO sugar_per_100;
+                ALTER TABLE db_food_item
+                    RENAME COLUMN fibre_per_base_amount TO fibre_per_100;
+                ALTER TABLE db_food_item
+                    RENAME COLUMN protein_per_base_amount TO protein_per_100;
+                ALTER TABLE db_food_item
                     RENAME COLUMN salt_per_base_amount TO salt_per_100;
 			`);
 		},
@@ -316,6 +330,88 @@ const allMigrations: IDbMigration[] = [
 		},
 		down: (qr: QueryRunner) => {
 			return qr.query("DROP EXTENSION IF EXISTS pg_trgm;");
+		},
+	},
+
+	// add calorie adjustment field to target
+	{
+		migrationNumber: 13,
+		up: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_target
+                    ADD COLUMN calorie_adjustment DOUBLE PRECISION NOT NULL DEFAULT 1;
+			`);
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_target
+                    DROP COLUMN calorie_adjustment;
+			`);
+		},
+	},
+
+	// rename baseline calories to maintenance calories
+	{
+		migrationNumber: 14,
+		up: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_target
+                    RENAME COLUMN baseline_calories_per_day TO maintenance_calories;
+			`);
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_target
+                    RENAME COLUMN maintenance_calories TO baseline_calories_per_day;
+			`);
+		},
+	},
+
+	// rename "proportion <macro>" to "<macro> target value"
+	{
+		migrationNumber: 15,
+		up: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_target
+                    RENAME COLUMN proportion_carbohydrates TO carbohydrates_target_value;
+                ALTER TABLE db_target
+                    RENAME COLUMN proportion_fat TO fat_target_value;
+                ALTER TABLE db_target
+                    RENAME COLUMN proportion_protein TO protein_target_value;
+			`);
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_target
+                    RENAME COLUMN carbohydrates_target_value TO proportion_carbohydrates;
+                ALTER TABLE db_target
+                    RENAME COLUMN fat_target_value TO proportion_fat;
+                ALTER TABLE db_target
+                    RENAME COLUMN protein_target_value TO proportion_protein;
+			`);
+		},
+	},
+
+	// add "<macro> target mode" values and body weight field
+	{
+		migrationNumber: 16,
+		up: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_target
+                    ADD COLUMN body_weight_kg DOUBLE PRECISION NOT NULL DEFAULT 0,
+                    ADD COLUMN carbohydrates_target_mode CHARACTER VARYING NOT NULL DEFAULT 'PERCENTAGE_OF_CALORIES',
+                    ADD COLUMN fat_target_mode CHARACTER VARYING NOT NULL DEFAULT 'PERCENTAGE_OF_CALORIES',
+                    ADD COLUMN protein_target_mode CHARACTER VARYING NOT NULL DEFAULT 'PERCENTAGE_OF_CALORIES';
+			`);
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_target
+                    DROP COLUMN body_weight_kg,
+                    DROP COLUMN carbohydrates_target_mode,
+                    DROP COLUMN fat_target_mode,
+                	DROP COLUMN protein_target_mode;
+			`);
 		},
 	},
 ];
