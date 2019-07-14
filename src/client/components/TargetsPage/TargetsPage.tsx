@@ -136,8 +136,8 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
 			const symbol = target.calorieAdjustment < 1 ? "-" : "+";
 			const percentAdjustment = Math.abs(target.calorieAdjustment - 1) * 100;
 			calorieRequirement = `${formatLargeNumber(target.maintenanceCalories)} kcal`
-					+ `${symbol} ${formatPercent(percentAdjustment)} =`
-					+ `${formatLargeNumber(target.maintenanceCalories * target.calorieAdjustment)} kcal`;
+					+ ` ${symbol} ${formatPercent(percentAdjustment)} =`
+					+ ` ${formatLargeNumber(target.maintenanceCalories * target.calorieAdjustment)} kcal`;
 		}
 
 		const infoChunks: ReactNode[] = [];

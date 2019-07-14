@@ -354,8 +354,6 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 								inputProps={{
 									type: "number",
 									step: 0.1,
-									min: 0,
-									max: 1,
 								}}
 						/>
 					</div>

@@ -196,42 +196,44 @@ function validateTarget(target: Partial<ITarget>): ITargetValidationResult {
 		};
 	}
 
-	if (!target.carbohydratesTargetValue && target.carbohydratesTargetValue !== 0) {
-		result = {
-			isValid: false,
-			errors: {
-				...result.errors,
-				carbohydratesTargetValue: "The carbohydrates target value must be entered",
-			},
-		};
-	} else if (isNaN(target.carbohydratesTargetValue)) {
-		result = {
-			isValid: false,
-			errors: {
-				...result.errors,
-				carbohydratesTargetValue: "The carbohydrates target value must be numeric",
-			},
-		};
-	} else {
-		if (target.carbohydratesTargetMode === TargetMode.PERCENTAGE_OF_CALORIES) {
-			if (target.carbohydratesTargetValue < 0 || target.carbohydratesTargetValue > 1) {
-				result = {
-					isValid: false,
-					errors: {
-						...result.errors,
-						carbohydratesTargetValue: "The carbohydrates target value must be between zero and one",
-					},
-				};
-			}
-		} else if (target.carbohydratesTargetMode !== TargetMode.REMAINDER_OF_CALORIES) {
-			if (target.carbohydratesTargetValue < 0) {
-				result = {
-					isValid: false,
-					errors: {
-						...result.errors,
-						carbohydratesTargetValue: "The carbohydrates target value must not be less than zero",
-					},
-				};
+	if (target.carbohydratesTargetMode !== TargetMode.REMAINDER_OF_CALORIES) {
+		if (!target.carbohydratesTargetValue && target.carbohydratesTargetValue !== 0) {
+			result = {
+				isValid: false,
+				errors: {
+					...result.errors,
+					carbohydratesTargetValue: "The carbohydrates target value must be entered",
+				},
+			};
+		} else if (isNaN(target.carbohydratesTargetValue)) {
+			result = {
+				isValid: false,
+				errors: {
+					...result.errors,
+					carbohydratesTargetValue: "The carbohydrates target value must be numeric",
+				},
+			};
+		} else {
+			if (target.carbohydratesTargetMode === TargetMode.PERCENTAGE_OF_CALORIES) {
+				if (target.carbohydratesTargetValue < 0 || target.carbohydratesTargetValue > 1) {
+					result = {
+						isValid: false,
+						errors: {
+							...result.errors,
+							carbohydratesTargetValue: "The carbohydrates target value must be between zero and one",
+						},
+					};
+				}
+			} else {
+				if (target.carbohydratesTargetValue < 0) {
+					result = {
+						isValid: false,
+						errors: {
+							...result.errors,
+							carbohydratesTargetValue: "The carbohydrates target value must not be less than zero",
+						},
+					};
+				}
 			}
 		}
 	}
@@ -246,42 +248,44 @@ function validateTarget(target: Partial<ITarget>): ITargetValidationResult {
 		};
 	}
 
-	if (!target.fatTargetValue && target.fatTargetValue !== 0) {
-		result = {
-			isValid: false,
-			errors: {
-				...result.errors,
-				fatTargetValue: "The fat target value must be entered",
-			},
-		};
-	} else if (isNaN(target.fatTargetValue)) {
-		result = {
-			isValid: false,
-			errors: {
-				...result.errors,
-				fatTargetValue: "The fat target value must be numeric",
-			},
-		};
-	} else {
-		if (target.fatTargetMode === TargetMode.PERCENTAGE_OF_CALORIES) {
-			if (target.fatTargetValue < 0 || target.fatTargetValue > 1) {
-				result = {
-					isValid: false,
-					errors: {
-						...result.errors,
-						fatTargetValue: "The fat target value must be between zero and one",
-					},
-				};
-			}
-		} else if (target.fatTargetMode !== TargetMode.REMAINDER_OF_CALORIES) {
-			if (target.fatTargetValue < 0) {
-				result = {
-					isValid: false,
-					errors: {
-						...result.errors,
-						fatTargetValue: "The fat target value must not be less than zero",
-					},
-				};
+	if (target.fatTargetMode !== TargetMode.REMAINDER_OF_CALORIES) {
+		if (!target.fatTargetValue && target.fatTargetValue !== 0) {
+			result = {
+				isValid: false,
+				errors: {
+					...result.errors,
+					fatTargetValue: "The fat target value must be entered",
+				},
+			};
+		} else if (isNaN(target.fatTargetValue)) {
+			result = {
+				isValid: false,
+				errors: {
+					...result.errors,
+					fatTargetValue: "The fat target value must be numeric",
+				},
+			};
+		} else {
+			if (target.fatTargetMode === TargetMode.PERCENTAGE_OF_CALORIES) {
+				if (target.fatTargetValue < 0 || target.fatTargetValue > 1) {
+					result = {
+						isValid: false,
+						errors: {
+							...result.errors,
+							fatTargetValue: "The fat target value must be between zero and one",
+						},
+					};
+				}
+			} else {
+				if (target.fatTargetValue < 0) {
+					result = {
+						isValid: false,
+						errors: {
+							...result.errors,
+							fatTargetValue: "The fat target value must not be less than zero",
+						},
+					};
+				}
 			}
 		}
 	}
@@ -296,42 +300,44 @@ function validateTarget(target: Partial<ITarget>): ITargetValidationResult {
 		};
 	}
 
-	if (!target.proteinTargetValue && target.proteinTargetValue !== 0) {
-		result = {
-			isValid: false,
-			errors: {
-				...result.errors,
-				proteinTargetValue: "The protein target value must be entered",
-			},
-		};
-	} else if (isNaN(target.proteinTargetValue)) {
-		result = {
-			isValid: false,
-			errors: {
-				...result.errors,
-				proteinTargetValue: "The protein target value must be numeric",
-			},
-		};
-	} else {
-		if (target.proteinTargetMode === TargetMode.PERCENTAGE_OF_CALORIES) {
-			if (target.proteinTargetValue < 0 || target.proteinTargetValue > 1) {
-				result = {
-					isValid: false,
-					errors: {
-						...result.errors,
-						proteinTargetValue: "The protein target value must be between zero and one",
-					},
-				};
-			}
-		} else if (target.proteinTargetMode !== TargetMode.REMAINDER_OF_CALORIES) {
-			if (target.proteinTargetValue < 0) {
-				result = {
-					isValid: false,
-					errors: {
-						...result.errors,
-						proteinTargetValue: "The protein target value must not be less than zero",
-					},
-				};
+	if (target.proteinTargetMode !== TargetMode.REMAINDER_OF_CALORIES) {
+		if (!target.proteinTargetValue && target.proteinTargetValue !== 0) {
+			result = {
+				isValid: false,
+				errors: {
+					...result.errors,
+					proteinTargetValue: "The protein target value must be entered",
+				},
+			};
+		} else if (isNaN(target.proteinTargetValue)) {
+			result = {
+				isValid: false,
+				errors: {
+					...result.errors,
+					proteinTargetValue: "The protein target value must be numeric",
+				},
+			};
+		} else {
+			if (target.proteinTargetMode === TargetMode.PERCENTAGE_OF_CALORIES) {
+				if (target.proteinTargetValue < 0 || target.proteinTargetValue > 1) {
+					result = {
+						isValid: false,
+						errors: {
+							...result.errors,
+							proteinTargetValue: "The protein target value must be between zero and one",
+						},
+					};
+				}
+			} else {
+				if (target.proteinTargetValue < 0) {
+					result = {
+						isValid: false,
+						errors: {
+							...result.errors,
+							proteinTargetValue: "The protein target value must not be less than zero",
+						},
+					};
+				}
 			}
 		}
 	}
