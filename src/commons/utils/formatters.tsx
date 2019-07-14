@@ -5,9 +5,9 @@ import { IFoodItem } from "../models/IFoodItem";
 import { utcMoment } from "./dates";
 import { getNutritionBaseAmount } from "./helpers";
 
-function formatLargeNumber(amount: number): string {
+function formatLargeNumber(amount: number, places: number = 0): string {
 	const safeAmount = isNaN(amount) || amount === null ? 0 : amount;
-	return safeAmount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	return safeAmount.toFixed(places).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function formatPercent(amount: number): string {
@@ -24,8 +24,8 @@ function formatMeasurementUnit(unit: FoodMeasurementUnit): string {
 	throw new Error(`Unrecognised unit: ${unit}`);
 }
 
-function formatMeasurement(amount: number, unit: FoodMeasurementUnit): string {
-	return formatLargeNumber(amount) + formatMeasurementUnit(unit);
+function formatMeasurement(amount: number, unit: FoodMeasurementUnit, places: number = 0): string {
+	return formatLargeNumber(amount, places) + formatMeasurementUnit(unit);
 }
 
 function formatDate(date: Moment.Moment, format: "short" | "user" | "title" | "system" = "user"): string {

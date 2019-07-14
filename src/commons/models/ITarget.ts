@@ -4,6 +4,7 @@ import { cleanUuid } from "../utils/entities";
 import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
 import { IJsonObject } from "./IJsonObject";
+import { generateMacroSummary } from "./IMacroSummary";
 import { IValidationResult } from "./IValidationResult";
 
 enum TargetMode {
@@ -335,16 +336,36 @@ function validateTarget(target: Partial<ITarget>): ITargetValidationResult {
 		}
 	}
 
-	if (target.carbohydratesTargetValue + target.fatTargetValue + target.proteinTargetValue !== 1) {
+	// validate overall selections
+	const countOfRemainders = [
+		target.carbohydratesTargetMode,
+		target.fatTargetMode,
+		target.proteinTargetMode,
+	].filter((m) => m === TargetMode.REMAINDER_OF_CALORIES).length;
+	if (countOfRemainders > 1) {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				carbohydratesTargetValue: "The proportions must add up to one",
-				fatTargetValue: "The proportions must add up to one",
-				proteinTargetValue: "The proportions must add up to one",
+				overallTarget: "A maximum of 1 macro can be set to \"remainder of calories\".",
 			},
 		};
+	} else {
+		const totalTargetCalories = Math.round(target.maintenanceCalories * target.calorieAdjustment);
+		const macroSummary = generateMacroSummary([], [], { ...getDefaultTarget(), ...target });
+		const caloriesFromMacros = macroSummary.targetCaloriesFromCarbohydrates
+				+ macroSummary.targetCaloriesFromFat
+				+ macroSummary.targetCaloriesFromProtein;
+
+		if (caloriesFromMacros !== totalTargetCalories) {
+			result = {
+				isValid: false,
+				errors: {
+					...result.errors,
+					overallTarget: `The total calorie target does not match the calories from the macros selected.`,
+				},
+			};
+		}
 	}
 
 	return result;

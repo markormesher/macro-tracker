@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { match as Match } from "react-router";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
+import { generateMacroSummary } from "../../../commons/models/IMacroSummary";
 import {
 	getDefaultTarget,
 	ITarget,
@@ -13,7 +14,7 @@ import {
 	TargetMode,
 	validateTarget,
 } from "../../../commons/models/ITarget";
-import { formatDate } from "../../../commons/utils/formatters";
+import { formatDate, formatLargeNumber, formatMeasurement, formatPercent } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
@@ -79,6 +80,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 
 		this.resetEditor = this.resetEditor.bind(this);
 		this.renderMacroTargetInput = this.renderMacroTargetInput.bind(this);
+		this.renderTargetSummary = this.renderTargetSummary.bind(this);
 		this.handleStartDateChange = this.handleStartDateChange.bind(this);
 		this.handleBodyWeightChange = this.handleBodyWeightChange.bind(this);
 		this.handleMaintenanceCaloriesChange = this.handleMaintenanceCaloriesChange.bind(this);
@@ -270,6 +272,18 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 										this.handleProteinTargetModeChange,
 										this.handleProteinTargetValueChange,
 								)}
+								{this.renderTargetSummary()}
+								{
+									errors.overallTarget && <>
+										<div className={bs.row}>
+											<div className={bs.col}>
+												<div className={combine(bs.alert, bs.alertDanger)}>
+													<p className={bs.mb0}>{errors.overallTarget}</p>
+												</div>
+											</div>
+										</div>
+									</>
+								}
 								<div className={bs.row}>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<IconBtn
@@ -333,8 +347,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 						<ControlledTextInput
 								id={`${macroName}TargetValue`}
 								label={`${macroName} Target Value`}
-								placeholder={`${macroName} Target Value`}
-								value={ControlledTextInput.safeNumericValue(value)}
+								value={mode === TargetMode.REMAINDER_OF_CALORIES ? "" : ControlledTextInput.safeNumericValue(value)}
 								onValueChange={handleValueChange}
 								disabled={editorBusy || mode === TargetMode.REMAINDER_OF_CALORIES}
 								error={valueError}
@@ -345,6 +358,45 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 									max: 1,
 								}}
 						/>
+					</div>
+				</div>
+		);
+	}
+
+	private renderTargetSummary(): ReactNode {
+		const { currentValue } = this.state;
+		const macroSummary = generateMacroSummary([], [], { ...getDefaultTarget(), ...currentValue });
+
+		return (
+				<div className={bs.row}>
+					<div className={bs.col}>
+						<h3>Computed Targets</h3>
+						<table className={combine(bs.table, bs.tableBordered)}>
+							<tbody>
+							<tr>
+								<td>Carbohydrates</td>
+								<td>{formatMeasurement(macroSummary.targetCarbohydrates, "g")}</td>
+								<td>{formatPercent(macroSummary.targetCaloriesFromCarbohydrates / macroSummary.targetCalories * 100)}</td>
+								<td>{formatLargeNumber(macroSummary.targetCaloriesFromCarbohydrates)} kcal</td>
+							</tr>
+							<tr>
+								<td>Fat</td>
+								<td>{formatMeasurement(macroSummary.targetFat, "g")}</td>
+								<td>{formatPercent(macroSummary.targetCaloriesFromFat / macroSummary.targetCalories * 100)}</td>
+								<td>{formatLargeNumber(macroSummary.targetCaloriesFromFat)} kcal</td>
+							</tr>
+							<tr>
+								<td>Protein</td>
+								<td>{formatMeasurement(macroSummary.targetProtein, "g")}</td>
+								<td>{formatPercent(macroSummary.targetCaloriesFromProtein / macroSummary.targetCalories * 100)}</td>
+								<td>{formatLargeNumber(macroSummary.targetCaloriesFromProtein)} kcal</td>
+							</tr>
+							<tr>
+								<td colSpan={3}><strong>Total Calories</strong></td>
+								<td><strong>{formatLargeNumber(macroSummary.targetCalories)} kcal</strong></td>
+							</tr>
+							</tbody>
+						</table>
 					</div>
 				</div>
 		);
