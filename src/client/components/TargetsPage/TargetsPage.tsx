@@ -115,11 +115,25 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
 	private tableRowRenderer(target: ITarget): ReactElement<void> {
 		const infoChunks: ReactNode[] = [];
 
-		infoChunks.push((
-				<span key={`info-chunk-calories`}>
-					{formatLargeNumber(target.baselineCaloriesPerDay)} kcal
-				</span>
-		));
+		if (target.calorieAdjustment === 1) {
+			infoChunks.push((
+					<span key={`info-chunk-calories`}>
+						{formatLargeNumber(target.baselineCaloriesPerDay)} kcal
+					</span>
+			));
+		} else {
+			const symbol = target.calorieAdjustment < 1 ? "-" : "+";
+			const percentAdjustment = Math.abs(target.calorieAdjustment - 1) * 100;
+			infoChunks.push((
+					<span key={`info-chunk-calories`}>
+						{formatLargeNumber(target.baselineCaloriesPerDay)} kcal
+						{" "}
+						{symbol} {formatPercent(percentAdjustment)} =
+						{" "}
+						{formatLargeNumber(target.baselineCaloriesPerDay * target.calorieAdjustment)} kcal
+					</span>
+			));
+		}
 
 		infoChunks.push((
 				<span key={`info-chunk-carbohydrates`}>

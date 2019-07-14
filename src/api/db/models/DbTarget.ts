@@ -18,6 +18,9 @@ class DbTarget extends BaseModel implements ITarget {
 	public baselineCaloriesPerDay: number;
 
 	@Column({ type: "double precision" })
+	public calorieAdjustment: number;
+
+	@Column({ type: "double precision" })
 	public proportionCarbohydrates: number;
 
 	@Column({ type: "double precision" })

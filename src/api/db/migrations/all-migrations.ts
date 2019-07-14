@@ -318,6 +318,23 @@ const allMigrations: IDbMigration[] = [
 			return qr.query("DROP EXTENSION IF EXISTS pg_trgm;");
 		},
 	},
+
+	// add calorie adjustment field to target
+	{
+		migrationNumber: 13,
+		up: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_target
+                    ADD COLUMN calorie_adjustment DOUBLE PRECISION NOT NULL DEFAULT 1;
+			`);
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_target
+                    DROP COLUMN calorie_adjustment;
+			`);
+		},
+	},
 ];
 
 export {

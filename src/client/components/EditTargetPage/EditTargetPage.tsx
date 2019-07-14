@@ -18,6 +18,7 @@ import { setEditorResult, startLoadTarget, startSaveTarget } from "../../redux/t
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { ControlledForm } from "../_ui/ControlledForm/ControlledForm";
 import { ControlledDateInput } from "../_ui/ControlledInputs/ControlledDateInput";
+import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
@@ -73,6 +74,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 		this.resetEditor = this.resetEditor.bind(this);
 		this.handleStartDateChange = this.handleStartDateChange.bind(this);
 		this.handleBaselineCaloriesPerDayChange = this.handleBaselineCaloriesPerDayChange.bind(this);
+		this.handleCalorieAdjustmentChange = this.handleCalorieAdjustmentChange.bind(this);
 		this.handleProportionCarbohydratesChange = this.handleProportionCarbohydratesChange.bind(this);
 		this.handleProportionFatChange = this.handleProportionFatChange.bind(this);
 		this.handleProportionProteinChange = this.handleProportionProteinChange.bind(this);
@@ -188,8 +190,8 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
 												id={"baselineCalories"}
-												label={"Baseline Calories per Day"}
-												placeholder={"Baseline Calories per Day"}
+												label={"Maintenance Calories per Day"}
+												placeholder={"Maintenance Calories per Day"}
 												value={ControlledTextInput.safeNumericValue(currentValue.baselineCaloriesPerDay)}
 												onValueChange={this.handleBaselineCaloriesPerDayChange}
 												disabled={editorBusy}
@@ -198,6 +200,24 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 													type: "number",
 												}}
 										/>
+									</div>
+								</div>
+								<div className={bs.row}>
+									<div className={combine(bs.col12, bs.formGroup)}>
+										<ControlledSelectInput
+												id={"calorieAdjustment"}
+												label={"Calorie Adjustment"}
+												value={ControlledTextInput.safeNumericValue(currentValue.calorieAdjustment)}
+												onValueChange={this.handleCalorieAdjustmentChange}
+												disabled={editorBusy}
+												error={errors.calorieAdjustment}
+										>
+											<option value={"0.9"}>-10%</option>
+											<option value={"0.95"}>-5%</option>
+											<option value={"1"}>0%</option>
+											<option value={"1.05"}>+5%</option>
+											<option value={"1.1"}>+10%</option>
+										</ControlledSelectInput>
 									</div>
 								</div>
 								<div className={bs.row}>
@@ -314,6 +334,10 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 
 	private handleBaselineCaloriesPerDayChange(value: string): void {
 		this.updateModel({ baselineCaloriesPerDay: value === "" ? null : parseFloat(value) });
+	}
+
+	private handleCalorieAdjustmentChange(value: string): void {
+		this.updateModel({ calorieAdjustment: value === null ? 1 : parseFloat(value) });
 	}
 
 	private handleProportionCarbohydratesChange(value: string): void {

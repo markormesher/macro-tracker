@@ -6,7 +6,7 @@ import { combine } from "../../../helpers/style-helpers";
 interface IControlledSelectInputProps {
 	readonly id: string;
 	readonly label: string | ReactElement<void>;
-	readonly value: string;
+	readonly value: string | number;
 	readonly onValueChange?: (newValue: string, id: string) => void;
 	readonly disabled?: boolean;
 	readonly error?: string;
