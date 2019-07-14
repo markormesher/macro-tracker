@@ -36,16 +36,16 @@ class DbTarget extends BaseModel implements ITarget {
 	public carbohydratesTargetValue: number;
 
 	@Column({ type: "character varying" })
-	public proteinTargetMode: TargetMode;
-
-	@Column({ type: "double precision" })
-	public proteinTargetValue: number;
-
-	@Column({ type: "character varying" })
 	public fatTargetMode: TargetMode;
 
 	@Column({ type: "double precision" })
 	public fatTargetValue: number;
+
+	@Column({ type: "character varying" })
+	public proteinTargetMode: TargetMode;
+
+	@Column({ type: "double precision" })
+	public proteinTargetValue: number;
 }
 
 export {

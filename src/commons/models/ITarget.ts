@@ -8,7 +8,8 @@ import { IValidationResult } from "./IValidationResult";
 
 enum TargetMode {
 	PERCENTAGE_OF_CALORIES = "PERCENTAGE_OF_CALORIES",
-	PER_KG_OF_BODY_WEIGHT = "PER_KG_OF_BODY_WEIGHT",
+	G_PER_KG_OF_BODY_WEIGHT = "G_PER_KG_OF_BODY_WEIGHT",
+	ABSOLUTE = "ABSOLUTE",
 	REMAINDER_OF_CALORIES = "REMAINDER_OF_CALORIES",
 }
 
@@ -21,11 +22,11 @@ interface ITarget extends IBaseModel {
 	readonly carbohydratesTargetMode: TargetMode;
 	readonly carbohydratesTargetValue: number;
 
-	readonly proteinTargetMode: TargetMode;
-	readonly proteinTargetValue: number;
-
 	readonly fatTargetMode: TargetMode;
 	readonly fatTargetValue: number;
+
+	readonly proteinTargetMode: TargetMode;
+	readonly proteinTargetValue: number;
 }
 
 interface ITargetValidationResult extends IValidationResult {
@@ -34,9 +35,13 @@ interface ITargetValidationResult extends IValidationResult {
 		readonly bodyWeightKg?: string;
 		readonly maintenanceCalories?: string;
 		readonly calorieAdjustment?: string;
-		readonly proportionCarbohydrates?: string;
-		readonly proportionProtein?: string;
-		readonly proportionFat?: string;
+		readonly carbohydratesTargetMode?: string;
+		readonly carbohydratesTargetValue?: string;
+		readonly fatTargetMode?: string;
+		readonly fatTargetValue?: string;
+		readonly proteinTargetMode?: string;
+		readonly proteinTargetValue?: string;
+		readonly overallTarget?: string;
 	};
 }
 
@@ -56,11 +61,11 @@ function mapTargetFromJson(json?: IJsonObject): ITarget {
 		carbohydratesTargetMode: cleanString(json.carbohydratesTargetMode as string) as TargetMode,
 		carbohydratesTargetValue: parseFloat(json.carbohydratesTargetValue as string),
 
-		proteinTargetMode: cleanString(json.proteinTargetMode as string) as TargetMode,
-		proteinTargetValue: parseFloat(json.proteinTargetValue as string),
-
 		fatTargetMode: cleanString(json.fatTargetMode as string) as TargetMode,
 		fatTargetValue: parseFloat(json.fatTargetValue as string),
+
+		proteinTargetMode: cleanString(json.proteinTargetMode as string) as TargetMode,
+		proteinTargetValue: parseFloat(json.proteinTargetValue as string),
 	};
 }
 
@@ -78,10 +83,10 @@ function mapTargetToJson(target?: ITarget): IJsonObject {
 		calorieAdjustment: target.calorieAdjustment,
 		carbohydratesTargetMode: target.carbohydratesTargetMode,
 		carbohydratesTargetValue: target.carbohydratesTargetValue,
-		proteinTargetMode: target.proteinTargetMode,
-		proteinTargetValue: target.proteinTargetValue,
 		fatTargetMode: target.fatTargetMode,
 		fatTargetValue: target.fatTargetValue,
+		proteinTargetMode: target.proteinTargetMode,
+		proteinTargetValue: target.proteinTargetValue,
 	};
 }
 
@@ -180,12 +185,22 @@ function validateTarget(target: Partial<ITarget>): ITargetValidationResult {
 		};
 	}
 
+	if (!target.carbohydratesTargetMode) {
+		result = {
+			isValid: false,
+			errors: {
+				...result.errors,
+				carbohydratesTargetMode: "A target mode must be selected",
+			},
+		};
+	}
+
 	if (!target.carbohydratesTargetValue && target.carbohydratesTargetValue !== 0) {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				proportionCarbohydrates: "The carbohydrates target value must be entered",
+				carbohydratesTargetValue: "The carbohydrates target value must be entered",
 			},
 		};
 	} else if (isNaN(target.carbohydratesTargetValue)) {
@@ -193,15 +208,39 @@ function validateTarget(target: Partial<ITarget>): ITargetValidationResult {
 			isValid: false,
 			errors: {
 				...result.errors,
-				proportionCarbohydrates: "The carbohydrates target value must be numeric",
+				carbohydratesTargetValue: "The carbohydrates target value must be numeric",
 			},
 		};
-	} else if (target.carbohydratesTargetValue < 0 || target.carbohydratesTargetValue > 1) {
+	} else {
+		if (target.carbohydratesTargetMode === TargetMode.PERCENTAGE_OF_CALORIES) {
+			if (target.carbohydratesTargetValue < 0 || target.carbohydratesTargetValue > 1) {
+				result = {
+					isValid: false,
+					errors: {
+						...result.errors,
+						carbohydratesTargetValue: "The carbohydrates target value must be between zero and one",
+					},
+				};
+			}
+		} else if (target.carbohydratesTargetMode !== TargetMode.REMAINDER_OF_CALORIES) {
+			if (target.carbohydratesTargetValue < 0) {
+				result = {
+					isValid: false,
+					errors: {
+						...result.errors,
+						carbohydratesTargetValue: "The carbohydrates target value must not be less than zero",
+					},
+				};
+			}
+		}
+	}
+
+	if (!target.fatTargetMode) {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				proportionCarbohydrates: "The carbohydrates target value must be between zero and one",
+				fatTargetMode: "A target mode must be selected",
 			},
 		};
 	}
@@ -211,7 +250,7 @@ function validateTarget(target: Partial<ITarget>): ITargetValidationResult {
 			isValid: false,
 			errors: {
 				...result.errors,
-				proportionFat: "The fat target value must be entered",
+				fatTargetValue: "The fat target value must be entered",
 			},
 		};
 	} else if (isNaN(target.fatTargetValue)) {
@@ -219,15 +258,39 @@ function validateTarget(target: Partial<ITarget>): ITargetValidationResult {
 			isValid: false,
 			errors: {
 				...result.errors,
-				proportionFat: "The fat target value must be numeric",
+				fatTargetValue: "The fat target value must be numeric",
 			},
 		};
-	} else if (target.fatTargetValue < 0 || target.fatTargetValue > 1) {
+	} else {
+		if (target.fatTargetMode === TargetMode.PERCENTAGE_OF_CALORIES) {
+			if (target.fatTargetValue < 0 || target.fatTargetValue > 1) {
+				result = {
+					isValid: false,
+					errors: {
+						...result.errors,
+						fatTargetValue: "The fat target value must be between zero and one",
+					},
+				};
+			}
+		} else if (target.fatTargetMode !== TargetMode.REMAINDER_OF_CALORIES) {
+			if (target.fatTargetValue < 0) {
+				result = {
+					isValid: false,
+					errors: {
+						...result.errors,
+						fatTargetValue: "The fat target value must not be less than zero",
+					},
+				};
+			}
+		}
+	}
+
+	if (!target.proteinTargetMode) {
 		result = {
 			isValid: false,
 			errors: {
 				...result.errors,
-				proportionFat: "The fat target value must be between zero and one",
+				proteinTargetMode: "A target mode must be selected",
 			},
 		};
 	}
@@ -237,7 +300,7 @@ function validateTarget(target: Partial<ITarget>): ITargetValidationResult {
 			isValid: false,
 			errors: {
 				...result.errors,
-				proportionProtein: "The protein target value must be entered",
+				proteinTargetValue: "The protein target value must be entered",
 			},
 		};
 	} else if (isNaN(target.proteinTargetValue)) {
@@ -245,17 +308,31 @@ function validateTarget(target: Partial<ITarget>): ITargetValidationResult {
 			isValid: false,
 			errors: {
 				...result.errors,
-				proportionProtein: "The protein target value must be numeric",
+				proteinTargetValue: "The protein target value must be numeric",
 			},
 		};
-	} else if (target.proteinTargetValue < 0 || target.proteinTargetValue > 1) {
-		result = {
-			isValid: false,
-			errors: {
-				...result.errors,
-				proportionProtein: "The protein target value must be between zero and one",
-			},
-		};
+	} else {
+		if (target.proteinTargetMode === TargetMode.PERCENTAGE_OF_CALORIES) {
+			if (target.proteinTargetValue < 0 || target.proteinTargetValue > 1) {
+				result = {
+					isValid: false,
+					errors: {
+						...result.errors,
+						proteinTargetValue: "The protein target value must be between zero and one",
+					},
+				};
+			}
+		} else if (target.proteinTargetMode !== TargetMode.REMAINDER_OF_CALORIES) {
+			if (target.proteinTargetValue < 0) {
+				result = {
+					isValid: false,
+					errors: {
+						...result.errors,
+						proteinTargetValue: "The protein target value must not be less than zero",
+					},
+				};
+			}
+		}
 	}
 
 	if (target.carbohydratesTargetValue + target.fatTargetValue + target.proteinTargetValue !== 1) {
@@ -263,9 +340,9 @@ function validateTarget(target: Partial<ITarget>): ITargetValidationResult {
 			isValid: false,
 			errors: {
 				...result.errors,
-				proportionCarbohydrates: "The proportions must add up to one",
-				proportionFat: "The proportions must add up to one",
-				proportionProtein: "The proportions must add up to one",
+				carbohydratesTargetValue: "The proportions must add up to one",
+				fatTargetValue: "The proportions must add up to one",
+				proteinTargetValue: "The proportions must add up to one",
 			},
 		};
 	}
@@ -285,11 +362,11 @@ function getDefaultTarget(): ITarget {
 		carbohydratesTargetMode: TargetMode.PERCENTAGE_OF_CALORIES,
 		carbohydratesTargetValue: 0.4,
 
-		proteinTargetMode: TargetMode.PERCENTAGE_OF_CALORIES,
-		proteinTargetValue: 0.3,
-
 		fatTargetMode: TargetMode.PERCENTAGE_OF_CALORIES,
 		fatTargetValue: 0.3,
+
+		proteinTargetMode: TargetMode.PERCENTAGE_OF_CALORIES,
+		proteinTargetValue: 0.3,
 	};
 }
 

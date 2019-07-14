@@ -375,9 +375,9 @@ const allMigrations: IDbMigration[] = [
                 ALTER TABLE db_target
                     RENAME COLUMN proportion_carbohydrates TO carbohydrates_target_value;
                 ALTER TABLE db_target
-                    RENAME COLUMN proportion_protein TO protein_target_value;
-                ALTER TABLE db_target
                     RENAME COLUMN proportion_fat TO fat_target_value;
+                ALTER TABLE db_target
+                    RENAME COLUMN proportion_protein TO protein_target_value;
 			`);
 		},
 		down: (qr: QueryRunner) => {
@@ -385,9 +385,9 @@ const allMigrations: IDbMigration[] = [
                 ALTER TABLE db_target
                     RENAME COLUMN carbohydrates_target_value TO proportion_carbohydrates;
                 ALTER TABLE db_target
-                    RENAME COLUMN protein_target_value TO proportion_protein;
-                ALTER TABLE db_target
                     RENAME COLUMN fat_target_value TO proportion_fat;
+                ALTER TABLE db_target
+                    RENAME COLUMN protein_target_value TO proportion_protein;
 			`);
 		},
 	},
@@ -400,8 +400,8 @@ const allMigrations: IDbMigration[] = [
                 ALTER TABLE db_target
                     ADD COLUMN body_weight_kg DOUBLE PRECISION NOT NULL DEFAULT 0,
                     ADD COLUMN carbohydrates_target_mode CHARACTER VARYING NOT NULL DEFAULT 'PERCENTAGE_OF_CALORIES',
-                    ADD COLUMN protein_target_mode CHARACTER VARYING NOT NULL DEFAULT 'PERCENTAGE_OF_CALORIES',
-                    ADD COLUMN fat_target_mode CHARACTER VARYING NOT NULL DEFAULT 'PERCENTAGE_OF_CALORIES';
+                    ADD COLUMN fat_target_mode CHARACTER VARYING NOT NULL DEFAULT 'PERCENTAGE_OF_CALORIES',
+                    ADD COLUMN protein_target_mode CHARACTER VARYING NOT NULL DEFAULT 'PERCENTAGE_OF_CALORIES';
 			`);
 		},
 		down: (qr: QueryRunner) => {
@@ -409,8 +409,8 @@ const allMigrations: IDbMigration[] = [
                 ALTER TABLE db_target
                     DROP COLUMN body_weight_kg,
                     DROP COLUMN carbohydrates_target_mode,
-                	DROP COLUMN protein_target_mode,
-                    DROP COLUMN fat_target_mode;
+                    DROP COLUMN fat_target_mode,
+                	DROP COLUMN protein_target_mode;
 			`);
 		},
 	},
