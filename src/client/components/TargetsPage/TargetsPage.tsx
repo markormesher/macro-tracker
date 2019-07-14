@@ -137,19 +137,19 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
 
 		infoChunks.push((
 				<span key={`info-chunk-carbohydrates`}>
-					{formatPercent(target.proportionCarbohydrates * 100)} carbs
+					{formatPercent(target.carbohydratesTargetValue * 100)} carbs
 				</span>
 		));
 
 		infoChunks.push((
 				<span key={`info-chunk-fat`}>
-					{formatPercent(target.proportionFat * 100)} fat
+					{formatPercent(target.fatTargetValue * 100)} fat
 				</span>
 		));
 
 		infoChunks.push((
 				<span key={`info-chunk-protein`}>
-					{formatPercent(target.proportionProtein * 100)} protein
+					{formatPercent(target.proteinTargetValue * 100)} protein
 				</span>
 		));
 

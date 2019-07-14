@@ -73,6 +73,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 
 		this.resetEditor = this.resetEditor.bind(this);
 		this.handleStartDateChange = this.handleStartDateChange.bind(this);
+		this.handleBodyWeightChange = this.handleBodyWeightChange.bind(this);
 		this.handleMaintenanceCaloriesChange = this.handleMaintenanceCaloriesChange.bind(this);
 		this.handleCalorieAdjustmentChange = this.handleCalorieAdjustmentChange.bind(this);
 		this.handleProportionCarbohydratesChange = this.handleProportionCarbohydratesChange.bind(this);
@@ -175,7 +176,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 									onSubmit={this.handleSubmit}
 							>
 								<div className={bs.row}>
-									<div className={combine(bs.col12, bs.formGroup)}>
+									<div className={combine(bs.col6, bs.formGroup)}>
 										<ControlledDateInput
 												id={"startDate"}
 												label={"Start Date"}
@@ -183,6 +184,20 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 												onValueChange={this.handleStartDateChange}
 												disabled={editorBusy}
 												error={errors.startDate}
+										/>
+									</div>
+									<div className={combine(bs.col6, bs.formGroup)}>
+										<ControlledTextInput
+												id={"bodyWeightKg"}
+												label={"Body Weight (kg)"}
+												placeholder={"Body Weight (kg)"}
+												value={ControlledTextInput.safeNumericValue(currentValue.bodyWeightKg)}
+												onValueChange={this.handleBodyWeightChange}
+												disabled={editorBusy}
+												error={errors.bodyWeightKg}
+												inputProps={{
+													type: "number",
+												}}
 										/>
 									</div>
 								</div>
@@ -221,10 +236,10 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 								<div className={bs.row}>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
-												id={"proportionCarbohydrates"}
+												id={"carbohydratesTargetValue"}
 												label={"Carbohydrates Proportion"}
 												placeholder={"Carbohydrates Proportion"}
-												value={ControlledTextInput.safeNumericValue(currentValue.proportionCarbohydrates)}
+												value={ControlledTextInput.safeNumericValue(currentValue.carbohydratesTargetValue)}
 												onValueChange={this.handleProportionCarbohydratesChange}
 												disabled={editorBusy}
 												error={errors.proportionCarbohydrates}
@@ -240,10 +255,10 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 								<div className={bs.row}>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
-												id={"proportionFat"}
+												id={"fatTargetValue"}
 												label={"Fat Proportion"}
 												placeholder={"Fat Proportion"}
-												value={ControlledTextInput.safeNumericValue(currentValue.proportionFat)}
+												value={ControlledTextInput.safeNumericValue(currentValue.fatTargetValue)}
 												onValueChange={this.handleProportionFatChange}
 												disabled={editorBusy}
 												error={errors.proportionFat}
@@ -259,10 +274,10 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 								<div className={bs.row}>
 									<div className={combine(bs.col12, bs.formGroup)}>
 										<ControlledTextInput
-												id={"proportionProtein"}
+												id={"proteinTargetValue"}
 												label={"Protein Proportion"}
 												placeholder={"Protein Proportion"}
-												value={ControlledTextInput.safeNumericValue(currentValue.proportionProtein)}
+												value={ControlledTextInput.safeNumericValue(currentValue.proteinTargetValue)}
 												onValueChange={this.handleProportionProteinChange}
 												disabled={editorBusy}
 												error={errors.proportionProtein}
@@ -330,6 +345,10 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 		this.updateModel({ startDate: startDate.startOf("day") });
 	}
 
+	private handleBodyWeightChange(value: string): void {
+		this.updateModel({ bodyWeightKg: value === "" ? null : parseFloat(value) });
+	}
+
 	private handleMaintenanceCaloriesChange(value: string): void {
 		this.updateModel({ maintenanceCalories: value === "" ? null : parseFloat(value) });
 	}
@@ -339,15 +358,15 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 	}
 
 	private handleProportionCarbohydratesChange(value: string): void {
-		this.updateModel({ proportionCarbohydrates: value === "" ? null : parseFloat(value) });
+		this.updateModel({ carbohydratesTargetValue: value === "" ? null : parseFloat(value) });
 	}
 
 	private handleProportionFatChange(value: string): void {
-		this.updateModel({ proportionFat: value === "" ? null : parseFloat(value) });
+		this.updateModel({ fatTargetValue: value === "" ? null : parseFloat(value) });
 	}
 
 	private handleProportionProteinChange(value: string): void {
-		this.updateModel({ proportionProtein: value === "" ? null : parseFloat(value) });
+		this.updateModel({ proteinTargetValue: value === "" ? null : parseFloat(value) });
 	}
 
 	private handleSubmit(): void {

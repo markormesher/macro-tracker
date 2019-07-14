@@ -41,9 +41,9 @@ function generateMacroSummary(
 
 	const totalCaloriesBurned = exerciseEntries.map((ee) => ee.caloriesBurned).reduce((a, b) => a + b, 0);
 	const targetCalories = (target.maintenanceCalories * target.calorieAdjustment) + totalCaloriesBurned;
-	const targetCarbohydrates = targetCalories * target.proportionCarbohydrates / CALORIES_PER_G_CARBOHYDRATES;
-	const targetFat = targetCalories * target.proportionFat / CALORIES_PER_G_FAT;
-	const targetProtein = targetCalories * target.proportionProtein / CALORIES_PER_G_PROTEIN;
+	const targetCarbohydrates = targetCalories * target.carbohydratesTargetValue / CALORIES_PER_G_CARBOHYDRATES;
+	const targetFat = targetCalories * target.fatTargetValue / CALORIES_PER_G_FAT;
+	const targetProtein = targetCalories * target.proteinTargetValue / CALORIES_PER_G_PROTEIN;
 
 	// reduce each entry to an array of macros
 	const nutritionAmounts = diaryEntries
