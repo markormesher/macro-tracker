@@ -52,16 +52,16 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
 	private static formatSingleMacroTarget(mode: TargetMode, value: number): string {
 		switch (mode) {
 			case TargetMode.PERCENTAGE_OF_CALORIES:
-				return formatPercent(value * 100);
+				return formatPercent(value * 100) + " of kcals";
 
 			case TargetMode.G_PER_KG_OF_BODY_WEIGHT:
-				return formatMeasurement(value, "g", 1) + " per KG";
+				return formatMeasurement(value, "g", 1) + " per kg weight";
 
 			case TargetMode.ABSOLUTE:
 				return formatMeasurement(value, "g");
 
 			case TargetMode.REMAINDER_OF_CALORIES:
-				return "remainder";
+				return "remaining kcals";
 		}
 	}
 
@@ -131,23 +131,13 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
 	private tableRowRenderer(target: ITarget): ReactElement<void> {
 		let calorieRequirement: ReactNode;
 		if (target.calorieAdjustment === 1) {
-			calorieRequirement = (
-					<>
-						{formatLargeNumber(target.maintenanceCalories)} kcal
-					</>
-			);
+			calorieRequirement = `${formatLargeNumber(target.maintenanceCalories)} kcal`;
 		} else {
 			const symbol = target.calorieAdjustment < 1 ? "-" : "+";
 			const percentAdjustment = Math.abs(target.calorieAdjustment - 1) * 100;
-			calorieRequirement = (
-					<>
-						{formatLargeNumber(target.maintenanceCalories)} kcal
-						{" "}
-						{symbol} {formatPercent(percentAdjustment)} =
-						{" "}
-						{formatLargeNumber(target.maintenanceCalories * target.calorieAdjustment)} kcal
-					</>
-			);
+			calorieRequirement = `${formatLargeNumber(target.maintenanceCalories)} kcal`
+					+ `${symbol} ${formatPercent(percentAdjustment)} =`
+					+ `${formatLargeNumber(target.maintenanceCalories * target.calorieAdjustment)} kcal`;
 		}
 
 		const infoChunks: ReactNode[] = [];
@@ -172,7 +162,7 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
 
 		for (let i = 1; i < infoChunks.length; i += 2) {
 			infoChunks.splice(i, 0, (
-					<span key={`spacer-${i}`} className={bs.mx1}>
+				<span key={`spacer-${i}`} className={bs.mx1}>
 					&bull;
 				</span>
 			));

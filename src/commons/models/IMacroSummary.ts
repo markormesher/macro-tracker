@@ -177,7 +177,7 @@ function calculateTargetCalories(
 
 		case TargetMode.REMAINDER_OF_CALORIES:
 		default:
-			// return "0" for REMAINDER_OF_CALORIES because this gets worked out later
+			// return 0 for REMAINDER_OF_CALORIES because this gets worked out later
 			return 0;
 	}
 }
