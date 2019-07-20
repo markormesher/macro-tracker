@@ -138,27 +138,23 @@ function*searchFoodItemByKeywordSaga(): Generator {
 		yield put(setKeywordSearchBusy(true));
 
 		try {
-			// check our own DB first
 			const existingFoodItems: IFoodItem[] = yield call(() => axios
 					.get(`/api/food-items/by-keyword/${keyword}`)
 					.then((res) => safeMapEntities(mapFoodItemFromJson, res.data as IJsonArray)));
 
-			if (existingFoodItems) {
-				yield all([
-					put(setFoodItemsByKeyword(keyword, existingFoodItems)),
-					put(setKeywordSearchBusy(false)),
-				]);
-			} else {
+			const nutritionixFoodItems: IFoodItem[] = yield call(() => axios
+					.get(`/api/nutritionix-api/search-keyword/${keyword}`)
+					.then((res) => safeMapEntities(mapFoodItemFromJson, res.data as IJsonArray)));
 
-				const foodItems: IFoodItem[] = yield call(() => axios
-						.get(`/api/nutritionix-api/search-keyword/${keyword}`)
-						.then((res) => safeMapEntities(mapFoodItemFromJson, res.data as IJsonArray)));
+			const foodItems = [
+				...existingFoodItems,
+				...(nutritionixFoodItems.filter((nfi) => !existingFoodItems.some((efi) => efi.apiId === nfi.apiId))),
+			];
 
-				yield all([
-					put(setFoodItemsByKeyword(keyword, foodItems)),
-					put(setKeywordSearchBusy(false)),
-				]);
-			}
+			yield all([
+				put(setFoodItemsByKeyword(keyword, foodItems)),
+				put(setKeywordSearchBusy(false)),
+			]);
 		} catch (err) {
 			yield put(setError(err));
 		}
