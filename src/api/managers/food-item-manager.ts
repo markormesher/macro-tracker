@@ -2,6 +2,7 @@ import { SelectQueryBuilder } from "typeorm";
 import { IFoodItem, validateFoodItem } from "../../commons/models/IFoodItem";
 import { validateServingSize } from "../../commons/models/IServingSize";
 import { StatusError } from "../../commons/StatusError";
+import { logger } from "../../commons/utils/logging";
 import { DbFoodItem } from "../db/models/DbFoodItem";
 import { saveServingSize } from "./serving-size-manager";
 
@@ -51,7 +52,9 @@ async function getAllFoodItems(): Promise<DbFoodItem[]> {
 }
 
 async function saveFoodItem(foodItemId: string, values: IFoodItem): Promise<DbFoodItem> {
-	if (!validateFoodItem(values).isValid) {
+	const validationResult = validateFoodItem(values);
+	if (!validationResult.isValid) {
+		logger.error("Failed to save invalid food item", { validationResult, values });
 		throw new StatusError(400, "The food item was not valid");
 	}
 

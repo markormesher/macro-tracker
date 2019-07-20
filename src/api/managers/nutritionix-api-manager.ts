@@ -84,8 +84,8 @@ function mapFoodItemFromNutritionixFoodItem(nutritionixFoodItem?: INutritionixFo
 	let foodItem: IFoodItem = {
 		...getDefaultFoodItem(),
 		brand: nutritionixFoodItem.brand_name || "Generic",
-		name: nutritionixFoodItem.food_name,
-		upcs: [upc],
+		name: nutritionixFoodItem.food_name.replace(/\b[a-z]/g, (c) => c.toUpperCase()),
+		upcs: upc ? [upc] : null,
 		apiSource: "nutritionix",
 		apiId: nutritionixFoodItem.nix_item_id ? nutritionixFoodItem.nix_item_id : nutritionixFoodItem.tag_id,
 	};
