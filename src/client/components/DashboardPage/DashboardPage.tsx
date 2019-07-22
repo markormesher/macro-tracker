@@ -1,16 +1,12 @@
-import { ChartDataSets, ChartLegendLabelItem } from "chart.js";
 import * as Dayjs from "dayjs";
-import { PureComponent, ReactNode } from "react";
 import * as React from "react";
-import { Line, LinearComponentProps } from "react-chartjs-2";
+import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { match as Match } from "react-router";
 import { Dispatch } from "redux";
 import { calculateTotalMacroSummary, IMacroSummary } from "../../../commons/models/IMacroSummary";
 import { dayjsToDateKey, utcDayjs } from "../../../commons/utils/dates";
-import { formatDate, formatPercent } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { chartColours, defaultDatasetProps } from "../../helpers/charts";
 import { renderMacroSummary } from "../../helpers/rendering";
 import { combine } from "../../helpers/style-helpers";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
@@ -159,179 +155,19 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 							{renderMacroSummary(calculateTotalMacroSummary(summaries))}
 						</div>
 					</div>
-					<div className={bs.row}>
-						<div className={bs.col}>
-							{this.renderCharts(dates, summaries)}
-						</div>
-					</div>
+					{this.renderCharts(dates, summaries)}
 				</>
 		);
 	}
 
 	private renderCharts(dates: Dayjs.Dayjs[], summaries: IMacroSummary[]): ReactNode {
-		const caloriesDatasets: ChartDataSets[] = [
-			{
-				...defaultDatasetProps,
-				borderColor: chartColours.black.toString(),
-				borderWidth: 1,
-				borderDash: [5, 10],
-				data: dates.map((date) => ({
-					x: date.toDate(),
-					y: 100,
-				})),
-			},
-			{
-				...defaultDatasetProps,
-				label: "Calories",
-				borderColor: chartColours.blackSemiTransparent.toString(),
-				data: summaries.map((sum, idx) => ({
-					x: dates[idx].toDate(),
-					y: sum.totalCalories / sum.targetCalories * 100,
-				})),
-			},
-		];
-		const carbohydratesDatasets: ChartDataSets[] = [
-			{
-				...defaultDatasetProps,
-				borderColor: chartColours.black.toString(),
-				borderWidth: 1,
-				borderDash: [5, 10],
-				data: dates.map((date) => ({
-					x: date.toDate(),
-					y: 100,
-				})),
-			},
-			{
-				...defaultDatasetProps,
-				label: "Carbohydrates",
-				borderColor: chartColours.blue.toString(),
-				data: summaries.map((sum, idx) => ({
-					x: dates[idx].toDate(),
-					y: sum.totalCarbohydrates / sum.targetCarbohydrates * 100,
-				})),
-			},
-		];
-		const fatDatasets: ChartDataSets[] = [
-			{
-				...defaultDatasetProps,
-				borderColor: chartColours.black.toString(),
-				borderWidth: 1,
-				borderDash: [5, 10],
-				data: dates.map((date) => ({
-					x: date.toDate(),
-					y: 100,
-				})),
-			},
-			{
-				...defaultDatasetProps,
-				label: "Fat",
-				borderColor: chartColours.red.toString(),
-				data: summaries.map((sum, idx) => ({
-					x: dates[idx].toDate(),
-					y: sum.totalFat / sum.targetFat * 100,
-				})),
-			},
-		];
-		const proteinDatasets: ChartDataSets[] = [
-			{
-				...defaultDatasetProps,
-				borderColor: chartColours.black.toString(),
-				borderWidth: 1,
-				borderDash: [5, 10],
-				data: dates.map((date) => ({
-					x: date.toDate(),
-					y: 100,
-				})),
-			},
-			{
-				...defaultDatasetProps,
-				label: "Protein",
-				borderColor: chartColours.green.toString(),
-				data: summaries.map((sum, idx) => ({
-					x: dates[idx].toDate(),
-					y: sum.totalProtein / sum.targetProtein * 100,
-				})),
-			},
-		];
-
-		const chartProps: Partial<LinearComponentProps> = {
-			legend: {
-				display: true,
-				position: "bottom",
-				labels: {
-					filter: (label: ChartLegendLabelItem) => !!label.text,
-				},
-			},
-			options: {
-				responsive: true,
-				maintainAspectRatio: false,
-				elements: {
-					line: {
-						borderWidth: 1,
-						tension: 0,
-						fill: false,
-					},
-				},
-				tooltips: {
-					enabled: false,
-				},
-				scales: {
-					display: true,
-					gridLines: {
-						offsetGridLines: true,
-					},
-					xAxes: [
-						{
-							display: true,
-							type: "time",
-							ticks: {
-								callback: (_: any, idx: number, values: Array<{ readonly value: number }>) => {
-									const date = values[idx];
-									return date ? formatDate(utcDayjs(date.value), "short") : undefined;
-								},
-							},
-						},
-					],
-					yAxes: [
-						{
-							display: true,
-							ticks: {
-								beginAtZero: true,
-								callback: (val: number) => formatPercent(val),
-							},
-						},
-					],
-				},
-			},
-		};
 
 		return (
-				<>
-					<div className={bs.mb3}>
-						<Line
-								{...chartProps}
-								data={{ datasets: caloriesDatasets }}
-						/>
+				<div className={bs.row}>
+					<div className={bs.col}>
+						<p>Watch this space</p>
 					</div>
-					<div className={bs.mb3}>
-						<Line
-								{...chartProps}
-								data={{ datasets: carbohydratesDatasets }}
-						/>
-					</div>
-					<div className={bs.mb3}>
-						<Line
-								{...chartProps}
-								data={{ datasets: fatDatasets }}
-						/>
-					</div>
-					<div>
-						<Line
-								{...chartProps}
-								data={{ datasets: proteinDatasets }}
-						/>
-					</div>
-				</>
+				</div>
 		);
 	}
 }
