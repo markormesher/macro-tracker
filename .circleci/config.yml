@@ -36,6 +36,18 @@ jobs:
           name: Run Linter
           command: yarn lint
 
+  bundlewatch:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Build client packages
+          command: yarn build-client
+      - run:
+          name: Run BundleWatch
+          command: yarn bundlewatch
+
   test:
     <<: *defaults
     steps:
@@ -83,7 +95,11 @@ workflows:
       - test:
           requires:
             - setup
+      - bundlewatch:
+          requires:
+            - setup
       - maybe_deploy:
           requires:
             - lint
             - test
+            - bundlewatch
