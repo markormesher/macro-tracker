@@ -43,6 +43,7 @@
     "lint-ts": "tslint -c ./tslint.json \"./src/**/*.{ts,tsx}\"",
     "lint-ts-fix": "tslint --fix -c ./tslint.json \"./src/**/*.{ts,tsx}\"",
     "// misc": "//",
+    "bundlewatch": "bundlewatch --config ./.bundlewatch/config.json",
     "clean": "rimraf ./build ./coverage ./.nyc_output",
     "copy-api-config": "copyfiles -u 2 -e \"./**/*.ts\" \"./src/api/config/**\" ./build/api/.",
     "check-cross-refs": "./.scripts/check-cross-project-references.sh"
@@ -130,6 +131,7 @@
     "babel-loader": "^8.0.4",
     "babel-plugin-istanbul": "^5.1.0",
     "browserify": "^16.2.2",
+    "bundlewatch": "^0.2.5",
     "chai": "^4.2.0",
     "chai-string": "^1.5.0",
     "copyfiles": "^2.1.0",

@@ -1,0 +1,7 @@
+{
+	"files": [
+		{
+			"path": "./build/client/*.js"
+		}
+	]
+}
