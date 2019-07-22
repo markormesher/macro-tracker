@@ -97,7 +97,7 @@ const config = {
 	output: {
 		publicPath: "/",
 		path: outputDir,
-		filename: IS_PROD ? "[name]~[contenthash].js" : "[name].js",
+		filename: "[name].js",
 
 		// used in development mode only
 		hotUpdateMainFilename: "hot-update.[hash:6].json",
@@ -199,7 +199,7 @@ const config = {
 		]),
 		IS_PROD && new MiniCssExtractPlugin({
 			minimize: true,
-			filename: "[name]~[contenthash].css",
+			filename: "[name].css",
 		}),
 		IS_PROD && new BundleAnalyzerPlugin({
 			analyzerMode: "static",
