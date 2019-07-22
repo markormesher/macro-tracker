@@ -2,7 +2,7 @@ import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { mapExerciseEntryFromJson } from "../../commons/models/IExerciseEntry";
 import { IJsonObject } from "../../commons/models/IJsonObject";
-import { urlStringToMoment } from "../../commons/utils/dates";
+import { urlStringToDayjs } from "../../commons/utils/dates";
 import { cleanUuid } from "../../commons/utils/entities";
 import { cleanString } from "../../commons/utils/strings";
 import {
@@ -30,7 +30,7 @@ exerciseEntriesRouter.get("/:id", requireUser, (req: Request, res: Response, nex
 });
 
 exerciseEntriesRouter.get("/for-date/:dateStr", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const date = urlStringToMoment(cleanString(req.params.dateStr));
+	const date = urlStringToDayjs(cleanString(req.params.dateStr));
 	getExerciseEntriesForDate(date)
 			.then((exerciseEntries) => res.json(exerciseEntries))
 			.catch(next);

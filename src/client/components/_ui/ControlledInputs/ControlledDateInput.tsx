@@ -1,7 +1,7 @@
-import * as Moment from "moment";
+import * as Dayjs from "dayjs";
 import * as React from "react";
 import { FormEvent, InputHTMLAttributes, PureComponent, ReactElement, ReactNode } from "react";
-import { utcMoment } from "../../../../commons/utils/dates";
+import { utcDayjs } from "../../../../commons/utils/dates";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 
@@ -9,7 +9,7 @@ interface IControlledDateInputProps {
 	readonly id: string;
 	readonly label: string | ReactElement<void>;
 	readonly value: string | number;
-	readonly onValueChange: (newValue: Moment.Moment, id: string) => void;
+	readonly onValueChange: (newValue: Dayjs.Dayjs, id: string) => void;
 	readonly disabled?: boolean;
 	readonly error?: string;
 	readonly inputProps?: Partial<InputHTMLAttributes<HTMLInputElement>>;
@@ -64,7 +64,7 @@ class ControlledDateInput extends PureComponent<IControlledDateInputProps, ICont
 		if (!newValue || newValue.trim() === "") {
 			this.props.onValueChange(undefined, this.props.id);
 		} else {
-			this.props.onValueChange(utcMoment(newValue), this.props.id);
+			this.props.onValueChange(utcDayjs(newValue), this.props.id);
 		}
 	}
 }

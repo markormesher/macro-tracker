@@ -1,5 +1,5 @@
 import { faBullseyeArrow, faCircleNotch, faRedoAlt, faSave } from "@fortawesome/pro-light-svg-icons";
-import * as Moment from "moment";
+import * as Dayjs from "dayjs";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -425,7 +425,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 		}
 	}
 
-	private handleStartDateChange(startDate: Moment.Moment): void {
+	private handleStartDateChange(startDate: Dayjs.Dayjs): void {
 		this.updateModel({ startDate: startDate.startOf("day") });
 	}
 

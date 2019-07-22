@@ -1,5 +1,5 @@
-import * as Moment from "moment";
-import { utcMoment } from "../utils/dates";
+import * as Dayjs from "dayjs";
+import { utcDayjs } from "../utils/dates";
 import { cleanUuid } from "../utils/entities";
 import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
@@ -15,7 +15,7 @@ enum TargetMode {
 }
 
 interface ITarget extends IBaseModel {
-	readonly startDate: Moment.Moment;
+	readonly startDate: Dayjs.Dayjs;
 	readonly bodyWeightKg: number;
 	readonly maintenanceCalories: number;
 	readonly calorieAdjustment: number;
@@ -54,7 +54,7 @@ function mapTargetFromJson(json?: IJsonObject): ITarget {
 	return {
 		id: cleanUuid(json.id as string),
 		deleted: json.deleted as boolean,
-		startDate: json.startDate ? utcMoment(cleanString(json.startDate as string)) : null,
+		startDate: json.startDate ? utcDayjs(cleanString(json.startDate as string)) : null,
 		bodyWeightKg: parseFloat(json.bodyWeightKg as string),
 		maintenanceCalories: parseFloat(json.maintenanceCalories as string),
 		calorieAdjustment: parseFloat(json.calorieAdjustment as string),
@@ -381,7 +381,7 @@ function getDefaultTarget(): ITarget {
 	return {
 		id: undefined,
 		deleted: false,
-		startDate: utcMoment().startOf("day"),
+		startDate: utcDayjs().startOf("day"),
 		bodyWeightKg: 0,
 		maintenanceCalories: 0,
 		calorieAdjustment: 1,

@@ -1,9 +1,9 @@
 import axios from "axios";
-import * as Moment from "moment";
+import * as Dayjs from "dayjs";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { IJsonObject } from "../../commons/models/IJsonObject";
 import { IMacroSummary, mapMacroSummaryFromJson } from "../../commons/models/IMacroSummary";
-import { momentToDateKey, momentToUrlString } from "../../commons/utils/dates";
+import { dayjsToDateKey, dayjsToUrlString } from "../../commons/utils/dates";
 import { formatDate } from "../../commons/utils/formatters";
 import { diaryEntriesCacheKeys } from "./diary-entries";
 import { exerciseEntriesCacheKeys } from "./exercise-entries";
@@ -28,17 +28,17 @@ enum MacroSummariesActions {
 }
 
 const macroSummariesCacheKeys = {
-	forDate: (date: Moment.Moment) => `macro-summaries.for-date.${formatDate(date, "system")}`,
+	forDate: (date: Dayjs.Dayjs) => `macro-summaries.for-date.${formatDate(date, "system")}`,
 };
 
-function setMacroSummariesForDate(date: Moment.Moment, macroSummary: IMacroSummary): PayloadAction {
+function setMacroSummariesForDate(date: Dayjs.Dayjs, macroSummary: IMacroSummary): PayloadAction {
 	return {
 		type: MacroSummariesActions.SET_MACRO_SUMMARY_FOR_DATE,
 		payload: { date, macroSummary },
 	};
 }
 
-function startLoadMacroSummaryForDate(date: Moment.Moment): PayloadAction {
+function startLoadMacroSummaryForDate(date: Dayjs.Dayjs): PayloadAction {
 	return {
 		type: MacroSummariesActions.START_LOAD_MACRO_SUMMARY_FOR_DATE,
 		payload: { date },
@@ -47,7 +47,7 @@ function startLoadMacroSummaryForDate(date: Moment.Moment): PayloadAction {
 
 function*loadMacroSummaryForDateSaga(): Generator {
 	yield takeEvery(MacroSummariesActions.START_LOAD_MACRO_SUMMARY_FOR_DATE, function*(action: PayloadAction): Generator {
-		const date: Moment.Moment = action.payload.date;
+		const date: Dayjs.Dayjs = action.payload.date;
 
 		// the summary must be newer than all diary, exercise, food item and target changes
 		const summaryKey = macroSummariesCacheKeys.forDate(date);
@@ -64,7 +64,7 @@ function*loadMacroSummaryForDateSaga(): Generator {
 
 		try {
 			const macroSummaries: IMacroSummary = yield call(() => axios
-					.get(`/api/macro-summary/for-date/${momentToUrlString(date)}`)
+					.get(`/api/macro-summary/for-date/${dayjsToUrlString(date)}`)
 					.then((res) => mapMacroSummaryFromJson(res.data as IJsonObject)));
 
 			yield all([
@@ -88,7 +88,7 @@ function macroSummariesReducer(state = initialState, action: PayloadAction): IMa
 
 		case MacroSummariesActions.SET_MACRO_SUMMARY_FOR_DATE:
 			return (() => {
-				const date = momentToDateKey(action.payload.date);
+				const date = dayjsToDateKey(action.payload.date);
 				const macroSummary: IMacroSummary = action.payload.macroSummary;
 
 				return {

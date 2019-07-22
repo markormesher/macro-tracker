@@ -1,6 +1,6 @@
-import * as Moment from "moment";
+import * as Dayjs from "dayjs";
 import { Meal } from "../enums";
-import { utcMoment } from "../utils/dates";
+import { utcDayjs } from "../utils/dates";
 import { cleanUuid } from "../utils/entities";
 import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
@@ -10,8 +10,8 @@ import { IServingSize, mapServingSizeFromJson, mapServingSizeToJson } from "./IS
 import { IValidationResult } from "./IValidationResult";
 
 interface IDiaryEntry extends IBaseModel {
-	readonly date: Moment.Moment;
-	readonly lastEdit: Moment.Moment;
+	readonly date: Dayjs.Dayjs;
+	readonly lastEdit: Dayjs.Dayjs;
 	readonly meal: Meal;
 	readonly servingQty: number;
 
@@ -37,8 +37,8 @@ function mapDiaryEntryFromJson(json?: IJsonObject): IDiaryEntry {
 	return {
 		id: cleanUuid(json.id as string),
 		deleted: json.deleted as boolean,
-		date: json.date ? utcMoment(cleanString(json.date as string)) : null,
-		lastEdit: json.date ? utcMoment(cleanString(json.lastEdit as string)) : null,
+		date: json.date ? utcDayjs(cleanString(json.date as string)) : null,
+		lastEdit: json.date ? utcDayjs(cleanString(json.lastEdit as string)) : null,
 		meal: cleanString(json.meal as string) as Meal,
 		servingQty: parseFloat(json.servingQty as string),
 		foodItem: mapFoodItemFromJson(json.foodItem as IJsonObject),
@@ -70,7 +70,7 @@ function validateDiaryEntry(diaryEntry?: Partial<IDiaryEntry>): IDiaryEntryValid
 
 	let result: IDiaryEntryValidationResult = { isValid: true, errors: {} };
 
-	const now = utcMoment();
+	const now = utcDayjs();
 	if (!diaryEntry.date) {
 		result = {
 			isValid: false,
@@ -145,7 +145,7 @@ function getDefaultDiaryEntry(): IDiaryEntry {
 		id: undefined,
 		deleted: false,
 
-		date: utcMoment(),
+		date: utcDayjs(),
 		lastEdit: undefined,
 		meal: undefined,
 		servingQty: 1,

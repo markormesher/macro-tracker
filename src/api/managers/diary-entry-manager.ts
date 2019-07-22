@@ -1,10 +1,10 @@
-import * as Moment from "moment";
+import * as Dayjs from "dayjs";
 import { SelectQueryBuilder } from "typeorm";
 import { IDiaryEntry, validateDiaryEntry } from "../../commons/models/IDiaryEntry";
 import { StatusError } from "../../commons/StatusError";
-import { utcMoment } from "../../commons/utils/dates";
+import { utcDayjs } from "../../commons/utils/dates";
 import { DbDiaryEntry } from "../db/models/DbDiaryEntry";
-import { MomentDateTransformer } from "../db/MomentDateTransformer";
+import { DayjsDateTransformer } from "../db/DayjsDateTransformer";
 
 function getDiaryEntryQueryBuilder(): SelectQueryBuilder<DbDiaryEntry> {
 	return DbDiaryEntry
@@ -22,7 +22,7 @@ async function getDiaryEntry(id: string): Promise<DbDiaryEntry> {
 			.getOne();
 }
 
-async function getDiaryEntriesForDate(date: Moment.Moment): Promise<DbDiaryEntry[]> {
+async function getDiaryEntriesForDate(date: Dayjs.Dayjs): Promise<DbDiaryEntry[]> {
 	const minDate = date.clone().startOf("day");
 	const maxDate = date.clone().endOf("day");
 
@@ -30,8 +30,8 @@ async function getDiaryEntriesForDate(date: Moment.Moment): Promise<DbDiaryEntry
 			.where("diary_entry.deleted = FALSE")
 			.andWhere("diary_entry.date >= :minDate")
 			.andWhere("diary_entry.date <= :maxDate")
-			.setParameter("minDate", MomentDateTransformer.toDbFormat(minDate))
-			.setParameter("maxDate", MomentDateTransformer.toDbFormat(maxDate))
+			.setParameter("minDate", DayjsDateTransformer.toDbFormat(minDate))
+			.setParameter("maxDate", DayjsDateTransformer.toDbFormat(maxDate))
 			.getMany();
 }
 
@@ -49,7 +49,7 @@ async function saveDiaryEntry(diaryEntryId: string, values: IDiaryEntry): Promis
 
 				values = {
 					...values,
-					lastEdit: utcMoment(),
+					lastEdit: utcDayjs(),
 
 					// remove serving size on non-measured food items
 					servingSize: values.foodItem.measurementUnit === "single_serving" ? null : values.servingSize,

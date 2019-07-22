@@ -1,8 +1,8 @@
-import * as Moment from "moment";
+import * as Dayjs from "dayjs";
 import * as React from "react";
 import { FoodMeasurementUnit, Meal } from "../enums";
 import { IFoodItem } from "../models/IFoodItem";
-import { utcMoment } from "./dates";
+import { utcDayjs } from "./dates";
 import { getNutritionBaseAmount } from "./helpers";
 
 function formatLargeNumber(amount: number, places: number = 0): string {
@@ -28,7 +28,7 @@ function formatMeasurement(amount: number, unit: FoodMeasurementUnit, places: nu
 	return formatLargeNumber(amount, places) + formatMeasurementUnit(unit);
 }
 
-function formatDate(date: Moment.Moment, format: "short" | "user" | "title" | "system" = "user"): string {
+function formatDate(date: Dayjs.Dayjs, format: "short" | "user" | "title" | "system" = "user"): string {
 	if (!date) {
 		return undefined;
 	}
@@ -39,7 +39,7 @@ function formatDate(date: Moment.Moment, format: "short" | "user" | "title" | "s
 	} else if (format === "user") {
 		return date.format("DD MMM YYYY");
 	} else if (format === "title") {
-		const now = utcMoment();
+		const now = utcDayjs();
 		if (now.isSame(date, "day")) {
 			return "Today";
 		} else if (now.subtract(1, "day").isSame(date, "day")) {

@@ -1,5 +1,5 @@
 import { faCalendarDay, faCircleNotch, faRedoAlt, faSave } from "@fortawesome/pro-light-svg-icons";
-import * as Moment from "moment";
+import * as Dayjs from "dayjs";
 import { PureComponent, ReactNode } from "react";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -12,7 +12,7 @@ import {
 	IExerciseEntryValidationResult,
 	validateExerciseEntry,
 } from "../../../commons/models/IExerciseEntry";
-import { momentToUrlString, urlStringToMoment } from "../../../commons/utils/dates";
+import { dayjsToUrlString, urlStringToDayjs } from "../../../commons/utils/dates";
 import { formatDate } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { history } from "../../helpers/single-history";
@@ -48,7 +48,7 @@ interface IEditExerciseEntryPageProps {
 	};
 
 	// derived from query string
-	readonly urlDate?: Moment.Moment;
+	readonly urlDate?: Dayjs.Dayjs;
 
 	// added by connected react router
 	readonly match?: Match<{ readonly exerciseEntryId: string }>;
@@ -70,7 +70,7 @@ function mapStateToProps(state: IRootState, props: IEditExerciseEntryPageProps):
 		allExerciseLabels: state.exerciseEntries.allExerciseLabels,
 		lastExerciseEntrySaved: state.exerciseEntries.lastExerciseEntrySaved,
 
-		urlDate: urlParams.has("initDate") ? urlStringToMoment(urlParams.get("initDate")) : undefined,
+		urlDate: urlParams.has("initDate") ? urlStringToDayjs(urlParams.get("initDate")) : undefined,
 	};
 }
 
@@ -148,7 +148,7 @@ class UCEditExerciseEntryPage extends PureComponent<IEditExerciseEntryPageProps,
 						</div>
 						<div className={bs.row}>
 							<div className={bs.col6}>
-								<Link to={`/diary-entries/${momentToUrlString(currentValue.date)}`}>
+								<Link to={`/diary-entries/${dayjsToUrlString(currentValue.date)}`}>
 									<IconBtn
 											icon={faCalendarDay}
 											text={"Back to the Diary"}
@@ -268,7 +268,7 @@ class UCEditExerciseEntryPage extends PureComponent<IEditExerciseEntryPageProps,
 		actions.resetEditorResult();
 
 		const defaultExerciseEntry = getDefaultExerciseEntry();
-		let nextDate: Moment.Moment;
+		let nextDate: Dayjs.Dayjs;
 
 		if (init) {
 			nextDate = urlDate ? urlDate : defaultExerciseEntry.date;
@@ -288,7 +288,7 @@ class UCEditExerciseEntryPage extends PureComponent<IEditExerciseEntryPageProps,
 			};
 		} else {
 			// reset the URL as well
-			const urlProps = new URLSearchParams({ initDate: momentToUrlString(nextDate) });
+			const urlProps = new URLSearchParams({ initDate: dayjsToUrlString(nextDate) });
 			history.push(`/exercise-entries/edit?${urlProps}`);
 
 			this.setState({
@@ -298,7 +298,7 @@ class UCEditExerciseEntryPage extends PureComponent<IEditExerciseEntryPageProps,
 		}
 	}
 
-	private handleDateChange(date: Moment.Moment): void {
+	private handleDateChange(date: Dayjs.Dayjs): void {
 		this.updateModel({ date });
 	}
 

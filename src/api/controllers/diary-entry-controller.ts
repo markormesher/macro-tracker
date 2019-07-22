@@ -2,7 +2,7 @@ import * as Express from "express";
 import { NextFunction, Request, Response } from "express";
 import { mapDiaryEntryFromJson } from "../../commons/models/IDiaryEntry";
 import { IJsonObject } from "../../commons/models/IJsonObject";
-import { urlStringToMoment } from "../../commons/utils/dates";
+import { urlStringToDayjs } from "../../commons/utils/dates";
 import { cleanUuid } from "../../commons/utils/entities";
 import { cleanString } from "../../commons/utils/strings";
 import {
@@ -23,7 +23,7 @@ diaryEntriesRouter.get("/:id", requireUser, (req: Request, res: Response, next: 
 });
 
 diaryEntriesRouter.get("/for-date/:dateStr", requireUser, (req: Request, res: Response, next: NextFunction) => {
-	const date = urlStringToMoment(cleanString(req.params.dateStr));
+	const date = urlStringToDayjs(cleanString(req.params.dateStr));
 	getDiaryEntriesForDate(date)
 			.then((diaryEntries) => res.json(diaryEntries))
 			.catch(next);

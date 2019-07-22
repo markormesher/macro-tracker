@@ -7,6 +7,7 @@ import * as Passport from "passport";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { StatusError } from "../commons/StatusError";
+import { utcDayjs } from "../commons/utils/dates";
 import { isPrimaryServer } from "../commons/utils/env";
 import { ensureLogFilesAreCreated, logger } from "../commons/utils/logging";
 import { delayPromise } from "../commons/utils/utils";
@@ -17,6 +18,8 @@ import * as PassportConfig from "./helpers/passport-config";
 import { setupApiRoutes } from "./middleware/api-routes";
 
 const app = Express();
+
+logger.debug("Date", { date: utcDayjs() });
 
 // logging
 ensureLogFilesAreCreated();

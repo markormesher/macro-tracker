@@ -1,6 +1,6 @@
 import { ICloneMealRequest } from "../../commons/models/ICloneMealRequest";
 import { IDiaryEntry } from "../../commons/models/IDiaryEntry";
-import { MomentDateTransformer } from "../db/MomentDateTransformer";
+import { DayjsDateTransformer } from "../db/DayjsDateTransformer";
 import { getDiaryEntryQueryBuilder, saveDiaryEntry } from "./diary-entry-manager";
 
 async function cloneMeal(request: ICloneMealRequest): Promise<void> {
@@ -11,8 +11,8 @@ async function cloneMeal(request: ICloneMealRequest): Promise<void> {
 			.where("diary_entry.date >= :startDate")
 			.andWhere("diary_entry.date <= :endDate")
 			.andWhere("diary_entry.meal = :meal")
-			.setParameter("startDate", MomentDateTransformer.toDbFormat(fromDateStart))
-			.setParameter("endDate", MomentDateTransformer.toDbFormat(fromDateEnd))
+			.setParameter("startDate", DayjsDateTransformer.toDbFormat(fromDateStart))
+			.setParameter("endDate", DayjsDateTransformer.toDbFormat(fromDateEnd))
 			.setParameter("meal", request.fromMeal)
 			.getMany();
 

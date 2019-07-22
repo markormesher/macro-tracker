@@ -1,8 +1,8 @@
-import * as Moment from "moment";
+import * as Dayjs from "dayjs";
 import { Column, PrimaryGeneratedColumn } from "typeorm";
 import { Entity } from "typeorm/decorator/entity/Entity";
 import { ITarget, TargetMode } from "../../../commons/models/ITarget";
-import { MomentDateTransformer } from "../MomentDateTransformer";
+import { DayjsDateTransformer } from "../DayjsDateTransformer";
 import { BaseModel } from "./BaseModel";
 
 @Entity()
@@ -16,9 +16,9 @@ class DbTarget extends BaseModel implements ITarget {
 
 	@Column({
 		type: "integer",
-		transformer: new MomentDateTransformer(),
+		transformer: new DayjsDateTransformer(),
 	})
-	public startDate: Moment.Moment;
+	public startDate: Dayjs.Dayjs;
 
 	@Column({ type: "double precision" })
 	public bodyWeightKg: number;

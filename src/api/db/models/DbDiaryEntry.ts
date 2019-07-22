@@ -1,9 +1,9 @@
-import * as Moment from "moment";
+import * as Dayjs from "dayjs";
 import { Entity, ManyToOne } from "typeorm";
 import { Column } from "typeorm/decorator/columns/Column";
 import { Meal } from "../../../commons/enums";
 import { IDiaryEntry } from "../../../commons/models/IDiaryEntry";
-import { MomentDateTransformer } from "../MomentDateTransformer";
+import { DayjsDateTransformer } from "../DayjsDateTransformer";
 import { BaseModel } from "./BaseModel";
 import { DbFoodItem } from "./DbFoodItem";
 import { DbServingSize } from "./DbServingSize";
@@ -13,15 +13,15 @@ class DbDiaryEntry extends BaseModel implements IDiaryEntry {
 
 	@Column({
 		type: "integer",
-		transformer: new MomentDateTransformer(),
+		transformer: new DayjsDateTransformer(),
 	})
-	public date: Moment.Moment;
+	public date: Dayjs.Dayjs;
 
 	@Column({
 		type: "integer",
-		transformer: new MomentDateTransformer(),
+		transformer: new DayjsDateTransformer(),
 	})
-	public lastEdit: Moment.Moment;
+	public lastEdit: Dayjs.Dayjs;
 
 	@Column({ type: "character varying" })
 	public meal: Meal;

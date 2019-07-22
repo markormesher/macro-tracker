@@ -1,5 +1,5 @@
 import { faCalendarDay, faCircleNotch, faCopy, faRedoAlt } from "@fortawesome/pro-light-svg-icons";
-import * as Moment from "moment";
+import * as Dayjs from "dayjs";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -12,7 +12,7 @@ import {
 	ICloneMealRequestValidationResult,
 	validateCloneMealRequest,
 } from "../../../commons/models/ICloneMealRequest";
-import { momentToUrlString, urlStringToMoment } from "../../../commons/utils/dates";
+import { dayjsToUrlString, urlStringToDayjs } from "../../../commons/utils/dates";
 import { formatDate, getMealTitle } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { history } from "../../helpers/single-history";
@@ -37,9 +37,9 @@ interface IEditCloneMealPageProps {
 	};
 
 	// derived from query string
-	readonly urlFromDate?: Moment.Moment;
+	readonly urlFromDate?: Dayjs.Dayjs;
 	readonly urlFromMeal?: Meal;
-	readonly urlToDate?: Moment.Moment;
+	readonly urlToDate?: Dayjs.Dayjs;
 	readonly urlToMeal?: Meal;
 }
 
@@ -56,9 +56,9 @@ function mapStateToProps(state: IRootState, props: IEditCloneMealPageProps): IEd
 		editorResult: state.mealCloning.editorResult,
 		lastCloneMealRequest: state.mealCloning.lastCloneMealRequest,
 
-		urlFromDate: urlParams.has("fromDate") ? urlStringToMoment(urlParams.get("fromDate")) : undefined,
+		urlFromDate: urlParams.has("fromDate") ? urlStringToDayjs(urlParams.get("fromDate")) : undefined,
 		urlFromMeal: urlParams.has("fromMeal") ? urlParams.get("fromMeal") as Meal : undefined,
-		urlToDate: urlParams.has("toDate") ? urlStringToMoment(urlParams.get("toDate")) : undefined,
+		urlToDate: urlParams.has("toDate") ? urlStringToDayjs(urlParams.get("toDate")) : undefined,
 		urlToMeal: urlParams.has("toMeal") ? urlParams.get("toMeal") as Meal : undefined,
 	};
 }
@@ -110,7 +110,7 @@ class UCEditCloneMealPage extends PureComponent<IEditCloneMealPageProps, IEditCl
 						</div>
 						<div className={bs.row}>
 							<div className={bs.col6}>
-								<Link to={`/diary-entries/${momentToUrlString(currentValue.toDate)}`}>
+								<Link to={`/diary-entries/${dayjsToUrlString(currentValue.toDate)}`}>
 									<IconBtn
 											icon={faCalendarDay}
 											text={"Back to the Diary"}
@@ -251,9 +251,9 @@ class UCEditCloneMealPage extends PureComponent<IEditCloneMealPageProps, IEditCl
 		actions.resetEditorResult();
 
 		const defaultCloneMeal = getDefaultCloneMealRequest();
-		let fromDate: Moment.Moment;
+		let fromDate: Dayjs.Dayjs;
 		let fromMeal: Meal;
-		let toDate: Moment.Moment;
+		let toDate: Dayjs.Dayjs;
 		let toMeal: Meal;
 
 		if (init) {
@@ -284,9 +284,9 @@ class UCEditCloneMealPage extends PureComponent<IEditCloneMealPageProps, IEditCl
 		} else {
 			// reset the URL as well
 			const urlProps = new URLSearchParams({
-				fromDate: momentToUrlString(fromDate),
+				fromDate: dayjsToUrlString(fromDate),
 				fromMeal,
-				toDate: momentToUrlString(toDate),
+				toDate: dayjsToUrlString(toDate),
 				toMeal,
 			});
 			history.push(`/clone-meal?${urlProps}`);
@@ -298,7 +298,7 @@ class UCEditCloneMealPage extends PureComponent<IEditCloneMealPageProps, IEditCl
 		}
 	}
 
-	private handleFromDateChange(fromDate: Moment.Moment): void {
+	private handleFromDateChange(fromDate: Dayjs.Dayjs): void {
 		this.updateModel({ fromDate });
 	}
 
@@ -306,7 +306,7 @@ class UCEditCloneMealPage extends PureComponent<IEditCloneMealPageProps, IEditCl
 		this.updateModel({ fromMeal: fromMeal as Meal });
 	}
 
-	private handleToDateChange(toDate: Moment.Moment): void {
+	private handleToDateChange(toDate: Dayjs.Dayjs): void {
 		this.updateModel({ toDate });
 	}
 

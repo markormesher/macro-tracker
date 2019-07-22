@@ -1,10 +1,10 @@
-import * as Moment from "moment";
+import * as Dayjs from "dayjs";
 import { SelectQueryBuilder } from "typeorm";
 import { IExerciseEntry, validateExerciseEntry } from "../../commons/models/IExerciseEntry";
 import { StatusError } from "../../commons/StatusError";
-import { utcMoment } from "../../commons/utils/dates";
+import { utcDayjs } from "../../commons/utils/dates";
 import { DbExerciseEntry } from "../db/models/DbExerciseEntry";
-import { MomentDateTransformer } from "../db/MomentDateTransformer";
+import { DayjsDateTransformer } from "../db/DayjsDateTransformer";
 
 function getExerciseEntryQueryBuilder(): SelectQueryBuilder<DbExerciseEntry> {
 	return DbExerciseEntry
@@ -19,7 +19,7 @@ async function getExerciseEntry(id: string): Promise<DbExerciseEntry> {
 			.getOne();
 }
 
-async function getExerciseEntriesForDate(date: Moment.Moment): Promise<DbExerciseEntry[]> {
+async function getExerciseEntriesForDate(date: Dayjs.Dayjs): Promise<DbExerciseEntry[]> {
 	const minDate = date.clone().startOf("day");
 	const maxDate = date.clone().endOf("day");
 
@@ -27,8 +27,8 @@ async function getExerciseEntriesForDate(date: Moment.Moment): Promise<DbExercis
 			.where("exercise_entry.deleted = FALSE")
 			.andWhere("exercise_entry.date >= :minDate")
 			.andWhere("exercise_entry.date <= :maxDate")
-			.setParameter("minDate", MomentDateTransformer.toDbFormat(minDate))
-			.setParameter("maxDate", MomentDateTransformer.toDbFormat(maxDate))
+			.setParameter("minDate", DayjsDateTransformer.toDbFormat(minDate))
+			.setParameter("maxDate", DayjsDateTransformer.toDbFormat(maxDate))
 			.getMany();
 }
 
@@ -54,7 +54,7 @@ async function saveExerciseEntry(exerciseEntryId: string, values: IExerciseEntry
 
 				values = {
 					...values,
-					lastEdit: utcMoment(),
+					lastEdit: utcDayjs(),
 				};
 
 				exerciseEntry = DbExerciseEntry.getRepository().merge(exerciseEntry || new DbExerciseEntry(), values);

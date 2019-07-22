@@ -1,10 +1,11 @@
-import * as Moment from "moment";
+import * as Dayjs from "dayjs";
 
-function utcMoment(inp?: Moment.MomentInput): Moment.Moment {
-	return Moment(inp).utcOffset(0, true);
+function utcDayjs(inp?: Dayjs.Dayjs | string | number): Dayjs.Dayjs {
+	// TODO: return local time as that time in UTC
+	return Dayjs(inp);
 }
 
-function momentToDateKey(date: Moment.Moment): string {
+function dayjsToDateKey(date: Dayjs.Dayjs): string {
 	if (!date) {
 		return null;
 	}
@@ -12,7 +13,7 @@ function momentToDateKey(date: Moment.Moment): string {
 	return date.format("YYYY-MM-DD");
 }
 
-function momentToUrlString(date: Moment.Moment): string {
+function dayjsToUrlString(date: Dayjs.Dayjs): string {
 	if (!date) {
 		return null;
 	}
@@ -20,17 +21,17 @@ function momentToUrlString(date: Moment.Moment): string {
 	return date.format("YYYY-MM-DD");
 }
 
-function urlStringToMoment(date: string): Moment.Moment {
+function urlStringToDayjs(date: string): Dayjs.Dayjs {
 	if (!date) {
 		return null;
 	}
 
-	return utcMoment(date);
+	return Dayjs(date);
 }
 
 export {
-	utcMoment,
-	momentToUrlString,
-	momentToDateKey,
-	urlStringToMoment,
+	utcDayjs,
+	dayjsToUrlString,
+	dayjsToDateKey,
+	urlStringToDayjs,
 };

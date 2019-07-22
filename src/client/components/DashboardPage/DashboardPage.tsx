@@ -1,5 +1,5 @@
 import { ChartDataSets, ChartLegendLabelItem } from "chart.js";
-import * as Moment from "moment";
+import * as Dayjs from "dayjs";
 import { PureComponent, ReactNode } from "react";
 import * as React from "react";
 import { Line, LinearComponentProps } from "react-chartjs-2";
@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import { match as Match } from "react-router";
 import { Dispatch } from "redux";
 import { calculateTotalMacroSummary, IMacroSummary } from "../../../commons/models/IMacroSummary";
-import { momentToDateKey, utcMoment } from "../../../commons/utils/dates";
+import { dayjsToDateKey, utcDayjs } from "../../../commons/utils/dates";
 import { formatDate, formatPercent } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { chartColours, defaultDatasetProps } from "../../helpers/charts";
@@ -22,7 +22,7 @@ import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 interface IDashboardPageProps {
 	readonly loadedMacroSummariesByDate?: { readonly [key: string]: IMacroSummary };
 	readonly actions?: {
-		readonly loadMacroSummaryForDate: (date: Moment.Moment) => PayloadAction;
+		readonly loadMacroSummaryForDate: (date: Dayjs.Dayjs) => PayloadAction;
 	};
 
 	// added by connected react router
@@ -40,7 +40,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDashboardPageProps): IDa
 	return {
 		...props,
 		actions: {
-			loadMacroSummaryForDate: (date: Moment.Moment) => dispatch(startLoadMacroSummaryForDate(date)),
+			loadMacroSummaryForDate: (date: Dayjs.Dayjs) => dispatch(startLoadMacroSummaryForDate(date)),
 		},
 	};
 }
@@ -97,7 +97,7 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 		}
 
 		this.loadDataDebounceTimeout = global.setTimeout(() => {
-			const today = utcMoment();
+			const today = utcDayjs();
 
 			for (let i = 0; i <= UCDashboardPage.HISTORY_DAYS; ++i) {
 				actions.loadMacroSummaryForDate(today.clone().subtract(i, "day"));
@@ -108,8 +108,8 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 	private renderToday(): ReactNode {
 		const { loadedMacroSummariesByDate } = this.props;
 
-		const now = utcMoment();
-		const summary = loadedMacroSummariesByDate[momentToDateKey(now)];
+		const now = utcDayjs();
+		const summary = loadedMacroSummariesByDate[dayjsToDateKey(now)];
 
 		if (!summary) {
 			return (
@@ -133,14 +133,14 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 	private renderHistory(days: number): ReactNode {
 		const { loadedMacroSummariesByDate } = this.props;
 
-		const now = utcMoment();
-		const dates: Moment.Moment[] = [];
+		const now = utcDayjs();
+		const dates: Dayjs.Dayjs[] = [];
 
 		for (let i = 1; i <= days; ++i) {
 			dates.push(now.clone().subtract(i, "day"));
 		}
 
-		const summaries = dates.map((d) => loadedMacroSummariesByDate[momentToDateKey(d)]);
+		const summaries = dates.map((d) => loadedMacroSummariesByDate[dayjsToDateKey(d)]);
 
 		if (summaries.some((e) => !e)) {
 			return (
@@ -168,7 +168,7 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 		);
 	}
 
-	private renderCharts(dates: Moment.Moment[], summaries: IMacroSummary[]): ReactNode {
+	private renderCharts(dates: Dayjs.Dayjs[], summaries: IMacroSummary[]): ReactNode {
 		const caloriesDatasets: ChartDataSets[] = [
 			{
 				...defaultDatasetProps,
@@ -287,7 +287,7 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 							ticks: {
 								callback: (_: any, idx: number, values: Array<{ readonly value: number }>) => {
 									const date = values[idx];
-									return date ? formatDate(utcMoment(date.value), "short") : undefined;
+									return date ? formatDate(utcDayjs(date.value), "short") : undefined;
 								},
 							},
 						},

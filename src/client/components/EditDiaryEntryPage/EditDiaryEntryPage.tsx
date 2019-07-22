@@ -1,5 +1,5 @@
 import { faCalendarDay, faCircleNotch, faRedoAlt, faSave } from "@fortawesome/pro-light-svg-icons";
-import * as Moment from "moment";
+import * as Dayjs from "dayjs";
 import { PureComponent, ReactNode } from "react";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -15,7 +15,7 @@ import {
 } from "../../../commons/models/IDiaryEntry";
 import { IFoodItem } from "../../../commons/models/IFoodItem";
 import { IServingSize, servingSizeComparator } from "../../../commons/models/IServingSize";
-import { momentToUrlString, urlStringToMoment } from "../../../commons/utils/dates";
+import { dayjsToUrlString, urlStringToDayjs } from "../../../commons/utils/dates";
 import { formatDate, getMealTitle } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { history } from "../../helpers/single-history";
@@ -48,7 +48,7 @@ interface IEditDiaryEntryPageProps {
 	};
 
 	// derived from query string
-	readonly urlDate?: Moment.Moment;
+	readonly urlDate?: Dayjs.Dayjs;
 	readonly urlMeal?: Meal;
 	readonly urlFoodItemId?: string;
 
@@ -72,7 +72,7 @@ function mapStateToProps(state: IRootState, props: IEditDiaryEntryPageProps): IE
 		allFoodItems: state.foodItems.allFoodItems,
 		lastDiaryEntrySaved: state.diaryEntries.lastDiaryEntrySaved,
 
-		urlDate: urlParams.has("initDate") ? urlStringToMoment(urlParams.get("initDate")) : undefined,
+		urlDate: urlParams.has("initDate") ? urlStringToDayjs(urlParams.get("initDate")) : undefined,
 		urlMeal: urlParams.has("initMeal") ? urlParams.get("initMeal") as Meal : undefined,
 		urlFoodItemId: urlParams.has("initFood") ? urlParams.get("initFood") : undefined,
 	};
@@ -154,7 +154,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 						</div>
 						<div className={bs.row}>
 							<div className={bs.col6}>
-								<Link to={`/diary-entries/${momentToUrlString(currentValue.date)}`}>
+								<Link to={`/diary-entries/${dayjsToUrlString(currentValue.date)}`}>
 									<IconBtn
 											icon={faCalendarDay}
 											text={"Back to the Diary"}
@@ -287,7 +287,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 		actions.resetEditorResult();
 
 		const defaultDiaryEntry = getDefaultDiaryEntry();
-		let nextDate: Moment.Moment;
+		let nextDate: Dayjs.Dayjs;
 		let nextMeal: Meal;
 
 		if (init) {
@@ -311,7 +311,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 			};
 		} else {
 			// reset the URL as well
-			const urlProps = new URLSearchParams({ initMeal: nextMeal, initDate: momentToUrlString(nextDate) });
+			const urlProps = new URLSearchParams({ initMeal: nextMeal, initDate: dayjsToUrlString(nextDate) });
 			history.push(`/diary-entries/edit?${urlProps}`);
 
 			this.setState({
@@ -328,7 +328,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
 		this.updateModel({ foodItem, servingSize });
 	}
 
-	private handleDateChange(date: Moment.Moment): void {
+	private handleDateChange(date: Dayjs.Dayjs): void {
 		this.updateModel({ date });
 	}
 
