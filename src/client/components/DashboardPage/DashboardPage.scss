@@ -1,8 +1,8 @@
 @import "~bootstrap-scss/functions";
 @import "~bootstrap-scss/variables";
 
-$lineColour: rgba(0, 0, 0, .4);
-$mainCellHeight: 80px;
+$line-colour: rgba(0, 0, 0, .4);
+$main-cell-height: 80px;
 
 .cell {
 	align-items: center;
@@ -10,7 +10,7 @@ $mainCellHeight: 80px;
 	display: flex;
 	flex-basis: 0;
 	flex-grow: 1;
-	height: #{$mainCellHeight * 1.2};
+	height: #{$main-cell-height * 1.2};
 	justify-content: center;
 	margin: 0 1px;
 	position: relative;
@@ -24,8 +24,8 @@ $mainCellHeight: 80px;
 	}
 
 	.cell-line {
-		border-bottom: dashed $lineColour 1px;
-		bottom: $mainCellHeight;
+		border-bottom: dashed $line-colour 1px;
+		bottom: $main-cell-height;
 		height: 1px;
 		position: absolute;
 		width: 100%;
