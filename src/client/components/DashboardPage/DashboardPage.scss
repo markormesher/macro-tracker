@@ -1,27 +1,39 @@
 @import "~bootstrap-scss/functions";
 @import "~bootstrap-scss/variables";
 
+$lineColour: rgba(0, 0, 0, .4);
+$mainCellHeight: 80px;
+
 .cell {
 	align-items: center;
 	background-color: $gray-200;
 	display: flex;
 	flex-basis: 0;
 	flex-grow: 1;
-	height: 80px;
+	height: #{$mainCellHeight * 1.2};
 	justify-content: center;
 	margin: 0 1px;
 	position: relative;
 	text-align: center;
 
-	.bg {
+	.cell-colour {
 		bottom: 0;
 		position: absolute;
 		width: 100%;
 		z-index: 100;
 	}
 
-	.label {
-		color: $white;
+	.cell-line {
+		border-bottom: dashed $lineColour 1px;
+		bottom: $mainCellHeight;
+		height: 1px;
+		position: absolute;
+		width: 100%;
 		z-index: 200;
+	}
+
+	.cell-label {
+		color: $white;
+		z-index: 300;
 	}
 }

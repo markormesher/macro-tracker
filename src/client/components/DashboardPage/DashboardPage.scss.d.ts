@@ -1,3 +1,4 @@
 export const cell: string;
-export const bg: string;
-export const label: string;
+export const cellColour: string;
+export const cellLine: string;
+export const cellLabel: string;

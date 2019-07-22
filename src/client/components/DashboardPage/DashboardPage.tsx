@@ -216,21 +216,25 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 						const total = totals[idx];
 						const target = targets[idx];
 						const percent = total / target;
+
 						return (
 								<div key={idx} className={style.cell}>
-									<div className={style.label}>
+									<div
+											className={combine(style.cellColour, getClassesForProgressBar(percent))}
+											style={{
+												height: (80 * Math.min(1.2, percent)) + "px",
+											}}
+									/>
+
+									<div className={style.cellLine}/>
+
+									<div className={style.cellLabel}>
 										{formatPercent(percent * 100, 0)}
 										<span className={combine(bs.dSmInline, bs.dNone, bs.small)}>
 											<br/>
 											{formatLargeNumber(total)} of {formatLargeNumber(target)}
 										</span>
 									</div>
-									<div
-											className={combine(style.bg, getClassesForProgressBar(percent))}
-											style={{
-												height: (percent * 100) + "%",
-											}}
-									/>
 								</div>
 						);
 					})}
