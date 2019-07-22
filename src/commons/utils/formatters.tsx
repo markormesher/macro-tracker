@@ -10,8 +10,8 @@ function formatLargeNumber(amount: number, places: number = 0): string {
 	return safeAmount.toFixed(places).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-function formatPercent(amount: number): string {
-	return amount.toFixed(1) + "%";
+function formatPercent(amount: number, places: number = 1): string {
+	return amount.toFixed(places) + "%";
 }
 
 function formatMeasurementUnit(unit: FoodMeasurementUnit): string {

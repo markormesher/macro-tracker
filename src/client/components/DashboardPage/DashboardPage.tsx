@@ -6,14 +6,16 @@ import { match as Match } from "react-router";
 import { Dispatch } from "redux";
 import { calculateTotalMacroSummary, IMacroSummary } from "../../../commons/models/IMacroSummary";
 import { dayjsToDateKey, utcDayjs } from "../../../commons/utils/dates";
+import { formatLargeNumber, formatPercent } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import { renderMacroSummary } from "../../helpers/rendering";
+import { getClassesForProgressBar, renderMacroSummary } from "../../helpers/rendering";
 import { combine } from "../../helpers/style-helpers";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { startLoadMacroSummaryForDate } from "../../redux/macro-summaries";
 import { IRootState } from "../../redux/root";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
+import * as style from "./DashboardPage.scss";
 
 interface IDashboardPageProps {
 	readonly loadedMacroSummariesByDate?: { readonly [key: string]: IMacroSummary };
@@ -78,7 +80,7 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 							<h5>Last {UCDashboardPage.HISTORY_DAYS} Days</h5>
 						</div>
 					</div>
-y
+
 					{this.renderHistory(UCDashboardPage.HISTORY_DAYS)}
 				</ContentWrapper>
 		);
@@ -161,12 +163,77 @@ y
 	}
 
 	private renderCharts(dates: Dayjs.Dayjs[], summaries: IMacroSummary[]): ReactNode {
-
 		return (
-				<div className={bs.row}>
-					<div className={bs.col}>
-						<p>Watch this space</p>
+				<>
+					<div className={bs.row}>
+						<div className={combine(bs.col, bs.mb3)}>
+							<h6>Calories</h6>
+							{this.renderChart(
+									dates,
+									summaries.map((s) => s.totalCalories),
+									summaries.map((s) => s.targetCalories),
+							)}
+						</div>
 					</div>
+					<div className={bs.row}>
+						<div className={combine(bs.col, bs.mb3)}>
+							<h6>Carbohydrates</h6>
+							{this.renderChart(
+									dates,
+									summaries.map((s) => s.totalCarbohydrates),
+									summaries.map((s) => s.targetCarbohydrates),
+							)}
+						</div>
+					</div>
+					<div className={bs.row}>
+						<div className={combine(bs.col, bs.mb3)}>
+							<h6>Fat</h6>
+							{this.renderChart(
+									dates,
+									summaries.map((s) => s.totalFat),
+									summaries.map((s) => s.targetFat),
+							)}
+						</div>
+					</div>
+					<div className={bs.row}>
+						<div className={bs.col}>
+							<h6>Protein</h6>
+							{this.renderChart(
+									dates,
+									summaries.map((s) => s.totalProtein),
+									summaries.map((s) => s.targetProtein),
+							)}
+						</div>
+					</div>
+				</>
+		);
+	}
+
+	private renderChart(dates: Dayjs.Dayjs[], totals: number[], targets: number[]): ReactNode {
+		return (
+				<div className={combine(bs.dFlex, bs.flexRow)}>
+					{dates.map((date, idx) => {
+						const total = totals[idx];
+						const target = targets[idx];
+						const percent = total / target;
+						return (
+								<div key={idx} className={style.cell}>
+									<div className={style.label}>
+										{formatPercent(percent * 100, 0)}
+										<span className={combine(bs.dSmInline, bs.dNone, bs.small)}>
+											<br/>
+											{formatLargeNumber(total)} of {formatLargeNumber(target)}
+										</span>
+									</div>
+									<div
+											className={combine(style.bg, getClassesForProgressBar(percent))}
+											style={{
+												height: (percent * 100) + "%",
+											}}
+									/>
+								</div>
+						);
+					})}
 				</div>
 		);
 	}

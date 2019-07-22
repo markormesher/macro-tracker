@@ -1,0 +1,27 @@
+@import "~bootstrap-scss/functions";
+@import "~bootstrap-scss/variables";
+
+.cell {
+	align-items: center;
+	background-color: $gray-200;
+	display: flex;
+	flex-basis: 0;
+	flex-grow: 1;
+	height: 80px;
+	justify-content: center;
+	margin: 0 1px;
+	position: relative;
+	text-align: center;
+
+	.bg {
+		bottom: 0;
+		position: absolute;
+		width: 100%;
+		z-index: 100;
+	}
+
+	.label {
+		color: $white;
+		z-index: 200;
+	}
+}
