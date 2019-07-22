@@ -2,7 +2,7 @@
 	"files": [
 		{
 			"path": "./build/client/*.js",
-			"maxSize": "500kb",
+			"maxSize": "50kb",
 			"compression": "gzip"
 		}
 	]
