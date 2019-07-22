@@ -3,8 +3,8 @@ import { SelectQueryBuilder } from "typeorm";
 import { IExerciseEntry, validateExerciseEntry } from "../../commons/models/IExerciseEntry";
 import { StatusError } from "../../commons/StatusError";
 import { utcDayjs } from "../../commons/utils/dates";
-import { DbExerciseEntry } from "../db/models/DbExerciseEntry";
 import { DayjsDateTransformer } from "../db/DayjsDateTransformer";
+import { DbExerciseEntry } from "../db/models/DbExerciseEntry";
 
 function getExerciseEntryQueryBuilder(): SelectQueryBuilder<DbExerciseEntry> {
 	return DbExerciseEntry

@@ -3,8 +3,8 @@ import { SelectQueryBuilder } from "typeorm";
 import { IDiaryEntry, validateDiaryEntry } from "../../commons/models/IDiaryEntry";
 import { StatusError } from "../../commons/StatusError";
 import { utcDayjs } from "../../commons/utils/dates";
-import { DbDiaryEntry } from "../db/models/DbDiaryEntry";
 import { DayjsDateTransformer } from "../db/DayjsDateTransformer";
+import { DbDiaryEntry } from "../db/models/DbDiaryEntry";
 
 function getDiaryEntryQueryBuilder(): SelectQueryBuilder<DbDiaryEntry> {
 	return DbDiaryEntry

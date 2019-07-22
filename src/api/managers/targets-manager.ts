@@ -2,8 +2,8 @@ import * as Dayjs from "dayjs";
 import { SelectQueryBuilder } from "typeorm";
 import { ITarget, validateTarget } from "../../commons/models/ITarget";
 import { StatusError } from "../../commons/StatusError";
-import { DbTarget } from "../db/models/DbTarget";
 import { DayjsDateTransformer } from "../db/DayjsDateTransformer";
+import { DbTarget } from "../db/models/DbTarget";
 
 function getTargetQueryBuilder(): SelectQueryBuilder<DbTarget> {
 	return DbTarget

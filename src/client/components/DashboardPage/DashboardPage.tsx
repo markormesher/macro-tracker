@@ -78,7 +78,7 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 							<h5>Last {UCDashboardPage.HISTORY_DAYS} Days</h5>
 						</div>
 					</div>
-
+y
 					{this.renderHistory(UCDashboardPage.HISTORY_DAYS)}
 				</ContentWrapper>
 		);
