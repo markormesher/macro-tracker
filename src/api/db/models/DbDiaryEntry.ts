@@ -16,12 +16,6 @@ class DbDiaryEntry extends BaseModel implements IDiaryEntry {
 	})
 	public date: Date;
 
-	@Column({
-		type: "integer",
-		transformer: new DateTransformer(),
-	})
-	public lastEdit: Date;
-
 	@Column({ type: "character varying" })
 	public meal: Meal;
 

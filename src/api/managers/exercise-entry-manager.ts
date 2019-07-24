@@ -45,11 +45,6 @@ async function saveExerciseEntry(exerciseEntryId: string, values: IExerciseEntry
 					throw new StatusError(404, "That exercise entry doesn't exist");
 				}
 
-				values = {
-					...values,
-					lastEdit: new Date(),
-				};
-
 				exerciseEntry = DbExerciseEntry.getRepository().merge(exerciseEntry || new DbExerciseEntry(), values);
 				return exerciseEntry.save();
 			});

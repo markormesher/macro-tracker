@@ -42,7 +42,6 @@ async function saveDiaryEntry(diaryEntryId: string, values: IDiaryEntry): Promis
 
 				values = {
 					...values,
-					lastEdit: new Date(),
 
 					// remove serving size on non-measured food items
 					servingSize: values.foodItem.measurementUnit === "single_serving" ? null : values.servingSize,

@@ -13,12 +13,6 @@ class DbExerciseEntry extends BaseModel implements IExerciseEntry {
 	})
 	public date: Date;
 
-	@Column({
-		type: "integer",
-		transformer: new DateTransformer(),
-	})
-	public lastEdit: Date;
-
 	@Column({ type: "character varying" })
 	public label: string;
 

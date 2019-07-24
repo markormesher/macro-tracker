@@ -6,7 +6,6 @@ import { IValidationResult } from "./IValidationResult";
 
 interface IExerciseEntry extends IBaseModel {
 	readonly date: Date;
-	readonly lastEdit: Date;
 	readonly label: string;
 	readonly caloriesBurned: number;
 }
@@ -28,7 +27,6 @@ function mapExerciseEntryFromJson(json?: IJsonObject): IExerciseEntry {
 		id: cleanUuid(json.id as string),
 		deleted: json.deleted as boolean,
 		date: json.date ? new Date(cleanString(json.date as string)) : null,
-		lastEdit: json.lastEdit ? new Date(cleanString(json.lastEdit as string)) : null,
 		label: cleanString(json.label as string),
 		caloriesBurned: parseFloat(json.caloriesBurned as string),
 	};
@@ -43,7 +41,6 @@ function mapExerciseEntryToJson(exerciseEntry?: IExerciseEntry): IJsonObject {
 		id: exerciseEntry.id,
 		deleted: exerciseEntry.deleted,
 		date: exerciseEntry.date ? exerciseEntry.date.toISOString() : null,
-		lastEdit: exerciseEntry.lastEdit ? exerciseEntry.lastEdit.toISOString() : null,
 		label: exerciseEntry.label,
 		caloriesBurned: exerciseEntry.caloriesBurned,
 	};
@@ -101,7 +98,6 @@ function getDefaultExerciseEntry(): IExerciseEntry {
 		deleted: false,
 
 		date: undefined,
-		lastEdit: undefined,
 		label: undefined,
 		caloriesBurned: undefined,
 	};

@@ -410,7 +410,7 @@ const allMigrations: IDbMigration[] = [
                     DROP COLUMN body_weight_kg,
                     DROP COLUMN carbohydrates_target_mode,
                     DROP COLUMN fat_target_mode,
-                	DROP COLUMN protein_target_mode;
+                    DROP COLUMN protein_target_mode;
 			`);
 		},
 	},
@@ -444,6 +444,27 @@ const allMigrations: IDbMigration[] = [
                     ALTER COLUMN last_edit TYPE INTEGER USING EXTRACT(EPOCH FROM last_edit AT TIME ZONE 'utc');
                 ALTER TABLE db_target
                     ALTER COLUMN start_date TYPE INTEGER USING EXTRACT(EPOCH FROM start_date AT TIME ZONE 'utc');
+			`);
+		},
+	},
+
+	// drop last edit fields
+	{
+		migrationNumber: 18,
+		up: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_diary_entry
+                    DROP COLUMN last_edit;
+                ALTER TABLE db_exercise_entry
+                    DROP COLUMN last_edit;
+			`);
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_diary_entry
+                    ADD COLUMN last_edit DATE DEFAULT NULL;
+                ALTER TABLE db_exercise_entry
+                    ADD COLUMN last_edit DATE DEFAULT NULL;
 			`);
 		},
 	},

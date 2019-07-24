@@ -10,7 +10,6 @@ import { IValidationResult } from "./IValidationResult";
 
 interface IDiaryEntry extends IBaseModel {
 	readonly date: Date;
-	readonly lastEdit: Date;
 	readonly meal: Meal;
 	readonly servingQty: number;
 
@@ -37,7 +36,6 @@ function mapDiaryEntryFromJson(json?: IJsonObject): IDiaryEntry {
 		id: cleanUuid(json.id as string),
 		deleted: json.deleted as boolean,
 		date: json.date ? new Date(cleanString(json.date as string)) : null,
-		lastEdit: json.date ? new Date(cleanString(json.lastEdit as string)) : null,
 		meal: cleanString(json.meal as string) as Meal,
 		servingQty: parseFloat(json.servingQty as string),
 		foodItem: mapFoodItemFromJson(json.foodItem as IJsonObject),
@@ -54,7 +52,6 @@ function mapDiaryEntryToJson(diaryEntry?: IDiaryEntry): IJsonObject {
 		id: diaryEntry.id,
 		deleted: diaryEntry.deleted,
 		date: diaryEntry.date ? diaryEntry.date.toISOString() : null,
-		lastEdit: diaryEntry.lastEdit ? diaryEntry.lastEdit.toISOString() : null,
 		meal: diaryEntry.meal,
 		servingQty: diaryEntry.servingQty,
 		foodItem: mapFoodItemToJson(diaryEntry.foodItem),
@@ -145,7 +142,6 @@ function getDefaultDiaryEntry(): IDiaryEntry {
 		deleted: false,
 
 		date: new Date(),
-		lastEdit: undefined,
 		meal: undefined,
 		servingQty: 1,
 
