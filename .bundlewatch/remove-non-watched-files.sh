@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-rm ./build/client/report.html
-rm ./build/client/server.js
-rm ./build/client/server.js.map
+rm -v ./build/client/report.html
+rm -v ./build/client/server.js
+rm -v ./build/client/server.js.map
