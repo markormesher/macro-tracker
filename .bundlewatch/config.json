@@ -1,7 +1,7 @@
 {
 	"files": [
 		{
-			"path": "./build/client/*.js",
+			"path": "./build/client/*",
 			"maxSize": "50kb",
 			"compression": "gzip"
 		}

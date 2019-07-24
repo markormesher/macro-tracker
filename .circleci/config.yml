@@ -45,6 +45,9 @@ jobs:
           name: Build client packages
           command: yarn build-client
       - run:
+          name: Remove non-shipped files
+          command: ./.bundlewatch/remove-non-watched-files.sh
+      - run:
           name: Run BundleWatch
           command: yarn bundlewatch
 
