@@ -126,6 +126,7 @@
     "@types/webpack-dev-middleware": "^2.0.2",
     "@types/webpack-hot-middleware": "^2.16.4",
     "babel-loader": "^8.0.4",
+    "babel-plugin-date-fns": "^0.2.1",
     "babel-plugin-istanbul": "^5.1.0",
     "browserify": "^16.2.2",
     "bundlewatch": "^0.2.5",

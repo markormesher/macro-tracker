@@ -31,6 +31,7 @@ const babelLoader = {
 		plugins: [
 			IS_TEST && "istanbul",
 			"@babel/plugin-syntax-dynamic-import",
+			"date-fns",
 		].filter(notFalse),
 		presets: [
 			[
