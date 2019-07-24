@@ -2,6 +2,7 @@ import { format as dateFnsFormat, isSameDay, subDays } from "date-fns";
 import * as React from "react";
 import { FoodMeasurementUnit, Meal } from "../enums";
 import { IFoodItem } from "../models/IFoodItem";
+import { removeTimezoneOffset } from "./dates";
 import { getNutritionBaseAmount } from "./helpers";
 
 function formatLargeNumber(amount: number, places: number = 0): string {
@@ -32,22 +33,24 @@ function formatDate(date: Date, format: "short" | "user" | "title" | "system" = 
 		return undefined;
 	}
 
+	const adjustedDate = removeTimezoneOffset(date);
+
 	/* istanbul ignore else: protected by type system */
 	if (format === "short") {
-		return dateFnsFormat(date, "DD/MM");
+		return dateFnsFormat(adjustedDate, "DD/MM");
 	} else if (format === "user") {
-		return dateFnsFormat(date, "DD MMM YYYY");
+		return dateFnsFormat(adjustedDate, "DD MMM YYYY");
 	} else if (format === "title") {
 		const now = new Date();
-		if (isSameDay(date, now)) {
+		if (isSameDay(adjustedDate, now)) {
 			return "Today";
-		} else if (isSameDay(subDays(date, 1), now)) {
+		} else if (isSameDay(adjustedDate, subDays(now, 1))) {
 			return "Yesterday";
 		} else {
-			return dateFnsFormat(date, "YYYY-MM-DD");
+			return dateFnsFormat(adjustedDate, "YYYY-MM-DD");
 		}
 	} else if (format === "system") {
-		return dateFnsFormat(date, "YYYY-MM-DD");
+		return dateFnsFormat(adjustedDate, "YYYY-MM-DD");
 	}
 }
 

@@ -1,5 +1,11 @@
 import { addHours, format } from "date-fns";
 
+function removeTimezoneOffset(date: Date): Date {
+	// a bit of hackery to fiddle with the TIME to make sure the DATE stays the same, regardless of local timezone
+	const tzOffset = date.getTimezoneOffset() / 60;
+	return addHours(date, tzOffset);
+}
+
 function dateToDateKey(date: Date): string {
 	if (!date) {
 		return null;
@@ -21,13 +27,11 @@ function urlStringToDate(date: string): Date {
 		return null;
 	}
 
-	// a bit of hackery to make sure the DATE stays the same regardless of local timezone
-	const localDate = new Date(date + "T00:00:00Z");
-	const tzOffset = localDate.getTimezoneOffset() / 60;
-	return addHours(localDate, tzOffset);
+	return removeTimezoneOffset(new Date(date));
 }
 
 export {
+	removeTimezoneOffset,
 	dateToDateKey,
 	dateToUrlString,
 	urlStringToDate,
