@@ -414,6 +414,39 @@ const allMigrations: IDbMigration[] = [
 			`);
 		},
 	},
+
+	// convert dates to actual dates
+	{
+		migrationNumber: 17,
+		up: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_diary_entry
+                    ALTER COLUMN "date" TYPE DATE USING DATE(TO_TIMESTAMP("date"));
+                ALTER TABLE db_diary_entry
+                    ALTER COLUMN last_edit TYPE DATE USING DATE(TO_TIMESTAMP(last_edit));
+                ALTER TABLE db_exercise_entry
+                    ALTER COLUMN "date" TYPE DATE USING DATE(TO_TIMESTAMP("date"));
+                ALTER TABLE db_exercise_entry
+                    ALTER COLUMN last_edit TYPE DATE USING DATE(TO_TIMESTAMP(last_edit));
+                ALTER TABLE db_target
+                    ALTER COLUMN start_date TYPE DATE USING DATE(TO_TIMESTAMP(start_date));
+			`);
+		},
+		down: (qr: QueryRunner) => {
+			return qr.query(`
+                ALTER TABLE db_diary_entry
+                    ALTER COLUMN "date" TYPE INTEGER USING EXTRACT(EPOCH FROM "date" AT TIME ZONE 'utc');
+                ALTER TABLE db_diary_entry
+                    ALTER COLUMN last_edit TYPE INTEGER USING EXTRACT(EPOCH FROM last_edit AT TIME ZONE 'utc');
+                ALTER TABLE db_exercise_entry
+                    ALTER COLUMN "date" TYPE INTEGER USING EXTRACT(EPOCH FROM "date" AT TIME ZONE 'utc');
+                ALTER TABLE db_exercise_entry
+                    ALTER COLUMN last_edit TYPE INTEGER USING EXTRACT(EPOCH FROM last_edit AT TIME ZONE 'utc');
+                ALTER TABLE db_target
+                    ALTER COLUMN start_date TYPE INTEGER USING EXTRACT(EPOCH FROM start_date AT TIME ZONE 'utc');
+			`);
+		},
+	},
 ];
 
 export {

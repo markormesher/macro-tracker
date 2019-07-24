@@ -1,8 +1,7 @@
-import * as Dayjs from "dayjs";
+import { format as dateFnsFormat, isSameDay, subDays } from "date-fns";
 import * as React from "react";
 import { FoodMeasurementUnit, Meal } from "../enums";
 import { IFoodItem } from "../models/IFoodItem";
-import { utcDayjs } from "./dates";
 import { getNutritionBaseAmount } from "./helpers";
 
 function formatLargeNumber(amount: number, places: number = 0): string {
@@ -28,27 +27,27 @@ function formatMeasurement(amount: number, unit: FoodMeasurementUnit, places: nu
 	return formatLargeNumber(amount, places) + formatMeasurementUnit(unit);
 }
 
-function formatDate(date: Dayjs.Dayjs, format: "short" | "user" | "title" | "system" = "user"): string {
+function formatDate(date: Date, format: "short" | "user" | "title" | "system" = "user"): string {
 	if (!date) {
 		return undefined;
 	}
 
 	/* istanbul ignore else: protected by type system */
 	if (format === "short") {
-		return date.format("DD/MM");
+		return dateFnsFormat(date, "DD/MM");
 	} else if (format === "user") {
-		return date.format("DD MMM YYYY");
+		return dateFnsFormat(date, "DD MMM YYYY");
 	} else if (format === "title") {
-		const now = utcDayjs();
-		if (now.isSame(date, "day")) {
+		const now = new Date();
+		if (isSameDay(date, now)) {
 			return "Today";
-		} else if (now.subtract(1, "day").isSame(date, "day")) {
+		} else if (isSameDay(subDays(date, 1), now)) {
 			return "Yesterday";
 		} else {
-			return date.format("YYYY-MM-DD");
+			return dateFnsFormat(date, "YYYY-MM-DD");
 		}
 	} else if (format === "system") {
-		return date.format("YYYY-MM-DD");
+		return dateFnsFormat(date, "YYYY-MM-DD");
 	}
 }
 

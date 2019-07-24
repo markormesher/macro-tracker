@@ -1,10 +1,9 @@
 import axios, { AxiosError } from "axios";
-import * as Dayjs from "dayjs";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { IExerciseEntry, mapExerciseEntryFromJson, mapExerciseEntryToJson } from "../../commons/models/IExerciseEntry";
 import { IJsonArray } from "../../commons/models/IJsonArray";
 import { IJsonObject } from "../../commons/models/IJsonObject";
-import { dayjsToDateKey, dayjsToUrlString } from "../../commons/utils/dates";
+import { dateToDateKey, dateToUrlString } from "../../commons/utils/dates";
 import { safeMapEntities } from "../../commons/utils/entities";
 import { formatDate } from "../../commons/utils/formatters";
 import { setError } from "./global";
@@ -49,7 +48,7 @@ const exerciseEntriesCacheKeys = {
 	latestUpdate: "exercise-entries.latest-update",
 	allLabels: "exercise-entries.all-labels",
 	forEntry: (id: string) => `exercise-entries.entry.${id}`,
-	forEntriesByDate: (date: Dayjs.Dayjs) => `exercise-entries.entries-by-date.${formatDate(date, "system")}`,
+	forEntriesByDate: (date: Date) => `exercise-entries.entries-by-date.${formatDate(date, "system")}`,
 };
 
 function setEditorBusy(editorBusy: boolean): PayloadAction {
@@ -73,7 +72,7 @@ function setExerciseEntry(exerciseEntry: IExerciseEntry): PayloadAction {
 	};
 }
 
-function setExerciseEntriesForDate(date: Dayjs.Dayjs, exerciseEntries: IExerciseEntry[]): PayloadAction {
+function setExerciseEntriesForDate(date: Date, exerciseEntries: IExerciseEntry[]): PayloadAction {
 	return {
 		type: ExerciseEntriesActions.SET_EXERCISE_ENTRIES_FOR_DATE,
 		payload: { date, exerciseEntries },
@@ -101,7 +100,7 @@ function startLoadExerciseEntry(exerciseEntryId: string): PayloadAction {
 	};
 }
 
-function startLoadExerciseEntriesForDate(date: Dayjs.Dayjs): PayloadAction {
+function startLoadExerciseEntriesForDate(date: Date): PayloadAction {
 	return {
 		type: ExerciseEntriesActions.START_LOAD_EXERCISE_ENTRIES_FOR_DATE,
 		payload: { date },
@@ -154,7 +153,7 @@ function*loadExerciseEntrySaga(): Generator {
 function*loadExerciseEntriesForDateSaga(): Generator {
 	yield takeEvery(ExerciseEntriesActions.START_LOAD_EXERCISE_ENTRIES_FOR_DATE,
 			function*(action: PayloadAction): Generator {
-				const date: Dayjs.Dayjs = action.payload.date;
+				const date: Date = action.payload.date;
 
 				if (KeyCache.keyIsValid(exerciseEntriesCacheKeys.forEntriesByDate(date))) {
 					return;
@@ -162,7 +161,7 @@ function*loadExerciseEntriesForDateSaga(): Generator {
 
 				try {
 					const exerciseEntries: IExerciseEntry[] = yield call(() => axios
-							.get(`/api/exercise-entries/for-date/${dayjsToUrlString(date)}`)
+							.get(`/api/exercise-entries/for-date/${dateToUrlString(date)}`)
 							.then((res) => safeMapEntities(mapExerciseEntryFromJson, res.data as IJsonArray)));
 
 					yield all([
@@ -283,7 +282,7 @@ function exerciseEntriesReducer(state = initialState, action: PayloadAction): IE
 
 		case ExerciseEntriesActions.SET_EXERCISE_ENTRIES_FOR_DATE:
 			return (() => {
-				const date = dayjsToDateKey(action.payload.date);
+				const date = dateToDateKey(action.payload.date);
 				const exerciseEntries: IExerciseEntry[] = action.payload.exerciseEntries;
 
 				return {

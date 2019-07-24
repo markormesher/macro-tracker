@@ -1,18 +1,13 @@
-import * as Dayjs from "dayjs";
+import { subDays } from "date-fns";
 import { Meal } from "../enums";
-import { utcDayjs } from "../utils/dates";
-import { cleanUuid } from "../utils/entities";
 import { cleanString } from "../utils/strings";
-import { IBaseModel } from "./IBaseModel";
-import { IFoodItem, mapFoodItemFromJson, mapFoodItemToJson } from "./IFoodItem";
 import { IJsonObject } from "./IJsonObject";
-import { IServingSize, mapServingSizeFromJson, mapServingSizeToJson } from "./IServingSize";
 import { IValidationResult } from "./IValidationResult";
 
 interface ICloneMealRequest {
-	readonly fromDate: Dayjs.Dayjs;
+	readonly fromDate: Date;
 	readonly fromMeal: Meal;
-	readonly toDate: Dayjs.Dayjs;
+	readonly toDate: Date;
 	readonly toMeal: Meal;
 }
 
@@ -31,9 +26,9 @@ function mapCloneMealRequestFromJson(json?: IJsonObject): ICloneMealRequest {
 	}
 
 	return {
-		fromDate: json.fromDate ? utcDayjs(cleanString(json.fromDate as string)) : null,
+		fromDate: json.fromDate ? new Date(cleanString(json.fromDate as string)) : null,
 		fromMeal: cleanString(json.fromMeal as string) as Meal,
-		toDate: json.toDate ? utcDayjs(cleanString(json.toDate as string)) : null,
+		toDate: json.toDate ? new Date(cleanString(json.toDate as string)) : null,
 		toMeal: cleanString(json.toMeal as string) as Meal,
 	};
 }
@@ -103,9 +98,9 @@ function validateCloneMealRequest(cloneMealRequest?: Partial<ICloneMealRequest>)
 
 function getDefaultCloneMealRequest(): ICloneMealRequest {
 	return {
-		fromDate: utcDayjs().subtract(1, "day"),
+		fromDate: subDays(new Date(), 1),
 		fromMeal: undefined,
-		toDate: utcDayjs(),
+		toDate: new Date(),
 		toMeal: undefined,
 	};
 }

@@ -1,5 +1,5 @@
 import { faCopy, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
-import * as Dayjs from "dayjs";
+import { isSameDay } from "date-fns";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -9,7 +9,7 @@ import { Meal } from "../../../commons/enums";
 import { IDiaryEntry } from "../../../commons/models/IDiaryEntry";
 import { IExerciseEntry } from "../../../commons/models/IExerciseEntry";
 import { IMacroSummary } from "../../../commons/models/IMacroSummary";
-import { dayjsToDateKey, dayjsToUrlString, urlStringToDayjs, utcDayjs } from "../../../commons/utils/dates";
+import { dateToDateKey, dateToUrlString, urlStringToDate } from "../../../commons/utils/dates";
 import { formatLargeNumber, getMealTitle } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
@@ -35,14 +35,14 @@ import { DiaryEntryFoodItemSummary } from "../DiaryEntryFoodItemSummary/DiaryEnt
 
 interface IDiaryPageProps {
 	readonly updateTime: number;
-	readonly currentDate: Dayjs.Dayjs;
+	readonly currentDate: Date;
 	readonly loadedMacroSummariesByDate?: { readonly [key: string]: IMacroSummary };
 	readonly loadedExerciseEntriesByDate?: { readonly [key: string]: IExerciseEntry[] };
 	readonly loadedDiaryEntriesByDate?: { readonly [key: string]: IDiaryEntry[] };
 	readonly actions?: {
-		readonly loadMacroSummaryForDate: (date: Dayjs.Dayjs) => PayloadAction;
-		readonly loadExerciseEntriesForDate: (date: Dayjs.Dayjs) => PayloadAction;
-		readonly loadDiaryEntriesForDate: (date: Dayjs.Dayjs) => PayloadAction;
+		readonly loadMacroSummaryForDate: (date: Date) => PayloadAction;
+		readonly loadExerciseEntriesForDate: (date: Date) => PayloadAction;
+		readonly loadDiaryEntriesForDate: (date: Date) => PayloadAction;
 		readonly deleteExerciseEntry: (exerciseEntry: IExerciseEntry) => PayloadAction;
 		readonly deleteDiaryEntry: (diaryEntry: IDiaryEntry) => PayloadAction;
 	};
@@ -52,7 +52,7 @@ interface IDiaryPageProps {
 }
 
 function mapStateToProps(state: IRootState, props: IDiaryPageProps): IDiaryPageProps {
-	const date = props.match.params.date ? urlStringToDayjs(props.match.params.date) : utcDayjs();
+	const date = props.match.params.date ? urlStringToDate(props.match.params.date) : new Date();
 
 	return {
 		...props,
@@ -71,9 +71,9 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDiaryPageProps): IDiaryP
 	return {
 		...props,
 		actions: {
-			loadMacroSummaryForDate: (date: Dayjs.Dayjs) => dispatch(startLoadMacroSummaryForDate(date)),
-			loadExerciseEntriesForDate: (date: Dayjs.Dayjs) => dispatch(startLoadExerciseEntriesForDate(date)),
-			loadDiaryEntriesForDate: (date: Dayjs.Dayjs) => dispatch(startLoadDiaryEntriesForDate(date)),
+			loadMacroSummaryForDate: (date: Date) => dispatch(startLoadMacroSummaryForDate(date)),
+			loadExerciseEntriesForDate: (date: Date) => dispatch(startLoadExerciseEntriesForDate(date)),
+			loadDiaryEntriesForDate: (date: Date) => dispatch(startLoadDiaryEntriesForDate(date)),
 			deleteExerciseEntry: (exerciseEntry: IExerciseEntry) => dispatch(startDeleteExerciseEntry(exerciseEntry)),
 			deleteDiaryEntry: (diaryEntry: IDiaryEntry) => dispatch(startDeleteDiaryEntry(diaryEntry)),
 		},
@@ -82,28 +82,28 @@ function mapDispatchToProps(dispatch: Dispatch, props: IDiaryPageProps): IDiaryP
 
 class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 
-	private static startAddExerciseEntry(date: Dayjs.Dayjs): void {
-		history.push(`/exercise-entries/edit?initDate=${dayjsToUrlString(date)}`);
+	private static startAddExerciseEntry(date: Date): void {
+		history.push(`/exercise-entries/edit?initDate=${dateToUrlString(date)}`);
 	}
 
 	private static startEditExerciseEntry(exerciseEntry: IExerciseEntry): void {
 		history.push(`/exercise-entries/edit/${exerciseEntry.id}`);
 	}
 
-	private static startCloneMeal(values: { readonly date: Dayjs.Dayjs, readonly meal: Meal }): void {
-		history.push(`/clone-meal?fromDate=${dayjsToUrlString(values.date)}&fromMeal=${values.meal}`);
+	private static startCloneMeal(values: { readonly date: Date, readonly meal: Meal }): void {
+		history.push(`/clone-meal?fromDate=${dateToUrlString(values.date)}&fromMeal=${values.meal}`);
 	}
 
-	private static startAddDiaryEntry(values: { readonly date: Dayjs.Dayjs, readonly meal: Meal }): void {
-		history.push(`/diary-entries/edit?initDate=${dayjsToUrlString(values.date)}&initMeal=${values.meal}`);
+	private static startAddDiaryEntry(values: { readonly date: Date, readonly meal: Meal }): void {
+		history.push(`/diary-entries/edit?initDate=${dateToUrlString(values.date)}&initMeal=${values.meal}`);
 	}
 
 	private static startEditDiaryEntry(diaryEntry: IDiaryEntry): void {
 		history.push(`/diary-entries/edit/${diaryEntry.id}`);
 	}
 
-	private static handleDateChange(date: Dayjs.Dayjs): void {
-		history.push(`/diary-entries/${dayjsToUrlString(date)}`);
+	private static handleDateChange(date: Date): void {
+		history.push(`/diary-entries/${dateToUrlString(date)}`);
 	}
 
 	private loadDataDebounceTimeout: NodeJS.Timer = undefined;
@@ -133,7 +133,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 		if (currProps.updateTime !== prevProps.updateTime) {
 			this.loadData();
 		} else if (currProps.currentDate) {
-			if (!prevProps.currentDate || !prevProps.currentDate.isSame(currProps.currentDate, "day")) {
+			if (!prevProps.currentDate || !isSameDay(prevProps.currentDate, currProps.currentDate)) {
 				this.loadData();
 			}
 		}
@@ -174,9 +174,9 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 			loadedExerciseEntriesByDate,
 		} = this.props;
 
-		const summary = loadedMacroSummariesByDate[dayjsToDateKey(currentDate)];
-		const diaryEntries = loadedDiaryEntriesByDate[dayjsToDateKey(currentDate)];
-		const exerciseEntries = loadedExerciseEntriesByDate[dayjsToDateKey(currentDate)];
+		const summary = loadedMacroSummariesByDate[dateToDateKey(currentDate)];
+		const diaryEntries = loadedDiaryEntriesByDate[dateToDateKey(currentDate)];
+		const exerciseEntries = loadedExerciseEntriesByDate[dateToDateKey(currentDate)];
 
 		if (!summary || !diaryEntries || !exerciseEntries) {
 			return (
@@ -207,14 +207,14 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 
 	private renderSummary(): ReactNode {
 		const { currentDate, loadedMacroSummariesByDate } = this.props;
-		const summary = loadedMacroSummariesByDate[dayjsToDateKey(currentDate)];
+		const summary = loadedMacroSummariesByDate[dateToDateKey(currentDate)];
 		return renderMacroSummary(summary);
 	}
 
 	private renderExercise(): ReactNode {
 		const { currentDate, loadedExerciseEntriesByDate } = this.props;
 
-		const entries = loadedExerciseEntriesByDate[dayjsToDateKey(currentDate)];
+		const entries = loadedExerciseEntriesByDate[dateToDateKey(currentDate)];
 
 		if (!entries) {
 			return null;
@@ -257,7 +257,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 	private renderMeal(meal: Meal): ReactNode {
 		const { currentDate, loadedDiaryEntriesByDate } = this.props;
 
-		const allEntries = loadedDiaryEntriesByDate[dayjsToDateKey(currentDate)];
+		const allEntries = loadedDiaryEntriesByDate[dateToDateKey(currentDate)];
 
 		if (!allEntries) {
 			return null;
@@ -265,7 +265,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
 
 		const entries = allEntries
 				.filter((e) => e.meal === meal)
-				.sort((e1, e2) => e1.lastEdit.diff(e2.lastEdit));
+				.sort((e1, e2) => e1.foodItem.name.localeCompare(e2.foodItem.name));
 
 		let renderedEntries: ReactNode;
 		if (!entries.length) {

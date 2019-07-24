@@ -1,8 +1,7 @@
-import * as Dayjs from "dayjs";
 import { SelectQueryBuilder } from "typeorm";
 import { ITarget, validateTarget } from "../../commons/models/ITarget";
 import { StatusError } from "../../commons/StatusError";
-import { DayjsDateTransformer } from "../db/DayjsDateTransformer";
+import { DateTransformer } from "../db/DateTransformer";
 import { DbTarget } from "../db/models/DbTarget";
 
 function getTargetQueryBuilder(): SelectQueryBuilder<DbTarget> {
@@ -18,11 +17,11 @@ async function getTarget(id: string): Promise<DbTarget> {
 			.getOne();
 }
 
-async function getTargetForDate(date: Dayjs.Dayjs): Promise<DbTarget> {
+async function getTargetForDate(date: Date): Promise<DbTarget> {
 	return getTargetQueryBuilder()
 			.where("target.deleted = FALSE")
 			.andWhere("target.startDate <= :date")
-			.setParameter("date", DayjsDateTransformer.toDbFormat(date))
+			.setParameter("date", DateTransformer.toDbFormat(date))
 			.orderBy("target.startDate", "DESC")
 			.getOne();
 }

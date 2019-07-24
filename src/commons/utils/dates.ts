@@ -1,37 +1,34 @@
-import * as Dayjs from "dayjs";
+import { addHours, format } from "date-fns";
 
-function utcDayjs(inp?: Dayjs.Dayjs | string | number): Dayjs.Dayjs {
-	// TODO: return local time as that time in UTC
-	return Dayjs(inp);
-}
-
-function dayjsToDateKey(date: Dayjs.Dayjs): string {
+function dateToDateKey(date: Date): string {
 	if (!date) {
 		return null;
 	}
 
-	return date.format("YYYY-MM-DD");
+	return format(date, "YYYY-MM-DD");
 }
 
-function dayjsToUrlString(date: Dayjs.Dayjs): string {
+function dateToUrlString(date: Date): string {
 	if (!date) {
 		return null;
 	}
 
-	return date.format("YYYY-MM-DD");
+	return format(date, "YYYY-MM-DD");
 }
 
-function urlStringToDayjs(date: string): Dayjs.Dayjs {
+function urlStringToDate(date: string): Date {
 	if (!date) {
 		return null;
 	}
 
-	return Dayjs(date);
+	// a bit of hackery to make sure the DATE stays the same regardless of local timezone
+	const localDate = new Date(date + "T00:00:00Z");
+	const tzOffset = localDate.getTimezoneOffset() / 60;
+	return addHours(localDate, tzOffset);
 }
 
 export {
-	utcDayjs,
-	dayjsToUrlString,
-	dayjsToDateKey,
-	urlStringToDayjs,
+	dateToDateKey,
+	dateToUrlString,
+	urlStringToDate,
 };

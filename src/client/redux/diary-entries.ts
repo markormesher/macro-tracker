@@ -1,10 +1,9 @@
 import axios, { AxiosError } from "axios";
-import * as Dayjs from "dayjs";
 import { all, call, Effect, put, takeEvery } from "redux-saga/effects";
 import { IDiaryEntry, mapDiaryEntryFromJson, mapDiaryEntryToJson } from "../../commons/models/IDiaryEntry";
 import { IJsonArray } from "../../commons/models/IJsonArray";
 import { IJsonObject } from "../../commons/models/IJsonObject";
-import { dayjsToDateKey, dayjsToUrlString } from "../../commons/utils/dates";
+import { dateToDateKey, dateToUrlString } from "../../commons/utils/dates";
 import { safeMapEntities } from "../../commons/utils/entities";
 import { formatDate } from "../../commons/utils/formatters";
 import { setError } from "./global";
@@ -51,7 +50,7 @@ enum DiaryEntriesActions {
 const diaryEntriesCacheKeys = {
 	latestUpdate: "diary-entries.latest-update",
 	forEntry: (id: string) => `diary-entries.entry.${id}`,
-	forEntriesByDate: (date: Dayjs.Dayjs) => `diary-entries.entries-by-date.${formatDate(date, "system")}`,
+	forEntriesByDate: (date: Date) => `diary-entries.entries-by-date.${formatDate(date, "system")}`,
 };
 
 function setEditorBusy(editorBusy: boolean): PayloadAction {
@@ -89,7 +88,7 @@ function setDiaryEntry(diaryEntry: IDiaryEntry): PayloadAction {
 	};
 }
 
-function setDiaryEntriesForDate(date: Dayjs.Dayjs, diaryEntries: IDiaryEntry[]): PayloadAction {
+function setDiaryEntriesForDate(date: Date, diaryEntries: IDiaryEntry[]): PayloadAction {
 	return {
 		type: DiaryEntriesActions.SET_DIARY_ENTRIES_FOR_DATE,
 		payload: { date, diaryEntries },
@@ -110,7 +109,7 @@ function startLoadDiaryEntry(diaryEntryId: string): PayloadAction {
 	};
 }
 
-function startLoadDiaryEntriesForDate(date: Dayjs.Dayjs): PayloadAction {
+function startLoadDiaryEntriesForDate(date: Date): PayloadAction {
 	return {
 		type: DiaryEntriesActions.START_LOAD_DIARY_ENTRIES_FOR_DATE,
 		payload: { date },
@@ -163,7 +162,7 @@ function*loadDiaryEntrySaga(): Generator {
 
 function*loadDiaryEntriesForDateSaga(): Generator {
 	yield takeEvery(DiaryEntriesActions.START_LOAD_DIARY_ENTRIES_FOR_DATE, function*(action: PayloadAction): Generator {
-		const date: Dayjs.Dayjs = action.payload.date;
+		const date: Date = action.payload.date;
 
 		if (KeyCache.keyIsValid(diaryEntriesCacheKeys.forEntriesByDate(date))) {
 			return;
@@ -171,7 +170,7 @@ function*loadDiaryEntriesForDateSaga(): Generator {
 
 		try {
 			const diaryEntries: IDiaryEntry[] = yield call(() => axios
-					.get(`/api/diary-entries/for-date/${dayjsToUrlString(date)}`)
+					.get(`/api/diary-entries/for-date/${dateToUrlString(date)}`)
 					.then((res) => safeMapEntities(mapDiaryEntryFromJson, res.data as IJsonArray)));
 
 			yield all([
@@ -317,7 +316,7 @@ function diaryEntriesReducer(state = initialState, action: PayloadAction): IDiar
 
 		case DiaryEntriesActions.SET_DIARY_ENTRIES_FOR_DATE:
 			return (() => {
-				const date = dayjsToDateKey(action.payload.date);
+				const date = dateToDateKey(action.payload.date);
 				const diaryEntries: IDiaryEntry[] = action.payload.diaryEntries;
 
 				return {

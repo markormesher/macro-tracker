@@ -1,18 +1,13 @@
 import { ICloneMealRequest } from "../../commons/models/ICloneMealRequest";
 import { IDiaryEntry } from "../../commons/models/IDiaryEntry";
-import { DayjsDateTransformer } from "../db/DayjsDateTransformer";
+import { DateTransformer } from "../db/DateTransformer";
 import { getDiaryEntryQueryBuilder, saveDiaryEntry } from "./diary-entry-manager";
 
 async function cloneMeal(request: ICloneMealRequest): Promise<void> {
-	const fromDateStart = request.fromDate.clone().startOf("day");
-	const fromDateEnd = request.fromDate.clone().endOf("day");
-
 	const entriesToCopy = await getDiaryEntryQueryBuilder()
-			.where("diary_entry.date >= :startDate")
-			.andWhere("diary_entry.date <= :endDate")
+			.andWhere("diary_entry.date = :fromDate")
 			.andWhere("diary_entry.meal = :meal")
-			.setParameter("startDate", DayjsDateTransformer.toDbFormat(fromDateStart))
-			.setParameter("endDate", DayjsDateTransformer.toDbFormat(fromDateEnd))
+			.setParameter("fromDate", DateTransformer.toDbFormat(request.fromDate))
 			.setParameter("meal", request.fromMeal)
 			.getMany();
 

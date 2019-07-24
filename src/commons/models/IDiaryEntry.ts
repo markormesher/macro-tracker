@@ -1,6 +1,5 @@
-import * as Dayjs from "dayjs";
+import { endOfDay, isAfter } from "date-fns";
 import { Meal } from "../enums";
-import { utcDayjs } from "../utils/dates";
 import { cleanUuid } from "../utils/entities";
 import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
@@ -10,8 +9,8 @@ import { IServingSize, mapServingSizeFromJson, mapServingSizeToJson } from "./IS
 import { IValidationResult } from "./IValidationResult";
 
 interface IDiaryEntry extends IBaseModel {
-	readonly date: Dayjs.Dayjs;
-	readonly lastEdit: Dayjs.Dayjs;
+	readonly date: Date;
+	readonly lastEdit: Date;
 	readonly meal: Meal;
 	readonly servingQty: number;
 
@@ -37,8 +36,8 @@ function mapDiaryEntryFromJson(json?: IJsonObject): IDiaryEntry {
 	return {
 		id: cleanUuid(json.id as string),
 		deleted: json.deleted as boolean,
-		date: json.date ? utcDayjs(cleanString(json.date as string)) : null,
-		lastEdit: json.date ? utcDayjs(cleanString(json.lastEdit as string)) : null,
+		date: json.date ? new Date(cleanString(json.date as string)) : null,
+		lastEdit: json.date ? new Date(cleanString(json.lastEdit as string)) : null,
 		meal: cleanString(json.meal as string) as Meal,
 		servingQty: parseFloat(json.servingQty as string),
 		foodItem: mapFoodItemFromJson(json.foodItem as IJsonObject),
@@ -70,7 +69,7 @@ function validateDiaryEntry(diaryEntry?: Partial<IDiaryEntry>): IDiaryEntryValid
 
 	let result: IDiaryEntryValidationResult = { isValid: true, errors: {} };
 
-	const now = utcDayjs();
+	const now = endOfDay(new Date());
 	if (!diaryEntry.date) {
 		result = {
 			isValid: false,
@@ -79,7 +78,7 @@ function validateDiaryEntry(diaryEntry?: Partial<IDiaryEntry>): IDiaryEntryValid
 				date: "A date must be selected",
 			},
 		};
-	} else if (diaryEntry.date.isAfter(now, "day")) {
+	} else if (isAfter(diaryEntry.date, now)) {
 		result = {
 			isValid: false,
 			errors: {
@@ -145,7 +144,7 @@ function getDefaultDiaryEntry(): IDiaryEntry {
 		id: undefined,
 		deleted: false,
 
-		date: utcDayjs(),
+		date: new Date(),
 		lastEdit: undefined,
 		meal: undefined,
 		servingQty: 1,

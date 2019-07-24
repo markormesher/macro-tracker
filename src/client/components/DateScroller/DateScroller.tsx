@@ -1,16 +1,15 @@
 import { faAngleLeft, faAngleRight } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import * as Dayjs from "dayjs";
+import { addDays, endOfDay, isBefore, subDays } from "date-fns";
 import * as React from "react";
 import { PureComponent, ReactNode } from "react";
-import { utcDayjs } from "../../../commons/utils/dates";
 import { formatDate } from "../../../commons/utils/formatters";
 import { combine } from "../../helpers/style-helpers";
 import * as style from "./DateScroller.scss";
 
 interface IDateScrollerProps {
-	readonly currentDate: Dayjs.Dayjs;
-	readonly onDateChange: (date: Dayjs.Dayjs) => void;
+	readonly currentDate: Date;
+	readonly onDateChange: (date: Date) => void;
 }
 
 class DateScroller extends PureComponent<IDateScrollerProps> {
@@ -25,8 +24,8 @@ class DateScroller extends PureComponent<IDateScrollerProps> {
 	public render(): ReactNode {
 		const { currentDate } = this.props;
 
-		const now = utcDayjs();
-		const nextBtnEnabled = currentDate.isBefore(now, "day");
+		const now = endOfDay(new Date());
+		const nextBtnEnabled = isBefore(currentDate, now);
 
 		return (
 				<div className={style.wrapper}>
@@ -56,11 +55,11 @@ class DateScroller extends PureComponent<IDateScrollerProps> {
 	}
 
 	private handlePrevBtnClick(): void {
-		this.props.onDateChange(this.props.currentDate.clone().subtract(1, "day"));
+		this.props.onDateChange(subDays(this.props.currentDate, 1));
 	}
 
 	private handleNextBtnClick(): void {
-		this.props.onDateChange(this.props.currentDate.clone().add(1, "day"));
+		this.props.onDateChange(addDays(this.props.currentDate, 1));
 	}
 }
 

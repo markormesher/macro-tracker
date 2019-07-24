@@ -1,9 +1,8 @@
-import * as Dayjs from "dayjs";
 import { Entity, ManyToOne } from "typeorm";
 import { Column } from "typeorm/decorator/columns/Column";
 import { Meal } from "../../../commons/enums";
 import { IDiaryEntry } from "../../../commons/models/IDiaryEntry";
-import { DayjsDateTransformer } from "../DayjsDateTransformer";
+import { DateTransformer } from "../DateTransformer";
 import { BaseModel } from "./BaseModel";
 import { DbFoodItem } from "./DbFoodItem";
 import { DbServingSize } from "./DbServingSize";
@@ -13,15 +12,15 @@ class DbDiaryEntry extends BaseModel implements IDiaryEntry {
 
 	@Column({
 		type: "integer",
-		transformer: new DayjsDateTransformer(),
+		transformer: new DateTransformer(),
 	})
-	public date: Dayjs.Dayjs;
+	public date: Date;
 
 	@Column({
 		type: "integer",
-		transformer: new DayjsDateTransformer(),
+		transformer: new DateTransformer(),
 	})
-	public lastEdit: Dayjs.Dayjs;
+	public lastEdit: Date;
 
 	@Column({ type: "character varying" })
 	public meal: Meal;
