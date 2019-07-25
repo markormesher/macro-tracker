@@ -1,5 +1,6 @@
 import * as React from "react";
 import { FormEvent, InputHTMLAttributes, PureComponent, ReactElement, ReactNode } from "react";
+import { fixedDate } from "../../../../commons/utils/dates";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 
@@ -62,7 +63,7 @@ class ControlledDateInput extends PureComponent<IControlledDateInputProps, ICont
 		if (!newValue || newValue.trim() === "") {
 			this.props.onValueChange(undefined, this.props.id);
 		} else {
-			this.props.onValueChange(new Date(newValue), this.props.id);
+			this.props.onValueChange(fixedDate(newValue), this.props.id);
 		}
 	}
 }

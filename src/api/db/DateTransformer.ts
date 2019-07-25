@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { FindOperator, ValueTransformer } from "typeorm";
+import { fixedDate } from "../../commons/utils/dates";
 
 class DateTransformer implements ValueTransformer {
 
@@ -14,7 +15,7 @@ class DateTransformer implements ValueTransformer {
 	}
 
 	public static fromDbFormat(value: string): Date {
-		return !!value ? new Date(value) : null;
+		return !!value ? fixedDate(value) : null;
 	}
 
 	public to(value: Date | FindOperator<any>): string | FindOperator<any> {

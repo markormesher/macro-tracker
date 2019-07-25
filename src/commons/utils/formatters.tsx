@@ -2,7 +2,7 @@ import { format as dateFnsFormat, isSameDay, subDays } from "date-fns";
 import * as React from "react";
 import { FoodMeasurementUnit, Meal } from "../enums";
 import { IFoodItem } from "../models/IFoodItem";
-import { removeTimezoneOffset } from "./dates";
+import { fixedDate } from "./dates";
 import { getNutritionBaseAmount } from "./helpers";
 
 function formatLargeNumber(amount: number, places: number = 0): string {
@@ -33,7 +33,7 @@ function formatDate(date: Date, format: "short" | "user" | "title" | "system" = 
 		return undefined;
 	}
 
-	const adjustedDate = removeTimezoneOffset(date);
+	const adjustedDate = fixedDate(date);
 
 	/* istanbul ignore else: protected by type system */
 	if (format === "short") {
@@ -41,7 +41,7 @@ function formatDate(date: Date, format: "short" | "user" | "title" | "system" = 
 	} else if (format === "user") {
 		return dateFnsFormat(adjustedDate, "DD MMM YYYY");
 	} else if (format === "title") {
-		const now = new Date();
+		const now = fixedDate();
 		if (isSameDay(adjustedDate, now)) {
 			return "Today";
 		} else if (isSameDay(adjustedDate, subDays(now, 1))) {

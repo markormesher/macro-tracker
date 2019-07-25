@@ -1,4 +1,5 @@
 import { startOfDay } from "date-fns";
+import { fixedDate } from "../utils/dates";
 import { cleanUuid } from "../utils/entities";
 import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
@@ -53,7 +54,7 @@ function mapTargetFromJson(json?: IJsonObject): ITarget {
 	return {
 		id: cleanUuid(json.id as string),
 		deleted: json.deleted as boolean,
-		startDate: json.startDate ? new Date(cleanString(json.startDate as string)) : null,
+		startDate: json.startDate ? fixedDate(cleanString(json.startDate as string)) : null,
 		bodyWeightKg: parseFloat(json.bodyWeightKg as string),
 		maintenanceCalories: parseFloat(json.maintenanceCalories as string),
 		calorieAdjustment: parseFloat(json.calorieAdjustment as string),
@@ -380,7 +381,7 @@ function getDefaultTarget(): ITarget {
 	return {
 		id: undefined,
 		deleted: false,
-		startDate: new Date(),
+		startDate: fixedDate(),
 		bodyWeightKg: 0,
 		maintenanceCalories: 0,
 		calorieAdjustment: 1,

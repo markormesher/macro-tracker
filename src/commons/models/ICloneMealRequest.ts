@@ -1,5 +1,6 @@
 import { subDays } from "date-fns";
 import { Meal } from "../enums";
+import { fixedDate } from "../utils/dates";
 import { cleanString } from "../utils/strings";
 import { IJsonObject } from "./IJsonObject";
 import { IValidationResult } from "./IValidationResult";
@@ -26,9 +27,9 @@ function mapCloneMealRequestFromJson(json?: IJsonObject): ICloneMealRequest {
 	}
 
 	return {
-		fromDate: json.fromDate ? new Date(cleanString(json.fromDate as string)) : null,
+		fromDate: json.fromDate ? fixedDate(cleanString(json.fromDate as string)) : null,
 		fromMeal: cleanString(json.fromMeal as string) as Meal,
-		toDate: json.toDate ? new Date(cleanString(json.toDate as string)) : null,
+		toDate: json.toDate ? fixedDate(cleanString(json.toDate as string)) : null,
 		toMeal: cleanString(json.toMeal as string) as Meal,
 	};
 }
@@ -98,9 +99,9 @@ function validateCloneMealRequest(cloneMealRequest?: Partial<ICloneMealRequest>)
 
 function getDefaultCloneMealRequest(): ICloneMealRequest {
 	return {
-		fromDate: subDays(new Date(), 1),
+		fromDate: subDays(fixedDate(), 1),
 		fromMeal: undefined,
-		toDate: new Date(),
+		toDate: fixedDate(),
 		toMeal: undefined,
 	};
 }

@@ -1,5 +1,6 @@
 import { endOfDay, isAfter } from "date-fns";
 import { Meal } from "../enums";
+import { fixedDate } from "../utils/dates";
 import { cleanUuid } from "../utils/entities";
 import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
@@ -35,7 +36,7 @@ function mapDiaryEntryFromJson(json?: IJsonObject): IDiaryEntry {
 	return {
 		id: cleanUuid(json.id as string),
 		deleted: json.deleted as boolean,
-		date: json.date ? new Date(cleanString(json.date as string)) : null,
+		date: json.date ? fixedDate(cleanString(json.date as string)) : null,
 		meal: cleanString(json.meal as string) as Meal,
 		servingQty: parseFloat(json.servingQty as string),
 		foodItem: mapFoodItemFromJson(json.foodItem as IJsonObject),
@@ -66,7 +67,7 @@ function validateDiaryEntry(diaryEntry?: Partial<IDiaryEntry>): IDiaryEntryValid
 
 	let result: IDiaryEntryValidationResult = { isValid: true, errors: {} };
 
-	const now = endOfDay(new Date());
+	const now = endOfDay(fixedDate());
 	if (!diaryEntry.date) {
 		result = {
 			isValid: false,
@@ -141,7 +142,7 @@ function getDefaultDiaryEntry(): IDiaryEntry {
 		id: undefined,
 		deleted: false,
 
-		date: new Date(),
+		date: fixedDate(),
 		meal: undefined,
 		servingQty: 1,
 

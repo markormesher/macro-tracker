@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { match as Match } from "react-router";
 import { Dispatch } from "redux";
 import { calculateTotalMacroSummary, IMacroSummary } from "../../../commons/models/IMacroSummary";
-import { dateToDateKey } from "../../../commons/utils/dates";
+import { dateToDateKey, fixedDate } from "../../../commons/utils/dates";
 import { formatLargeNumber, formatPercent } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { getClassesForProgressBar, renderMacroSummary } from "../../helpers/rendering";
@@ -95,7 +95,7 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 		}
 
 		this.loadDataDebounceTimeout = global.setTimeout(() => {
-			const today = new Date();
+			const today = fixedDate();
 
 			for (let i = 0; i <= UCDashboardPage.HISTORY_DAYS; ++i) {
 				actions.loadMacroSummaryForDate(subDays(today, i));
@@ -106,7 +106,7 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 	private renderToday(): ReactNode {
 		const { loadedMacroSummariesByDate } = this.props;
 
-		const now = new Date();
+		const now = fixedDate();
 		const summary = loadedMacroSummariesByDate[dateToDateKey(now)];
 
 		if (!summary) {
@@ -131,7 +131,7 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
 	private renderHistory(days: number): ReactNode {
 		const { loadedMacroSummariesByDate } = this.props;
 
-		const now = new Date();
+		const now = fixedDate();
 		const dates: Date[] = [];
 
 		for (let i = days; i >= 1; --i) {

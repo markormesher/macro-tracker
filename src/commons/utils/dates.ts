@@ -1,9 +1,12 @@
-import { addHours, format } from "date-fns";
+import { format } from "date-fns";
 
-function removeTimezoneOffset(date: Date): Date {
-	// a bit of hackery to fiddle with the TIME to make sure the DATE stays the same, regardless of local timezone
-	const tzOffset = date.getTimezoneOffset() / 60;
-	return addHours(date, tzOffset);
+function fixedDate(input?: Date | string): Date {
+	// TODO: make sure the date component never changes, even if we're in a different timezone
+	if (input) {
+		return new Date(input);
+	} else {
+		return new Date();
+	}
 }
 
 function dateToDateKey(date: Date): string {
@@ -27,11 +30,11 @@ function urlStringToDate(date: string): Date {
 		return null;
 	}
 
-	return removeTimezoneOffset(new Date(date));
+	return fixedDate(date);
 }
 
 export {
-	removeTimezoneOffset,
+	fixedDate,
 	dateToDateKey,
 	dateToUrlString,
 	urlStringToDate,
