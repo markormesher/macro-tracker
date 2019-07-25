@@ -1,3 +1,4 @@
+import { fixedDate } from "../utils/dates";
 import { cleanUuid } from "../utils/entities";
 import { cleanString } from "../utils/strings";
 import { IBaseModel } from "./IBaseModel";
@@ -26,7 +27,7 @@ function mapExerciseEntryFromJson(json?: IJsonObject): IExerciseEntry {
 	return {
 		id: cleanUuid(json.id as string),
 		deleted: json.deleted as boolean,
-		date: json.date ? new Date(cleanString(json.date as string)) : null,
+		date: json.date ? fixedDate(cleanString(json.date as string)) : null,
 		label: cleanString(json.label as string),
 		caloriesBurned: parseFloat(json.caloriesBurned as string),
 	};
