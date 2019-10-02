@@ -115,16 +115,16 @@ function generateMacroSummary(
   });
 
   // sum up the total amounts and calories from each macro
-  const reduceSum = (a: number, b: number): number => a + b;
-  const totalCalories = nutritionAmounts.map((a) => a.calories).reduce(reduceSum, 0);
+  const sunFunc = (a: number, b: number): number => a + b;
+  const totalCalories = nutritionAmounts.map((a) => a.calories).reduce(sunFunc, 0);
   const totalCaloriesFromCarbohydrates = nutritionAmounts
     .map((a) => a.carbohydrates * CALORIES_PER_G_CARBOHYDRATES)
-    .reduce(reduceSum, 0);
-  const totalCaloriesFromFat = nutritionAmounts.map((a) => a.fat * CALORIES_PER_G_FAT).reduce(reduceSum, 0);
-  const totalCaloriesFromProtein = nutritionAmounts.map((a) => a.protein * CALORIES_PER_G_PROTEIN).reduce(reduceSum, 0);
-  const totalCarbohydrates = nutritionAmounts.map((a) => a.carbohydrates).reduce((a, b) => a + b, 0);
-  const totalFat = nutritionAmounts.map((a) => a.fat).reduce((a, b) => a + b, 0);
-  const totalProtein = nutritionAmounts.map((a) => a.protein).reduce((a, b) => a + b, 0);
+    .reduce(sunFunc, 0);
+  const totalCaloriesFromFat = nutritionAmounts.map((a) => a.fat * CALORIES_PER_G_FAT).reduce(sunFunc, 0);
+  const totalCaloriesFromProtein = nutritionAmounts.map((a) => a.protein * CALORIES_PER_G_PROTEIN).reduce(sunFunc, 0);
+  const totalCarbohydrates = nutritionAmounts.map((a) => a.carbohydrates).reduce(sunFunc, 0);
+  const totalFat = nutritionAmounts.map((a) => a.fat).reduce(sunFunc, 0);
+  const totalProtein = nutritionAmounts.map((a) => a.protein).reduce(sunFunc, 0);
 
   return {
     totalCalories,

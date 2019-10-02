@@ -1,7 +1,6 @@
 // From https://github.com/airbnb/enzyme/blob/master/docs/guides/jsdom.md
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { JSDOM } = require("jsdom");
+import { JSDOM } from "jsdom";
 
 const jsdom = new JSDOM("<!doctype html><html><body></body></html>", {
   url: "http://localhost:9999",

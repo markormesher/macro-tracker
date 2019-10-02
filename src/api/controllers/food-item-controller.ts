@@ -28,7 +28,7 @@ foodItemsRouter.get("/table", requireUser, (req: Request, res: Response, next: N
     .where("food_item.deleted = FALSE")
     .andWhere(
       new Brackets(
-        (qb): WhereExpression => qb.where("food_item.brand ILIKE :searchTerm" + " OR food_item.name ILIKE :searchTerm"),
+        (qb): WhereExpression => qb.where("food_item.brand ILIKE :searchTerm OR food_item.name ILIKE :searchTerm"),
       ),
     )
     .setParameters({
