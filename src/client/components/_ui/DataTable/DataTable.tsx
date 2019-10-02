@@ -49,10 +49,10 @@ interface IDataTableState<Model> {
 }
 
 class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableState<Model>> {
-  // give each remote request an increasing "frame" number so that late arrivals will be dropped
+  private static defaultPageSize = 15;
+
   private frameCounter = 0;
   private lastFrameReceived = 0;
-
   private fetchPending = false;
 
   constructor(props: IDataTableProps<Model>) {
@@ -114,7 +114,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
         <DataTableOuterHeader
           loading={loading}
           currentPage={currentPage}
-          pageSize={pageSize}
+          pageSize={pageSize || DataTable.defaultPageSize}
           rowCount={filteredRowCount}
           onPageChange={this.handlePageChange}
           onSearchTermChange={this.handleSearchTermChange}
@@ -144,7 +144,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 
         <DataTableOuterFooter
           currentPage={currentPage}
-          pageSize={pageSize}
+          pageSize={pageSize || DataTable.defaultPageSize}
           filteredRowCount={filteredRowCount}
           totalRowCount={totalRowCount}
           sortedColumns={sortedColumns}
@@ -176,7 +176,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
   }
 
   private fetchData(): void {
-    const { pageSize, dataProvider } = this.props;
+    const { pageSize = DataTable.defaultPageSize, dataProvider } = this.props;
     const { currentPage, searchTerm, sortedColumns } = this.state;
 
     this.setState({ loading: true });
@@ -201,7 +201,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 
     this.onFrameReceived(frame);
 
-    const { pageSize } = this.props;
+    const { pageSize = DataTable.defaultPageSize } = this.props;
     const { currentPage } = this.state;
     const { data, filteredRowCount, totalRowCount } = rawData;
 
