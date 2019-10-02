@@ -1,6 +1,11 @@
+// TODO: fix duplicate Express import
+
 import { resolve } from "path";
 import * as Compression from "compression";
-import Express, { Request, Response, static as expressStatic } from "express";
+// eslint-disable-next-line import/no-duplicates
+import * as Express from "express";
+// eslint-disable-next-line import/no-duplicates
+import { Request, Response, static as expressStatic } from "express";
 import * as Webpack from "webpack";
 import * as webpackDevMiddleware from "webpack-dev-middleware";
 import * as webpackHotMiddleware from "webpack-hot-middleware";

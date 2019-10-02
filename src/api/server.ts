@@ -1,6 +1,11 @@
+// TODO: fix duplicate Express import
+
 import * as BodyParser from "body-parser";
 import * as ConnectRedis from "connect-redis";
-import Express, { Request, Response } from "express";
+// eslint-disable-next-line import/no-duplicates
+import * as Express from "express";
+// eslint-disable-next-line import/no-duplicates
+import { Request, Response } from "express";
 import * as ExpressSession from "express-session";
 import * as Passport from "passport";
 import "reflect-metadata";
