@@ -10,17 +10,15 @@ import { targetsRouter } from "../controllers/targets-controller";
 import { tescoApiRouter } from "../controllers/tesco-api-controller";
 
 function setupApiRoutes(app: Express): void {
-	app.use("/api/auth", authRouter);
-	app.use("/api/clone-meal", cloneMealRouter);
-	app.use("/api/diary-entries", diaryEntriesRouter);
-	app.use("/api/exercise-entries", exerciseEntriesRouter);
-	app.use("/api/food-items", foodItemsRouter);
-	app.use("/api/macro-summary", macroSummaryRouter);
-	app.use("/api/nutritionix-api", nutritionixApiRouter);
-	app.use("/api/targets", targetsRouter);
-	app.use("/api/tesco-api", tescoApiRouter);
+  app.use("/api/auth", authRouter);
+  app.use("/api/clone-meal", cloneMealRouter);
+  app.use("/api/diary-entries", diaryEntriesRouter);
+  app.use("/api/exercise-entries", exerciseEntriesRouter);
+  app.use("/api/food-items", foodItemsRouter);
+  app.use("/api/macro-summary", macroSummaryRouter);
+  app.use("/api/nutritionix-api", nutritionixApiRouter);
+  app.use("/api/targets", targetsRouter);
+  app.use("/api/tesco-api", tescoApiRouter);
 }
 
-export {
-	setupApiRoutes,
-};
+export { setupApiRoutes };

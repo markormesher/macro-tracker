@@ -1,13 +1,11 @@
 function cleanString(raw: string): string {
-	if (!raw) {
-		return null;
-	}
+  if (!raw) {
+    return null;
+  }
 
-	const trimmed = raw.trim();
+  const trimmed = raw.trim();
 
-	return trimmed === "" ? null : trimmed;
+  return trimmed === "" ? null : trimmed;
 }
 
-export {
-	cleanString,
-};
+export { cleanString };

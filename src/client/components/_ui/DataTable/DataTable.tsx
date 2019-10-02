@@ -1,7 +1,6 @@
 import { faCircleNotch } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import * as React from "react";
-import { PureComponent, ReactElement, ReactNode } from "react";
+import React, { PureComponent, ReactElement, ReactNode } from "react";
 import { IDataTableResponse } from "../../../../commons/models/IDataTableResponse";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
@@ -14,238 +13,229 @@ import { DataTableOuterHeader } from "./DataTableOuterHeader";
 type SortDirection = "ASC" | "DESC";
 
 interface IColumn {
-	readonly title: string;
-	readonly lowercaseTitle?: string;
-	readonly sortable?: boolean;
-	readonly sortField?: string;
-	readonly defaultSortDirection?: SortDirection;
-	readonly defaultSortPriority?: number;
+  readonly title: string;
+  readonly lowercaseTitle?: string;
+  readonly sortable?: boolean;
+  readonly sortField?: string;
+  readonly defaultSortDirection?: SortDirection;
+  readonly defaultSortPriority?: number;
 }
 
 interface IColumnSortEntry {
-	readonly column: IColumn;
-	readonly dir: SortDirection;
+  readonly column: IColumn;
+  readonly dir: SortDirection;
 }
 
 interface IDataTableProps<Model> {
-	readonly dataProvider?: IDataTableDataProvider<Model>;
-	readonly watchedProps?: any;
-	readonly pageSize?: number;
-	readonly columns: IColumn[];
-	readonly rowRenderer: (row: Model, index: number) => ReactNode;
+  readonly dataProvider?: IDataTableDataProvider<Model>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  readonly watchedProps?: any;
+  readonly pageSize?: number;
+  readonly columns: IColumn[];
+  readonly rowRenderer: (row: Model, index: number) => ReactNode;
 }
 
 interface IDataTableState<Model> {
-	readonly loading?: boolean;
-	readonly failed: boolean;
-	readonly currentPage?: number;
-	readonly searchTerm?: string;
-	readonly sortedColumns?: IColumnSortEntry[];
-	readonly data?: {
-		readonly rows?: Model[],
-		readonly filteredRowCount?: number,
-		readonly totalRowCount?: number,
-	};
+  readonly loading?: boolean;
+  readonly failed: boolean;
+  readonly currentPage?: number;
+  readonly searchTerm?: string;
+  readonly sortedColumns?: IColumnSortEntry[];
+  readonly data?: {
+    readonly rows?: Model[];
+    readonly filteredRowCount?: number;
+    readonly totalRowCount?: number;
+  };
 }
 
 class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableState<Model>> {
+  // give each remote request an increasing "frame" number so that late arrivals will be dropped
+  private frameCounter = 0;
+  private lastFrameReceived = 0;
 
-	public static defaultProps: Partial<IDataTableProps<any>> = {
-		pageSize: 15,
-	};
+  private fetchPending = false;
 
-	// give each remote request an increasing "frame" number so that late arrivals will be dropped
-	private frameCounter = 0;
-	private lastFrameReceived = 0;
+  constructor(props: IDataTableProps<Model>) {
+    super(props);
+    this.state = {
+      loading: true,
+      failed: false,
+      currentPage: 0,
+      sortedColumns: undefined,
+      data: {
+        rows: [] as Model[],
+        filteredRowCount: 0,
+        totalRowCount: 0,
+      },
+    };
 
-	private fetchPending = false;
+    this.handlePageChange = this.handlePageChange.bind(this);
+    this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
+    this.handleSortOrderChange = this.handleSortOrderChange.bind(this);
 
-	constructor(props: IDataTableProps<Model>) {
-		super(props);
-		this.state = {
-			loading: true,
-			failed: false,
-			currentPage: 0,
-			sortedColumns: undefined,
-			data: {
-				rows: [] as Model[],
-				filteredRowCount: 0,
-				totalRowCount: 0,
-			},
-		};
+    this.fetchData = this.fetchData.bind(this);
+    this.generateMsgRow = this.generateMsgRow.bind(this);
+    this.onDataLoaded = this.onDataLoaded.bind(this);
+    this.onDataLoadFailed = this.onDataLoadFailed.bind(this);
+  }
 
-		this.handlePageChange = this.handlePageChange.bind(this);
-		this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
-		this.handleSortOrderChange = this.handleSortOrderChange.bind(this);
+  public componentDidMount(): void {
+    this.fetchData();
+  }
 
-		this.fetchData = this.fetchData.bind(this);
-		this.generateMsgRow = this.generateMsgRow.bind(this);
-		this.onDataLoaded = this.onDataLoaded.bind(this);
-		this.onDataLoadFailed = this.onDataLoadFailed.bind(this);
-	}
+  public componentWillUpdate(nextProps: IDataTableProps<Model>, nextState: IDataTableState<Model>): void {
+    // JSON.stringify(...) is a neat hack to do deep comparison of data-only structures
+    if (
+      this.state.currentPage !== nextState.currentPage ||
+      this.state.searchTerm !== nextState.searchTerm ||
+      JSON.stringify(this.state.sortedColumns) !== JSON.stringify(nextState.sortedColumns) ||
+      JSON.stringify(this.props.watchedProps) !== JSON.stringify(nextProps.watchedProps)
+    ) {
+      this.fetchPending = true;
+    }
+  }
 
-	public componentDidMount(): void {
-		this.fetchData();
-	}
+  public componentDidUpdate(): void {
+    if (this.fetchPending) {
+      this.fetchData();
+      this.fetchPending = false;
+    }
+  }
 
-	public componentWillUpdate(nextProps: IDataTableProps<Model>, nextState: IDataTableState<Model>): void {
-		// JSON.stringify(...) is a neat hack to do deep comparison of data-only structures
-		if (this.state.currentPage !== nextState.currentPage
-				|| this.state.searchTerm !== nextState.searchTerm
-				|| JSON.stringify(this.state.sortedColumns) !== JSON.stringify(nextState.sortedColumns)
-				|| JSON.stringify(this.props.watchedProps) !== JSON.stringify(nextProps.watchedProps)) {
-			this.fetchPending = true;
-		}
-	}
+  public render(): ReactNode {
+    const { columns, rowRenderer, pageSize } = this.props;
+    const { loading, failed, data, currentPage, sortedColumns } = this.state;
+    const { filteredRowCount, totalRowCount } = data;
 
-	public componentDidUpdate(): void {
-		if (this.fetchPending) {
-			this.fetchData();
-			this.fetchPending = false;
-		}
-	}
+    const rows = data && data.rows.map(rowRenderer);
 
-	public render(): ReactNode {
-		const { columns, rowRenderer, pageSize } = this.props;
-		const { loading, failed, data, currentPage, sortedColumns } = this.state;
-		const { filteredRowCount, totalRowCount } = data;
+    return (
+      <div className={combine(styles.tableWrapper, loading && styles.loading)}>
+        <DataTableOuterHeader
+          loading={loading}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          rowCount={filteredRowCount}
+          onPageChange={this.handlePageChange}
+          onSearchTermChange={this.handleSearchTermChange}
+        />
 
-		const rows = data && data.rows.map(rowRenderer);
+        <div className={styles.tableBodyWrapper}>
+          <div className={styles.loadingIconWrapper}>
+            {loading && <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"} />}
+          </div>
 
-		return (
-				<div className={combine(styles.tableWrapper, loading && styles.loading)}>
-					<DataTableOuterHeader
-							loading={loading}
-							currentPage={currentPage}
-							pageSize={pageSize}
-							rowCount={filteredRowCount}
-							onPageChange={this.handlePageChange}
-							onSearchTermChange={this.handleSearchTermChange}
-					/>
+          <div className={bs.tableResponsive}>
+            <table className={combine(bs.table, styles.table, bs.tableStriped, bs.tableSm)}>
+              <DataTableInnerHeader
+                columns={columns}
+                sortedColumns={sortedColumns}
+                onSortOrderUpdate={this.handleSortOrderChange}
+              />
 
-					<div className={styles.tableBodyWrapper}>
-						<div className={styles.loadingIconWrapper}>
-							{loading && <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"}/>}
-						</div>
+              <tbody>
+                {!failed && (!rows || rows.length === 0) && this.generateMsgRow("No rows to display")}
+                {failed && this.generateMsgRow("Failed to load data")}
+                {rows}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-						<div className={bs.tableResponsive}>
-							<table className={combine(bs.table, styles.table, bs.tableStriped, bs.tableSm)}>
-								<DataTableInnerHeader
-										columns={columns}
-										sortedColumns={sortedColumns}
-										onSortOrderUpdate={this.handleSortOrderChange}
-								/>
+        <DataTableOuterFooter
+          currentPage={currentPage}
+          pageSize={pageSize}
+          filteredRowCount={filteredRowCount}
+          totalRowCount={totalRowCount}
+          sortedColumns={sortedColumns}
+        />
+      </div>
+    );
+  }
 
-								<tbody>
-								{!failed && (!rows || rows.length === 0) && this.generateMsgRow("No rows to display")}
-								{failed && this.generateMsgRow("Failed to load data")}
-								{rows}
-								</tbody>
-							</table>
-						</div>
-					</div>
+  private handlePageChange(page: number): void {
+    this.setState({ currentPage: page });
+  }
 
-					<DataTableOuterFooter
-							currentPage={currentPage}
-							pageSize={pageSize}
-							filteredRowCount={filteredRowCount}
-							totalRowCount={totalRowCount}
-							sortedColumns={sortedColumns}
-					/>
-				</div>
-		);
-	}
+  private handleSearchTermChange(searchTerm: string): void {
+    this.setState({ searchTerm });
+  }
 
-	private handlePageChange(page: number): void {
-		this.setState({ currentPage: page });
-	}
+  private handleSortOrderChange(sortedColumns: IColumnSortEntry[]): void {
+    this.setState({ sortedColumns });
+  }
 
-	private handleSearchTermChange(searchTerm: string): void {
-		this.setState({ searchTerm });
-	}
+  private generateMsgRow(msg: string): ReactElement<void> {
+    return (
+      <tr>
+        <td colSpan={this.props.columns.length} className={combine(bs.textCenter, bs.textMuted)}>
+          {msg}
+        </td>
+      </tr>
+    );
+  }
 
-	private handleSortOrderChange(sortedColumns: IColumnSortEntry[]): void {
-		this.setState({ sortedColumns });
-	}
+  private fetchData(): void {
+    const { pageSize, dataProvider } = this.props;
+    const { currentPage, searchTerm, sortedColumns } = this.state;
 
-	private generateMsgRow(msg: string): ReactElement<void> {
-		return (
-				<tr>
-					<td colSpan={this.props.columns.length} className={combine(bs.textCenter, bs.textMuted)}>
-						{msg}
-					</td>
-				</tr>
-		);
-	}
+    this.setState({ loading: true });
+    const frame = ++this.frameCounter;
 
-	private fetchData(): void {
-		const { pageSize, dataProvider } = this.props;
-		const { currentPage, searchTerm, sortedColumns } = this.state;
+    if (dataProvider) {
+      dataProvider
+        .getData(currentPage * pageSize, pageSize, searchTerm, sortedColumns)
+        .then((res) => this.onDataLoaded(frame, res))
+        .catch(() => this.onDataLoadFailed(frame));
+    }
+  }
 
-		this.setState({ loading: true });
-		const frame = ++this.frameCounter;
+  private onFrameReceived(frame: number): void {
+    this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
+  }
 
-		if (dataProvider) {
-			dataProvider
-					.getData(currentPage * pageSize, pageSize, searchTerm, sortedColumns)
-					.then((res) => this.onDataLoaded(frame, res))
-					.catch(() => this.onDataLoadFailed(frame));
-		}
-	}
+  private onDataLoaded(frame: number, rawData: IDataTableResponse<Model>): void {
+    if (frame <= this.lastFrameReceived) {
+      return;
+    }
 
-	private onFrameReceived(frame: number): void {
-		this.lastFrameReceived = Math.max(frame, this.lastFrameReceived);
-	}
+    this.onFrameReceived(frame);
 
-	private onDataLoaded(frame: number, rawData: IDataTableResponse<Model>): void {
-		if (frame <= this.lastFrameReceived) {
-			return;
-		}
+    const { pageSize } = this.props;
+    const { currentPage } = this.state;
+    const { data, filteredRowCount, totalRowCount } = rawData;
 
-		this.onFrameReceived(frame);
+    const maxPossiblePage = filteredRowCount === 0 ? 0 : Math.ceil(filteredRowCount / pageSize) - 1;
+    this.setState({
+      loading: false,
+      failed: false,
+      currentPage: Math.min(currentPage, maxPossiblePage),
+      data: {
+        rows: data as Model[],
+        filteredRowCount,
+        totalRowCount,
+      },
+    });
+  }
 
-		const { pageSize } = this.props;
-		const { currentPage } = this.state;
-		const { data, filteredRowCount, totalRowCount } = rawData;
+  private onDataLoadFailed(frame: number): void {
+    if (frame <= this.lastFrameReceived) {
+      return;
+    }
 
-		const maxPossiblePage = filteredRowCount === 0 ? 0 : Math.ceil(filteredRowCount / pageSize) - 1;
-		this.setState({
-			loading: false,
-			failed: false,
-			currentPage: Math.min(currentPage, maxPossiblePage),
-			data: {
-				rows: data as Model[],
-				filteredRowCount,
-				totalRowCount,
-			},
-		});
-	}
+    this.onFrameReceived(frame);
 
-	private onDataLoadFailed(frame: number): void {
-		if (frame <= this.lastFrameReceived) {
-			return;
-		}
-
-		this.onFrameReceived(frame);
-
-		this.setState({
-			loading: false,
-			failed: true,
-			currentPage: 0,
-			data: {
-				rows: [] as Model[],
-				filteredRowCount: 0,
-				totalRowCount: 0,
-			},
-		});
-	}
+    this.setState({
+      loading: false,
+      failed: true,
+      currentPage: 0,
+      data: {
+        rows: [] as Model[],
+        filteredRowCount: 0,
+        totalRowCount: 0,
+      },
+    });
+  }
 }
 
-export {
-	IColumn,
-	IColumnSortEntry,
-	IDataTableProps,
-	IDataTableState,
-	SortDirection,
-	DataTable,
-};
+export { IColumn, IColumnSortEntry, IDataTableProps, IDataTableState, SortDirection, DataTable };

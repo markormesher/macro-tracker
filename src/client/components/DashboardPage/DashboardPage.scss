@@ -1,39 +1,39 @@
 @import "~bootstrap-scss/functions";
 @import "~bootstrap-scss/variables";
 
-$line-colour: rgba(0, 0, 0, .4);
+$line-colour: rgba(0, 0, 0, 0.4);
 $main-cell-height: 80px;
 
 .cell {
-	align-items: center;
-	background-color: $gray-200;
-	display: flex;
-	flex-basis: 0;
-	flex-grow: 1;
-	height: #{$main-cell-height * 1.2};
-	justify-content: center;
-	margin: 0 1px;
-	position: relative;
-	text-align: center;
+  align-items: center;
+  background-color: $gray-200;
+  display: flex;
+  flex-basis: 0;
+  flex-grow: 1;
+  height: #{$main-cell-height * 1.2};
+  justify-content: center;
+  margin: 0 1px;
+  position: relative;
+  text-align: center;
 
-	.cell-colour {
-		bottom: 0;
-		position: absolute;
-		width: 100%;
-		z-index: 100;
-	}
+  .cell-colour {
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+    z-index: 100;
+  }
 
-	.cell-line {
-		border-bottom: dashed $line-colour 1px;
-		bottom: $main-cell-height;
-		height: 1px;
-		position: absolute;
-		width: 100%;
-		z-index: 200;
-	}
+  .cell-line {
+    border-bottom: dashed $line-colour 1px;
+    bottom: $main-cell-height;
+    height: 1px;
+    position: absolute;
+    width: 100%;
+    z-index: 200;
+  }
 
-	.cell-label {
-		color: $white;
-		z-index: 300;
-	}
+  .cell-label {
+    color: $white;
+    z-index: 300;
+  }
 }

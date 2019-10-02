@@ -1,8 +1,6 @@
 interface IBaseModel {
-	readonly id: string;
-	readonly deleted: boolean;
+  readonly id: string;
+  readonly deleted: boolean;
 }
 
-export {
-	IBaseModel,
-};
+export { IBaseModel };

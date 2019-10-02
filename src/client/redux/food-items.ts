@@ -10,276 +10,263 @@ import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 
 interface IFoodItemsState {
-	readonly editorBusy: boolean;
-	readonly editorResult: ActionResult;
-	readonly allFoodItems: IFoodItem[];
-	readonly loadedFoodItems: { readonly [key: string]: IFoodItem };
-	readonly lastFoodItemSaved?: IFoodItem;
+  readonly editorBusy: boolean;
+  readonly editorResult: ActionResult;
+  readonly allFoodItems: IFoodItem[];
+  readonly loadedFoodItems: { readonly [key: string]: IFoodItem };
+  readonly lastFoodItemSaved?: IFoodItem;
 }
 
 const initialState: IFoodItemsState = {
-	editorBusy: false,
-	editorResult: undefined,
-	allFoodItems: [],
-	loadedFoodItems: {},
-	lastFoodItemSaved: undefined,
+  editorBusy: false,
+  editorResult: undefined,
+  allFoodItems: [],
+  loadedFoodItems: {},
+  lastFoodItemSaved: undefined,
 };
 
 enum FoodItemsActions {
-	SET_EDITOR_BUSY = "FoodItemsActions.SET_EDITOR_BUSY",
-	SET_EDITOR_RESULT = "FoodItemsActions.SET_EDITOR_RESULT",
-	SET_FOOD_ITEM = "FoodItemsActions.SET_FOOD_ITEM",
-	SET_ALL_FOOD_ITEMS = "FoodItemsActions.SET_ALL_FOOD_ITEMS",
-	SET_LAST_FOOD_ITEM_SAVED = "FoodItemsActions.SET_LAST_FOOD_ITEM_SAVED",
+  SET_EDITOR_BUSY = "FoodItemsActions.SET_EDITOR_BUSY",
+  SET_EDITOR_RESULT = "FoodItemsActions.SET_EDITOR_RESULT",
+  SET_FOOD_ITEM = "FoodItemsActions.SET_FOOD_ITEM",
+  SET_ALL_FOOD_ITEMS = "FoodItemsActions.SET_ALL_FOOD_ITEMS",
+  SET_LAST_FOOD_ITEM_SAVED = "FoodItemsActions.SET_LAST_FOOD_ITEM_SAVED",
 
-	START_LOAD_FOOD_ITEM = "FoodItemsActions.START_LOAD_FOOD_ITEM",
-	START_LOAD_ALL_FOOD_ITEMS = "FoodItemsActions.START_LOAD_ALL_FOOD_ITEMS",
-	START_SAVE_FOOD_ITEM = "FoodItemsActions.START_SAVE_FOOD_ITEM",
-	START_DELETE_FOOD_ITEM = "FoodItemsActions.START_DELETE_FOOD_ITEM",
+  START_LOAD_FOOD_ITEM = "FoodItemsActions.START_LOAD_FOOD_ITEM",
+  START_LOAD_ALL_FOOD_ITEMS = "FoodItemsActions.START_LOAD_ALL_FOOD_ITEMS",
+  START_SAVE_FOOD_ITEM = "FoodItemsActions.START_SAVE_FOOD_ITEM",
+  START_DELETE_FOOD_ITEM = "FoodItemsActions.START_DELETE_FOOD_ITEM",
 }
 
 const foodItemsCacheKeys = {
-	latestUpdate: "food-items.latest-update",
-	allItems: "food-items.all-items",
-	forItem: (id: string) => `food-items.item.${id}`,
+  latestUpdate: "food-items.latest-update",
+  allItems: "food-items.all-items",
+  forItem: (id: string): string => `food-items.item.${id}`,
 };
 
 function setEditorBusy(editorBusy: boolean): PayloadAction {
-	return {
-		type: FoodItemsActions.SET_EDITOR_BUSY,
-		payload: { editorBusy },
-	};
+  return {
+    type: FoodItemsActions.SET_EDITOR_BUSY,
+    payload: { editorBusy },
+  };
 }
 
 function setEditorResult(editorResult: ActionResult): PayloadAction {
-	return {
-		type: FoodItemsActions.SET_EDITOR_RESULT,
-		payload: { editorResult },
-	};
+  return {
+    type: FoodItemsActions.SET_EDITOR_RESULT,
+    payload: { editorResult },
+  };
 }
 
 function setFoodItem(foodItem: IFoodItem): PayloadAction {
-	return {
-		type: FoodItemsActions.SET_FOOD_ITEM,
-		payload: { foodItem },
-	};
+  return {
+    type: FoodItemsActions.SET_FOOD_ITEM,
+    payload: { foodItem },
+  };
 }
 
 function setAllFoodItems(foodItems: IFoodItem[]): PayloadAction {
-	return {
-		type: FoodItemsActions.SET_ALL_FOOD_ITEMS,
-		payload: { foodItems },
-	};
+  return {
+    type: FoodItemsActions.SET_ALL_FOOD_ITEMS,
+    payload: { foodItems },
+  };
 }
 
 function setLastFoodItemSaved(foodItem: IFoodItem): PayloadAction {
-	return {
-		type: FoodItemsActions.SET_LAST_FOOD_ITEM_SAVED,
-		payload: { foodItem },
-	};
+  return {
+    type: FoodItemsActions.SET_LAST_FOOD_ITEM_SAVED,
+    payload: { foodItem },
+  };
 }
 
 function startLoadFoodItem(foodItemId: string): PayloadAction {
-	return {
-		type: FoodItemsActions.START_LOAD_FOOD_ITEM,
-		payload: { foodItemId },
-	};
+  return {
+    type: FoodItemsActions.START_LOAD_FOOD_ITEM,
+    payload: { foodItemId },
+  };
 }
 
 function startLoadAllFoodItems(): PayloadAction {
-	return {
-		type: FoodItemsActions.START_LOAD_ALL_FOOD_ITEMS,
-	};
+  return {
+    type: FoodItemsActions.START_LOAD_ALL_FOOD_ITEMS,
+  };
 }
 
 function startSaveFoodItem(foodItem: IFoodItem): PayloadAction {
-	return {
-		type: FoodItemsActions.START_SAVE_FOOD_ITEM,
-		payload: { foodItem },
-	};
+  return {
+    type: FoodItemsActions.START_SAVE_FOOD_ITEM,
+    payload: { foodItem },
+  };
 }
 
 function startDeleteFoodItem(foodItem: IFoodItem): PayloadAction {
-	return {
-		type: FoodItemsActions.START_DELETE_FOOD_ITEM,
-		payload: { foodItem },
-	};
+  return {
+    type: FoodItemsActions.START_DELETE_FOOD_ITEM,
+    payload: { foodItem },
+  };
 }
 
-function*loadFoodItemSaga(): Generator {
-	yield takeEvery(FoodItemsActions.START_LOAD_FOOD_ITEM, function*(action: PayloadAction): Generator {
-		const foodItemId: string = action.payload.foodItemId;
+function* loadFoodItemSaga(): Generator {
+  yield takeEvery(FoodItemsActions.START_LOAD_FOOD_ITEM, function*(action: PayloadAction): Generator {
+    const foodItemId: string = action.payload.foodItemId;
 
-		if (KeyCache.keyIsValid(foodItemsCacheKeys.forItem(foodItemId))) {
-			return;
-		}
+    if (KeyCache.keyIsValid(foodItemsCacheKeys.forItem(foodItemId))) {
+      return;
+    }
 
-		try {
-			const foodItem: IFoodItem = yield call(() => axios
-					.get(`/api/food-items/${foodItemId}`)
-					.then((res) => mapFoodItemFromJson(res.data as IJsonObject)));
+    try {
+      const foodItem: IFoodItem = yield call(() =>
+        axios.get(`/api/food-items/${foodItemId}`).then((res) => mapFoodItemFromJson(res.data as IJsonObject)),
+      );
 
-			yield all([
-				put(setFoodItem(foodItem)),
-				put(KeyCache.updateKey(foodItemsCacheKeys.forItem(foodItemId))),
-			]);
-		} catch (err) {
-			yield put(setError(err));
-		}
-	});
+      yield all([put(setFoodItem(foodItem)), put(KeyCache.updateKey(foodItemsCacheKeys.forItem(foodItemId)))]);
+    } catch (err) {
+      yield put(setError(err));
+    }
+  });
 }
 
-function*loadAllFoodItemsSaga(): Generator {
-	yield takeEvery(FoodItemsActions.START_LOAD_ALL_FOOD_ITEMS, function*(): Generator {
-		if (KeyCache.keyIsValid(foodItemsCacheKeys.allItems)) {
-			return;
-		}
+function* loadAllFoodItemsSaga(): Generator {
+  yield takeEvery(FoodItemsActions.START_LOAD_ALL_FOOD_ITEMS, function*(): Generator {
+    if (KeyCache.keyIsValid(foodItemsCacheKeys.allItems)) {
+      return;
+    }
 
-		try {
-			const foodItems: IFoodItem[] = yield call(() => axios
-					.get("/api/food-items/all")
-					.then((res) => safeMapEntities(mapFoodItemFromJson, res.data as IJsonArray)));
+    try {
+      const foodItems: IFoodItem[] = yield call(() =>
+        axios.get("/api/food-items/all").then((res) => safeMapEntities(mapFoodItemFromJson, res.data as IJsonArray)),
+      );
 
-			yield all([
-				put(setAllFoodItems(foodItems)),
-				KeyCache.updateKey(foodItemsCacheKeys.allItems),
-			]);
-		} catch (err) {
-			yield put(setError(err));
-		}
-	});
+      yield all([put(setAllFoodItems(foodItems)), KeyCache.updateKey(foodItemsCacheKeys.allItems)]);
+    } catch (err) {
+      yield put(setError(err));
+    }
+  });
 }
 
-function*saveFoodItemSaga(): Generator {
-	yield takeEvery(FoodItemsActions.START_SAVE_FOOD_ITEM, function*(action: PayloadAction): Generator {
-		try {
-			const foodItem: IFoodItem = action.payload.foodItem;
-			const foodItemId = foodItem.id || "";
-			yield put(setEditorBusy(true));
-			const savedFoodItem: IFoodItem = yield call(() => axios
-					.post(`/api/food-items/edit/${foodItemId}`, mapFoodItemToJson(foodItem))
-					.then((res) => mapFoodItemFromJson(res.data as IJsonObject)));
+function* saveFoodItemSaga(): Generator {
+  yield takeEvery(FoodItemsActions.START_SAVE_FOOD_ITEM, function*(action: PayloadAction): Generator {
+    try {
+      const foodItem: IFoodItem = action.payload.foodItem;
+      const foodItemId = foodItem.id || "";
+      yield put(setEditorBusy(true));
+      const savedFoodItem: IFoodItem = yield call(() =>
+        axios
+          .post(`/api/food-items/edit/${foodItemId}`, mapFoodItemToJson(foodItem))
+          .then((res) => mapFoodItemFromJson(res.data as IJsonObject)),
+      );
 
-			// note: this should happen before the group below
-			yield put(setLastFoodItemSaved(savedFoodItem));
+      // note: this should happen before the group below
+      yield put(setLastFoodItemSaved(savedFoodItem));
 
-			yield all([
-				put(setEditorBusy(false)),
-				put(setEditorResult("success")),
-				put(KeyCache.updateKey(foodItemsCacheKeys.latestUpdate)),
-				put(KeyCache.invalidateKey(foodItemsCacheKeys.allItems)),
-				put(KeyCache.invalidateKey(foodItemsCacheKeys.forItem(foodItem.id))),
-			]);
-		} catch (rawError) {
-			const error = rawError as AxiosError;
-			yield all([
-				put(setEditorBusy(false)),
-				put(setEditorResult(error.response.data)),
-			]);
-		}
-	});
+      yield all([
+        put(setEditorBusy(false)),
+        put(setEditorResult("success")),
+        put(KeyCache.updateKey(foodItemsCacheKeys.latestUpdate)),
+        put(KeyCache.invalidateKey(foodItemsCacheKeys.allItems)),
+        put(KeyCache.invalidateKey(foodItemsCacheKeys.forItem(foodItem.id))),
+      ]);
+    } catch (rawError) {
+      const error = rawError as AxiosError;
+      yield all([put(setEditorBusy(false)), put(setEditorResult(error.response.data))]);
+    }
+  });
 }
 
-function*deleteFoodItemSaga(): Generator {
-	yield takeEvery(FoodItemsActions.START_DELETE_FOOD_ITEM, function*(action: PayloadAction): Generator {
-		try {
-			const foodItem: IFoodItem = action.payload.foodItem;
-			yield call(() => axios.post(`/api/food-items/delete/${foodItem.id}`));
+function* deleteFoodItemSaga(): Generator {
+  yield takeEvery(FoodItemsActions.START_DELETE_FOOD_ITEM, function*(action: PayloadAction): Generator {
+    try {
+      const foodItem: IFoodItem = action.payload.foodItem;
+      yield call(() => axios.post(`/api/food-items/delete/${foodItem.id}`));
 
-			yield all([
-				put(KeyCache.updateKey(foodItemsCacheKeys.latestUpdate)),
-				put(KeyCache.invalidateKey(foodItemsCacheKeys.allItems)),
-				put(KeyCache.invalidateKey(foodItemsCacheKeys.forItem(foodItem.id))),
-			]);
-		} catch (err) {
-			yield put(setError(err));
-		}
-	});
+      yield all([
+        put(KeyCache.updateKey(foodItemsCacheKeys.latestUpdate)),
+        put(KeyCache.invalidateKey(foodItemsCacheKeys.allItems)),
+        put(KeyCache.invalidateKey(foodItemsCacheKeys.forItem(foodItem.id))),
+      ]);
+    } catch (err) {
+      yield put(setError(err));
+    }
+  });
 }
 
-function*foodItemsSagas(): Generator {
-	yield all([
-		saveFoodItemSaga(),
-		loadAllFoodItemsSaga(),
-		deleteFoodItemSaga(),
-		loadFoodItemSaga(),
-	]);
+function* foodItemsSagas(): Generator {
+  yield all([saveFoodItemSaga(), loadAllFoodItemsSaga(), deleteFoodItemSaga(), loadFoodItemSaga()]);
 }
 
 function foodItemsReducer(state = initialState, action: PayloadAction): IFoodItemsState {
-	switch (action.type) {
+  switch (action.type) {
+    case FoodItemsActions.SET_EDITOR_BUSY:
+      return {
+        ...state,
+        editorBusy: action.payload.editorBusy,
+      };
 
-		case FoodItemsActions.SET_EDITOR_BUSY:
-			return {
-				...state,
-				editorBusy: action.payload.editorBusy,
-			};
+    case FoodItemsActions.SET_EDITOR_RESULT:
+      return {
+        ...state,
+        editorResult: action.payload.editorResult,
+      };
 
-		case FoodItemsActions.SET_EDITOR_RESULT:
-			return {
-				...state,
-				editorResult: action.payload.editorResult,
-			};
+    case FoodItemsActions.SET_FOOD_ITEM:
+      return ((): IFoodItemsState => {
+        let newState = state;
+        const foodItem: IFoodItem = action.payload.foodItem;
 
-		case FoodItemsActions.SET_FOOD_ITEM:
-			return (() => {
-				let newState = state;
-				const foodItem: IFoodItem = action.payload.foodItem;
+        // replace individual item
+        newState = {
+          ...newState,
+          loadedFoodItems: {
+            ...newState.loadedFoodItems,
+            [foodItem.id]: foodItem,
+          },
+        };
 
-				// replace individual item
-				newState = {
-					...newState,
-					loadedFoodItems: {
-						...newState.loadedFoodItems,
-						[foodItem.id]: foodItem,
-					},
-				};
+        return newState;
+      })();
 
-				return newState;
-			})();
+    case FoodItemsActions.SET_ALL_FOOD_ITEMS:
+      return ((): IFoodItemsState => {
+        let newState = state;
+        const foodItems: IFoodItem[] = action.payload.foodItems;
 
-		case FoodItemsActions.SET_ALL_FOOD_ITEMS:
-			return (() => {
-				let newState = state;
-				const foodItems: IFoodItem[] = action.payload.foodItems;
+        // replace the list of all items
+        newState = {
+          ...newState,
+          allFoodItems: foodItems,
+        };
 
-				// replace the list of all items
-				newState = {
-					...newState,
-					allFoodItems: foodItems,
-				};
+        return newState;
+      })();
 
-				return newState;
-			})();
+    case FoodItemsActions.SET_LAST_FOOD_ITEM_SAVED:
+      return ((): IFoodItemsState => {
+        let newState = state;
+        const foodItem: IFoodItem = action.payload.foodItem;
 
-		case FoodItemsActions.SET_LAST_FOOD_ITEM_SAVED:
-			return (() => {
-				let newState = state;
-				const foodItem: IFoodItem = action.payload.foodItem;
+        // replace individual item
+        newState = {
+          ...newState,
+          lastFoodItemSaved: foodItem,
+        };
 
-				// replace individual item
-				newState = {
-					...newState,
-					lastFoodItemSaved: foodItem,
-				};
+        return newState;
+      })();
 
-				return newState;
-			})();
-
-		default:
-			return state;
-	}
+    default:
+      return state;
+  }
 }
 
 export {
-	IFoodItemsState,
-	foodItemsCacheKeys,
-	foodItemsReducer,
-	foodItemsSagas,
-	setEditorBusy,
-	setEditorResult,
-	startSaveFoodItem,
-	startLoadAllFoodItems,
-	startDeleteFoodItem,
-	startLoadFoodItem,
+  IFoodItemsState,
+  foodItemsCacheKeys,
+  foodItemsReducer,
+  foodItemsSagas,
+  setEditorBusy,
+  setEditorResult,
+  startSaveFoodItem,
+  startLoadAllFoodItems,
+  startDeleteFoodItem,
+  startLoadFoodItem,
 };

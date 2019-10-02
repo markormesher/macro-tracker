@@ -2,53 +2,53 @@
 @import "~bootstrap-scss/variables";
 
 .table-wrapper {
-	&.loading {
-		.table-header,
-		.table-footer,
-		.table {
-			opacity: .4;
-		}
-	}
+  &.loading {
+    .table-header,
+    .table-footer,
+    .table {
+      opacity: 0.4;
+    }
+  }
 }
 
 .table {
-	margin-bottom: .4rem !important; // Bootstrap override
+  margin-bottom: 0.4rem !important; // Bootstrap override
 }
 
 .table-body-wrapper {
-	position: relative;
-	width: 100%;
+  position: relative;
+  width: 100%;
 
-	.loading-icon-wrapper {
-		position: absolute;
-		text-align: center;
-		top: 4em;
-		width: 100%;
-	}
+  .loading-icon-wrapper {
+    position: absolute;
+    text-align: center;
+    top: 4em;
+    width: 100%;
+  }
 }
 
 .table-header {
-	overflow: auto; // allows the div to have height even though it only contains floated elements
-	width: 100%;
+  overflow: auto; // allows the div to have height even though it only contains floated elements
+  width: 100%;
 
-	> div {
-		margin-bottom: $spacer * .5;
-	}
+  > div {
+    margin-bottom: $spacer * 0.5;
+  }
 }
 
 .table-footer {
-	font-size: 60%;
-	width: 100%;
+  font-size: 60%;
+  width: 100%;
 }
 
 .sort-inactive {
-	opacity: .3;
+  opacity: 0.3;
 }
 
 th {
-	white-space: nowrap;
+  white-space: nowrap;
 
-	&.sortable {
-		cursor: pointer;
-	}
+  &.sortable {
+    cursor: pointer;
+  }
 }

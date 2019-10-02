@@ -1,18 +1,16 @@
 interface ITescoProduct {
-	readonly brand: string;
-	readonly description: string;
-	readonly calcNutrition: {
-		readonly per100Header: string;
-		readonly calcNutrients: Array<{
-			readonly name: string;
-			readonly valuePer100: string;
-		}>;
-	};
+  readonly brand: string;
+  readonly description: string;
+  readonly calcNutrition: {
+    readonly per100Header: string;
+    readonly calcNutrients: Array<{
+      readonly name: string;
+      readonly valuePer100: string;
+    }>;
+  };
 }
 
-export {
-	ITescoProduct,
-};
+export { ITescoProduct };
 
 /*
 Example (irrelevant parts omitted):

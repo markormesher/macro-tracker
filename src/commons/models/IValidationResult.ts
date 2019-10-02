@@ -1,7 +1,5 @@
 interface IValidationResult {
-	readonly isValid: boolean;
+  readonly isValid: boolean;
 }
 
-export {
-	IValidationResult,
-};
+export { IValidationResult };

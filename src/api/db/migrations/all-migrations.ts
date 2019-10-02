@@ -1,4 +1,4 @@
-/* tslint:disable:no-trailing-whitespace max-line-length */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { QueryRunner } from "typeorm";
 import { PostgresNamingStrategy } from "../PostgresNamingStrategy";
 import { IDbMigration } from "./IDbMigration";
@@ -6,11 +6,11 @@ import { IDbMigration } from "./IDbMigration";
 const ns = new PostgresNamingStrategy();
 
 const allMigrations: IDbMigration[] = [
-	// create initial tables
-	{
-		migrationNumber: 1,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // create initial tables
+  {
+    migrationNumber: 1,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 CREATE TABLE IF NOT EXISTS db_diary_entry
                 (
                     id              uuid    DEFAULT uuid_generate_v4() NOT NULL,
@@ -79,21 +79,21 @@ const allMigrations: IDbMigration[] = [
                     ADD CONSTRAINT ${ns.foreignKeyName("db_serving_size", ["food_item_id"])}
                         FOREIGN KEY (food_item_id) REFERENCES db_food_item (id);
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 DROP TABLE IF EXISTS db_diary_entry;
                 DROP TABLE IF EXISTS db_food_item;
                 DROP TABLE IF EXISTS db_serving_size;
 			`);
-		},
-	},
+    },
+  },
 
-	// add target table
-	{
-		migrationNumber: 2,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // add target table
+  {
+    migrationNumber: 2,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 CREATE TABLE IF NOT EXISTS db_target
                 (
                     id                        uuid    DEFAULT uuid_generate_v4() NOT NULL,
@@ -111,19 +111,19 @@ const allMigrations: IDbMigration[] = [
                 ALTER TABLE db_target
                     OWNER TO macro_tracker;
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 DROP TABLE IF EXISTS db_target;
 			`);
-		},
-	},
+    },
+  },
 
-	// add exercise entry table
-	{
-		migrationNumber: 3,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // add exercise entry table
+  {
+    migrationNumber: 3,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 CREATE TABLE IF NOT EXISTS db_exercise_entry
                 (
 					id              uuid    DEFAULT uuid_generate_v4() NOT NULL,
@@ -140,19 +140,19 @@ const allMigrations: IDbMigration[] = [
                 ALTER TABLE db_exercise_entry
                     OWNER TO macro_tracker;
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 DROP TABLE IF EXISTS db_exercise_entry;
 			`);
-		},
-	},
+    },
+  },
 
-	// add user table
-	{
-		migrationNumber: 4,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // add user table
+  {
+    migrationNumber: 4,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 CREATE TABLE IF NOT EXISTS db_user
                 (
 					id           uuid    DEFAULT uuid_generate_v4() NOT NULL,
@@ -167,36 +167,36 @@ const allMigrations: IDbMigration[] = [
                 ALTER TABLE db_user
                     OWNER TO macro_tracker;
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 DROP TABLE IF EXISTS db_user;
 			`);
-		},
-	},
+    },
+  },
 
-	// add food item UPC
-	{
-		migrationNumber: 5,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // add food item UPC
+  {
+    migrationNumber: 5,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_food_item
                     ADD COLUMN upc CHARACTER VARYING;
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_food_item
                     DROP COLUMN upc;
 			`);
-		},
-	},
+    },
+  },
 
-	// refactor macro names for more generic forms
-	{
-		migrationNumber: 6,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // refactor macro names for more generic forms
+  {
+    migrationNumber: 6,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_food_item
                     RENAME COLUMN calories_per_100 TO calories_per_base_amount;
                 ALTER TABLE db_food_item
@@ -214,9 +214,9 @@ const allMigrations: IDbMigration[] = [
                 ALTER TABLE db_food_item
                     RENAME COLUMN salt_per_100 TO salt_per_base_amount;
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_food_item
                     RENAME COLUMN calories_per_base_amount TO calories_per_100;
                 ALTER TABLE db_food_item
@@ -234,144 +234,144 @@ const allMigrations: IDbMigration[] = [
                 ALTER TABLE db_food_item
                     RENAME COLUMN salt_per_base_amount TO salt_per_100;
 			`);
-		},
-	},
+    },
+  },
 
-	// add food item API source
-	{
-		migrationNumber: 7,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // add food item API source
+  {
+    migrationNumber: 7,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_food_item
                     ADD COLUMN api_source CHARACTER VARYING;
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_food_item
                     DROP COLUMN api_source;
 			`);
-		},
-	},
+    },
+  },
 
-	// add food item API ID
-	{
-		migrationNumber: 8,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // add food item API ID
+  {
+    migrationNumber: 8,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_food_item
                     ADD COLUMN api_id CHARACTER VARYING;
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_food_item
                     DROP COLUMN api_id;
 			`);
-		},
-	},
+    },
+  },
 
-	// allow food to have multiple UPCs
-	{
-		migrationNumber: 9,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // allow food to have multiple UPCs
+  {
+    migrationNumber: 9,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_food_item
                     ALTER COLUMN upc TYPE CHARACTER VARYING[] USING ARRAY [upc];
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_food_item
                     ALTER COLUMN upc TYPE CHARACTER VARYING USING upc[1];
 			`);
-		},
-	},
+    },
+  },
 
-	// rename upc to upcs
-	{
-		migrationNumber: 10,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // rename upc to upcs
+  {
+    migrationNumber: 10,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_food_item
                     RENAME COLUMN upc TO upcs;
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_food_item
                     RENAME COLUMN upcs TO upc;
 			`);
-		},
-	},
+    },
+  },
 
-	// remove UPC = [null] created in migration #9
-	{
-		migrationNumber: 11,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // remove UPC = [null] created in migration #9
+  {
+    migrationNumber: 11,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 UPDATE db_food_item
                 SET upcs = CASE WHEN upcs = '{NULL}' THEN NULL ELSE upcs END;
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 UPDATE db_food_item
                 SET upcs = CASE WHEN upcs IS NULL THEN '{NULL}' ELSE upcs END;
 			`);
-		},
-	},
+    },
+  },
 
-	// enable pg_trgm module for fuzzy searching
-	{
-		migrationNumber: 12,
-		up: (qr: QueryRunner) => {
-			return qr.query("CREATE EXTENSION IF NOT EXISTS pg_trgm;");
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query("DROP EXTENSION IF EXISTS pg_trgm;");
-		},
-	},
+  // enable pg_trgm module for fuzzy searching
+  {
+    migrationNumber: 12,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query("CREATE EXTENSION IF NOT EXISTS pg_trgm;");
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query("DROP EXTENSION IF EXISTS pg_trgm;");
+    },
+  },
 
-	// add calorie adjustment field to target
-	{
-		migrationNumber: 13,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // add calorie adjustment field to target
+  {
+    migrationNumber: 13,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_target
                     ADD COLUMN calorie_adjustment DOUBLE PRECISION NOT NULL DEFAULT 1;
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_target
                     DROP COLUMN calorie_adjustment;
 			`);
-		},
-	},
+    },
+  },
 
-	// rename baseline calories to maintenance calories
-	{
-		migrationNumber: 14,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // rename baseline calories to maintenance calories
+  {
+    migrationNumber: 14,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_target
                     RENAME COLUMN baseline_calories_per_day TO maintenance_calories;
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_target
                     RENAME COLUMN maintenance_calories TO baseline_calories_per_day;
 			`);
-		},
-	},
+    },
+  },
 
-	// rename "proportion <macro>" to "<macro> target value"
-	{
-		migrationNumber: 15,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // rename "proportion <macro>" to "<macro> target value"
+  {
+    migrationNumber: 15,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_target
                     RENAME COLUMN proportion_carbohydrates TO carbohydrates_target_value;
                 ALTER TABLE db_target
@@ -379,9 +379,9 @@ const allMigrations: IDbMigration[] = [
                 ALTER TABLE db_target
                     RENAME COLUMN proportion_protein TO protein_target_value;
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_target
                     RENAME COLUMN carbohydrates_target_value TO proportion_carbohydrates;
                 ALTER TABLE db_target
@@ -389,37 +389,37 @@ const allMigrations: IDbMigration[] = [
                 ALTER TABLE db_target
                     RENAME COLUMN protein_target_value TO proportion_protein;
 			`);
-		},
-	},
+    },
+  },
 
-	// add "<macro> target mode" values and body weight field
-	{
-		migrationNumber: 16,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // add "<macro> target mode" values and body weight field
+  {
+    migrationNumber: 16,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_target
                     ADD COLUMN body_weight_kg DOUBLE PRECISION NOT NULL DEFAULT 0,
                     ADD COLUMN carbohydrates_target_mode CHARACTER VARYING NOT NULL DEFAULT 'PERCENTAGE_OF_CALORIES',
                     ADD COLUMN fat_target_mode CHARACTER VARYING NOT NULL DEFAULT 'PERCENTAGE_OF_CALORIES',
                     ADD COLUMN protein_target_mode CHARACTER VARYING NOT NULL DEFAULT 'PERCENTAGE_OF_CALORIES';
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_target
                     DROP COLUMN body_weight_kg,
                     DROP COLUMN carbohydrates_target_mode,
                     DROP COLUMN fat_target_mode,
                     DROP COLUMN protein_target_mode;
 			`);
-		},
-	},
+    },
+  },
 
-	// convert dates to actual dates
-	{
-		migrationNumber: 17,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // convert dates to actual dates
+  {
+    migrationNumber: 17,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_diary_entry
                     ALTER COLUMN "date" TYPE DATE USING DATE(TO_TIMESTAMP("date"));
                 ALTER TABLE db_diary_entry
@@ -431,9 +431,9 @@ const allMigrations: IDbMigration[] = [
                 ALTER TABLE db_target
                     ALTER COLUMN start_date TYPE DATE USING DATE(TO_TIMESTAMP(start_date));
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_diary_entry
                     ALTER COLUMN "date" TYPE INTEGER USING EXTRACT(EPOCH FROM "date" AT TIME ZONE 'utc');
                 ALTER TABLE db_diary_entry
@@ -445,31 +445,29 @@ const allMigrations: IDbMigration[] = [
                 ALTER TABLE db_target
                     ALTER COLUMN start_date TYPE INTEGER USING EXTRACT(EPOCH FROM start_date AT TIME ZONE 'utc');
 			`);
-		},
-	},
+    },
+  },
 
-	// drop last edit fields
-	{
-		migrationNumber: 18,
-		up: (qr: QueryRunner) => {
-			return qr.query(`
+  // drop last edit fields
+  {
+    migrationNumber: 18,
+    up: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_diary_entry
                     DROP COLUMN last_edit;
                 ALTER TABLE db_exercise_entry
                     DROP COLUMN last_edit;
 			`);
-		},
-		down: (qr: QueryRunner) => {
-			return qr.query(`
+    },
+    down: (qr: QueryRunner): Promise<any> => {
+      return qr.query(`
                 ALTER TABLE db_diary_entry
                     ADD COLUMN last_edit DATE DEFAULT NULL;
                 ALTER TABLE db_exercise_entry
                     ADD COLUMN last_edit DATE DEFAULT NULL;
 			`);
-		},
-	},
+    },
+  },
 ];
 
-export {
-	allMigrations,
-};
+export { allMigrations };

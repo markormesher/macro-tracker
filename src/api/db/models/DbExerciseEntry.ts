@@ -6,20 +6,17 @@ import { BaseModel } from "./BaseModel";
 
 @Entity()
 class DbExerciseEntry extends BaseModel implements IExerciseEntry {
+  @Column({
+    type: "integer",
+    transformer: new DateTransformer(),
+  })
+  public date: Date;
 
-	@Column({
-		type: "integer",
-		transformer: new DateTransformer(),
-	})
-	public date: Date;
+  @Column({ type: "character varying" })
+  public label: string;
 
-	@Column({ type: "character varying" })
-	public label: string;
-
-	@Column({ type: "double precision" })
-	public caloriesBurned: number;
+  @Column({ type: "double precision" })
+  public caloriesBurned: number;
 }
 
-export {
-	DbExerciseEntry,
-};
+export { DbExerciseEntry };

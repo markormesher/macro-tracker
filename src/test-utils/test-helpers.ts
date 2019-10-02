@@ -1,7 +1,5 @@
 function voidListener(): void {
-	// ...
+  // ...
 }
 
-export {
-	voidListener,
-};
+export { voidListener };

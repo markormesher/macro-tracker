@@ -1,9 +1,7 @@
 import { INutritionixFoodItem } from "./INutritionixFoodItem";
 
 interface INutritionixUpcSearchResponse {
-	readonly foods: INutritionixFoodItem[];
+  readonly foods: INutritionixFoodItem[];
 }
 
-export {
-	INutritionixUpcSearchResponse,
-};
+export { INutritionixUpcSearchResponse };

@@ -3,7 +3,7 @@ version: 2
 defaults: &defaults
   working_directory: ~/macro-tracker
   docker:
-    - image: circleci/node:9.11.2
+    - image: circleci/node:carbon
 
 jobs:
   setup:
@@ -33,7 +33,7 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Run Linter
+          name: Check linters
           command: yarn lint
 
   bundlewatch:

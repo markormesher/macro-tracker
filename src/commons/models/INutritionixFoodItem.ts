@@ -1,20 +1,18 @@
 interface INutritionixFoodItem {
-	readonly nix_item_id: string;
-	readonly tag_id: string;
-	readonly food_name: string;
-	readonly brand_name: string;
-	readonly serving_qty: number;
-	readonly serving_unit: string;
-	readonly serving_weight_grams: number;
-	readonly full_nutrients: Array<{
-		readonly attr_id: number,
-		readonly value: number,
-	}>;
+  readonly nix_item_id: string;
+  readonly tag_id: string;
+  readonly food_name: string;
+  readonly brand_name: string;
+  readonly serving_qty: number;
+  readonly serving_unit: string;
+  readonly serving_weight_grams: number;
+  readonly full_nutrients: Array<{
+    readonly attr_id: number;
+    readonly value: number;
+  }>;
 }
 
-export {
-	INutritionixFoodItem,
-};
+export { INutritionixFoodItem };
 
 /*
 Example:
