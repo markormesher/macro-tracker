@@ -2,14 +2,12 @@ import { IDataTableResponse } from "../../../../../commons/models/IDataTableResp
 import { IColumnSortEntry } from "../DataTable";
 
 interface IDataTableDataProvider<Model> {
-	readonly getData: (
-			start: number,
-			length: number,
-			searchTerm?: string,
-			sortedColumns?: IColumnSortEntry[],
-	) => Promise<IDataTableResponse<Model>>;
+  readonly getData: (
+    start: number,
+    length: number,
+    searchTerm?: string,
+    sortedColumns?: IColumnSortEntry[],
+  ) => Promise<IDataTableResponse<Model>>;
 }
 
-export {
-	IDataTableDataProvider,
-};
+export { IDataTableDataProvider };

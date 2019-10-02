@@ -8,24 +8,24 @@ $border-colour: #004ba0;
 $icon-colour: #fff;
 
 .nav {
-	background-color: $bg-colour;
-	border-bottom: 1px solid $border-colour;
-	display: flex;
+  background-color: $bg-colour;
+  border-bottom: 1px solid $border-colour;
+  display: flex;
 
-	.nav-item {
-		border-right: 1px solid $border-colour;
-		display: block;
-		flex-basis: 0;
-		flex-grow: 1;
-		padding: $spacer;
-		text-align: center;
+  .nav-item {
+    border-right: 1px solid $border-colour;
+    display: block;
+    flex-basis: 0;
+    flex-grow: 1;
+    padding: $spacer;
+    text-align: center;
 
-		&:last-of-type {
-			border-right: 0;
-		}
+    &:last-of-type {
+      border-right: 0;
+    }
 
-		svg {
-			color: $icon-colour;
-		}
-	}
+    svg {
+      color: $icon-colour;
+    }
+  }
 }

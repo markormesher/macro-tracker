@@ -6,23 +6,23 @@
 $border-color: $gray-500;
 
 .wrapper {
-	border-bottom: 1px solid $border-color;
-	display: flex;
+  border-bottom: 1px solid $border-color;
+  display: flex;
 
-	.btn {
-		cursor: pointer;
-		flex-grow: 0;
-		padding: $spacer;
+  .btn {
+    cursor: pointer;
+    flex-grow: 0;
+    padding: $spacer;
 
-		&.disabled {
-			cursor: not-allowed !important;
-			opacity: .4;
-		}
-	}
+    &.disabled {
+      cursor: not-allowed !important;
+      opacity: 0.4;
+    }
+  }
 
-	.display {
-		flex-grow: 1;
-		padding: $spacer;
-		text-align: center;
-	}
+  .display {
+    flex-grow: 1;
+    padding: $spacer;
+    text-align: center;
+  }
 }

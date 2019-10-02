@@ -12,48 +12,44 @@ import { IMealCloningState, mealCloningReducer, mealCloningSagas } from "./meal-
 import { ITargetsState, targetsReducer, targetsSagas } from "./targets";
 
 interface IRootState {
-	readonly auth: IAuthState;
-	readonly diaryEntries: IDiaryEntriesState;
-	readonly exerciseEntries: IExerciseEntriesState;
-	readonly foodItems: IFoodItemsState;
-	readonly foodSearchApi: IFoodSearchApiState;
-	readonly global: IGlobalState;
-	readonly macroSummaries: IMacroSummariesState;
-	readonly mealCloning: IMealCloningState;
-	readonly targets: ITargetsState;
+  readonly auth: IAuthState;
+  readonly diaryEntries: IDiaryEntriesState;
+  readonly exerciseEntries: IExerciseEntriesState;
+  readonly foodItems: IFoodItemsState;
+  readonly foodSearchApi: IFoodSearchApiState;
+  readonly global: IGlobalState;
+  readonly macroSummaries: IMacroSummariesState;
+  readonly mealCloning: IMealCloningState;
+  readonly targets: ITargetsState;
 
-	// from connected-react-router
-	readonly router?: RouterState;
+  // from connected-react-router
+  readonly router?: RouterState;
 }
 
 const rootReducers = {
-	[KeyCache.STATE_KEY]: KeyCache.reducer,
-	auth: authReducer,
-	diaryEntries: diaryEntriesReducer,
-	exerciseEntries: exerciseEntriesReducer,
-	foodItems: foodItemsReducer,
-	foodSearchApi: foodSearchApiReducer,
-	global: globalReducer,
-	macroSummaries: macroSummariesReducer,
-	mealCloning: mealCloningReducer,
-	targets: targetsReducer,
+  [KeyCache.STATE_KEY]: KeyCache.reducer,
+  auth: authReducer,
+  diaryEntries: diaryEntriesReducer,
+  exerciseEntries: exerciseEntriesReducer,
+  foodItems: foodItemsReducer,
+  foodSearchApi: foodSearchApiReducer,
+  global: globalReducer,
+  macroSummaries: macroSummariesReducer,
+  mealCloning: mealCloningReducer,
+  targets: targetsReducer,
 };
 
-function*rootSaga(): Generator {
-	yield all([
-		authSagas(),
-		diaryEntriesSagas(),
-		exerciseEntriesSagas(),
-		foodItemsSagas(),
-		foodSearchApiSagas(),
-		macroSummariesSagas(),
-		mealCloningSagas(),
-		targetsSagas(),
-	]);
+function* rootSaga(): Generator {
+  yield all([
+    authSagas(),
+    diaryEntriesSagas(),
+    exerciseEntriesSagas(),
+    foodItemsSagas(),
+    foodSearchApiSagas(),
+    macroSummariesSagas(),
+    mealCloningSagas(),
+    targetsSagas(),
+  ]);
 }
 
-export {
-	IRootState,
-	rootReducers,
-	rootSaga,
-};
+export { IRootState, rootReducers, rootSaga };

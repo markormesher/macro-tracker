@@ -6,47 +6,44 @@ import { BaseModel } from "./BaseModel";
 
 @Entity()
 class DbTarget extends BaseModel implements ITarget {
+  @PrimaryGeneratedColumn("uuid")
+  public id: string;
 
-	@PrimaryGeneratedColumn("uuid")
-	public id: string;
+  @Column({ default: false })
+  public deleted: boolean;
 
-	@Column({ default: false })
-	public deleted: boolean;
+  @Column({
+    type: "integer",
+    transformer: new DateTransformer(),
+  })
+  public startDate: Date;
 
-	@Column({
-		type: "integer",
-		transformer: new DateTransformer(),
-	})
-	public startDate: Date;
+  @Column({ type: "double precision" })
+  public bodyWeightKg: number;
 
-	@Column({ type: "double precision" })
-	public bodyWeightKg: number;
+  @Column({ type: "double precision" })
+  public maintenanceCalories: number;
 
-	@Column({ type: "double precision" })
-	public maintenanceCalories: number;
+  @Column({ type: "double precision" })
+  public calorieAdjustment: number;
 
-	@Column({ type: "double precision" })
-	public calorieAdjustment: number;
+  @Column({ type: "character varying" })
+  public carbohydratesTargetMode: TargetMode;
 
-	@Column({ type: "character varying" })
-	public carbohydratesTargetMode: TargetMode;
+  @Column({ type: "double precision" })
+  public carbohydratesTargetValue: number;
 
-	@Column({ type: "double precision" })
-	public carbohydratesTargetValue: number;
+  @Column({ type: "character varying" })
+  public fatTargetMode: TargetMode;
 
-	@Column({ type: "character varying" })
-	public fatTargetMode: TargetMode;
+  @Column({ type: "double precision" })
+  public fatTargetValue: number;
 
-	@Column({ type: "double precision" })
-	public fatTargetValue: number;
+  @Column({ type: "character varying" })
+  public proteinTargetMode: TargetMode;
 
-	@Column({ type: "character varying" })
-	public proteinTargetMode: TargetMode;
-
-	@Column({ type: "double precision" })
-	public proteinTargetValue: number;
+  @Column({ type: "double precision" })
+  public proteinTargetValue: number;
 }
 
-export {
-	DbTarget,
-};
+export { DbTarget };

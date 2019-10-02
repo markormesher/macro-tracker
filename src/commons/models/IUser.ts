@@ -1,21 +1,18 @@
 interface IUser {
-	readonly id: string;
-	readonly googleId: string;
-	readonly displayName: string;
-	readonly deleted: boolean;
+  readonly id: string;
+  readonly googleId: string;
+  readonly displayName: string;
+  readonly deleted: boolean;
 }
 
 function mapUserFromApi(user?: IUser): IUser {
-	if (!user) {
-		return undefined;
-	}
+  if (!user) {
+    return undefined;
+  }
 
-	return {
-		...user,
-	};
+  return {
+    ...user,
+  };
 }
 
-export {
-	IUser,
-	mapUserFromApi,
-};
+export { IUser, mapUserFromApi };

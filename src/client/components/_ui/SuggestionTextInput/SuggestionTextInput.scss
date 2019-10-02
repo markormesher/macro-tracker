@@ -2,41 +2,41 @@
 @import "~bootstrap-scss/variables";
 
 // sass-lint:disable no-color-literals
-$highlight: rgba(red($blue), green($blue), blue($blue), .2);
+$highlight: rgba(red($blue), green($blue), blue($blue), 0.2);
 
 .suggestion-wrapper {
-	background-color: $white;
-	border: 1px solid $gray-500;
-	border-radius: .25rem;
-	margin-right: 5px;
-	min-width: 140px;
-	position: fixed;
-	z-index: 9000;
+  background-color: $white;
+  border: 1px solid $gray-500;
+  border-radius: 0.25rem;
+  margin-right: 5px;
+  min-width: 140px;
+  position: fixed;
+  z-index: 9000;
 
-	ul {
-		list-style: none;
-		margin: 0;
-		padding: 0;
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
 
-		li {
-			border-top: 1px solid $gray-500;
-			cursor: pointer;
-			margin: 0;
-			padding: $spacer * .5;
+    li {
+      border-top: 1px solid $gray-500;
+      cursor: pointer;
+      margin: 0;
+      padding: $spacer * 0.5;
 
-			&.active,
-			&:hover {
-				&:not(.overflow) {
-					background-color: $gray-300;
-				}
-			}
-		}
-	}
+      &.active,
+      &:hover {
+        &:not(.overflow) {
+          background-color: $gray-300;
+        }
+      }
+    }
+  }
 
-	span {
-		&.highlight {
-			background-color: $highlight;
-			font-weight: bold;
-		}
-	}
+  span {
+    &.highlight {
+      background-color: $highlight;
+      font-weight: bold;
+    }
+  }
 }

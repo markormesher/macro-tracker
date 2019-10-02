@@ -1,5 +1,5 @@
 import { ConnectedRouter, connectRouter, routerMiddleware } from "connected-react-router";
-import * as React from "react";
+import React from "react";
 import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { applyMiddleware, combineReducers, createStore } from "redux";
@@ -17,16 +17,11 @@ require("./global-styles/Global.scss"); // tslint:disable-line:no-var-requires
 
 const sagaMiddleware = createSagaMiddleware();
 const store = createStore(
-		combineReducers({
-			...rootReducers,
-			router: connectRouter(history),
-		}),
-		composeWithDevTools(
-				applyMiddleware(
-						routerMiddleware(history),
-						sagaMiddleware,
-				),
-		),
+  combineReducers({
+    ...rootReducers,
+    router: connectRouter(history),
+  }),
+  composeWithDevTools(applyMiddleware(routerMiddleware(history), sagaMiddleware)),
 );
 
 KeyCache.setStore(store);
@@ -36,10 +31,10 @@ sagaMiddleware.run(rootSaga);
 store.dispatch(startLoadCurrentUser());
 
 ReactDOM.render(
-		<Provider store={store}>
-			<ConnectedRouter history={history}>
-				<App/>
-			</ConnectedRouter>
-		</Provider>,
-		document.getElementById("root"),
+  <Provider store={store}>
+    <ConnectedRouter history={history}>
+      <App />
+    </ConnectedRouter>
+  </Provider>,
+  document.getElementById("root"),
 );

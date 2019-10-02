@@ -8,128 +8,128 @@ import { IJsonObject } from "./IJsonObject";
 import { IValidationResult } from "./IValidationResult";
 
 interface IServingSize extends IBaseModel {
-	readonly label: string;
-	readonly measurement: number;
+  readonly label: string;
+  readonly measurement: number;
 
-	readonly foodItem: IFoodItem;
-	readonly diaryEntries: IDiaryEntry[];
+  readonly foodItem: IFoodItem;
+  readonly diaryEntries: IDiaryEntry[];
 }
 
 interface IServingSizeValidationResult extends IValidationResult {
-	readonly errors: {
-		readonly label?: string;
-		readonly measurement?: string;
-	};
+  readonly errors: {
+    readonly label?: string;
+    readonly measurement?: string;
+  };
 }
 
 function mapServingSizeFromJson(json?: IJsonObject): IServingSize {
-	if (!json) {
-		return null;
-	}
+  if (!json) {
+    return null;
+  }
 
-	return {
-		id: cleanUuid(json.id as string),
-		deleted: json.deleted as boolean,
-		label: cleanString(json.label as string),
-		measurement: parseFloat(json.measurement as string),
-		foodItem: mapFoodItemFromJson(json.foodItem as IJsonObject),
-		diaryEntries: safeMapEntities(mapDiaryEntryFromJson, json.diaryEntries as IJsonArray),
-	};
+  return {
+    id: cleanUuid(json.id as string),
+    deleted: json.deleted as boolean,
+    label: cleanString(json.label as string),
+    measurement: parseFloat(json.measurement as string),
+    foodItem: mapFoodItemFromJson(json.foodItem as IJsonObject),
+    diaryEntries: safeMapEntities(mapDiaryEntryFromJson, json.diaryEntries as IJsonArray),
+  };
 }
 
 function mapServingSizeToJson(servingSize?: IServingSize): IJsonObject {
-	if (!servingSize) {
-		return null;
-	}
+  if (!servingSize) {
+    return null;
+  }
 
-	return {
-		id: servingSize.id,
-		deleted: servingSize.deleted,
-		label: servingSize.label,
-		measurement: servingSize.measurement,
-		foodItem: mapFoodItemToJson(servingSize.foodItem),
-	};
+  return {
+    id: servingSize.id,
+    deleted: servingSize.deleted,
+    label: servingSize.label,
+    measurement: servingSize.measurement,
+    foodItem: mapFoodItemToJson(servingSize.foodItem),
+  };
 }
 
 function validateServingSize(servingSize?: Partial<IServingSize>): IServingSizeValidationResult {
-	if (!servingSize) {
-		return { isValid: false, errors: {} };
-	}
+  if (!servingSize) {
+    return { isValid: false, errors: {} };
+  }
 
-	let result: IServingSizeValidationResult = { isValid: true, errors: {} };
+  let result: IServingSizeValidationResult = { isValid: true, errors: {} };
 
-	if (servingSize.deleted) {
-		return result;
-	}
+  if (servingSize.deleted) {
+    return result;
+  }
 
-	if (!servingSize.label || servingSize.label.trim() === "") {
-		result = {
-			isValid: false,
-			errors: {
-				...result.errors,
-				label: "A label must be entered",
-			},
-		};
-	}
+  if (!servingSize.label || servingSize.label.trim() === "") {
+    result = {
+      isValid: false,
+      errors: {
+        ...result.errors,
+        label: "A label must be entered",
+      },
+    };
+  }
 
-	if (!servingSize.measurement && servingSize.measurement !== 0) {
-		result = {
-			isValid: false,
-			errors: {
-				...result.errors,
-				measurement: "The measurement must be entered",
-			},
-		};
-	} else if (isNaN(servingSize.measurement)) {
-		result = {
-			isValid: false,
-			errors: {
-				...result.errors,
-				measurement: "The measurement must be numeric",
-			},
-		};
-	} else if (servingSize.measurement <= 0) {
-		result = {
-			isValid: false,
-			errors: {
-				...result.errors,
-				measurement: "The measurement must greater than zero",
-			},
-		};
-	}
+  if (!servingSize.measurement && servingSize.measurement !== 0) {
+    result = {
+      isValid: false,
+      errors: {
+        ...result.errors,
+        measurement: "The measurement must be entered",
+      },
+    };
+  } else if (isNaN(servingSize.measurement)) {
+    result = {
+      isValid: false,
+      errors: {
+        ...result.errors,
+        measurement: "The measurement must be numeric",
+      },
+    };
+  } else if (servingSize.measurement <= 0) {
+    result = {
+      isValid: false,
+      errors: {
+        ...result.errors,
+        measurement: "The measurement must greater than zero",
+      },
+    };
+  }
 
-	return result;
+  return result;
 }
 
 function getDefaultServingSize(newId?: string): IServingSize {
-	return {
-		id: newId,
-		deleted: false,
-		label: undefined,
-		measurement: undefined,
-		foodItem: undefined,
-		diaryEntries: undefined,
-	};
+  return {
+    id: newId,
+    deleted: false,
+    label: undefined,
+    measurement: undefined,
+    foodItem: undefined,
+    diaryEntries: undefined,
+  };
 }
 
 function servingSizeComparator(a: IServingSize, b: IServingSize): number {
-	if (!a && !b) {
-		return 0;
-	} else if (!a) {
-		return -1;
-	} else if (!b) {
-		return 1;
-	} else {
-		return a.label.localeCompare(b.label);
-	}
+  if (!a && !b) {
+    return 0;
+  } else if (!a) {
+    return -1;
+  } else if (!b) {
+    return 1;
+  } else {
+    return a.label.localeCompare(b.label);
+  }
 }
 
 export {
-	IServingSize,
-	IServingSizeValidationResult,
-	mapServingSizeFromJson,
-	mapServingSizeToJson,
-	validateServingSize,
-	getDefaultServingSize,
-	servingSizeComparator,
+  IServingSize,
+  IServingSizeValidationResult,
+  mapServingSizeFromJson,
+  mapServingSizeToJson,
+  validateServingSize,
+  getDefaultServingSize,
+  servingSizeComparator,
 };

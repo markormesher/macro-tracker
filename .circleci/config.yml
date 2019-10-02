@@ -33,7 +33,7 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Run Linter
+          name: Check linters
           command: yarn lint
 
   bundlewatch:

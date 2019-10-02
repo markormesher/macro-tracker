@@ -1,5 +1,6 @@
-import { Connection, ConnectionOptions, createConnection, QueryRunner, Table } from "typeorm";
+import { ConnectionOptions, createConnection, QueryRunner } from "typeorm";
 import { logger } from "../../../commons/utils/logging";
+import { delayPromise } from "../../../commons/utils/utils";
 import { allMigrations } from "./all-migrations";
 
 /*
@@ -15,136 +16,94 @@ INSERT INTO migrations VALUES (default, default);
  */
 
 interface IMigrationsTableRow {
-	readonly migration_in_progress: boolean;
-	readonly last_migration: number;
+  readonly migration_in_progress: boolean;
+  readonly last_migration: number;
 }
 
 class MigrationRunner {
+  private connectionOptions: ConnectionOptions;
 
-	private connectionOptions: ConnectionOptions;
+  constructor(connectionOptions: ConnectionOptions) {
+    this.connectionOptions = connectionOptions;
+  }
 
-	constructor(connectionOptions: ConnectionOptions) {
-		this.connectionOptions = connectionOptions;
-	}
+  public waitForMigrationsToComplete(): Promise<void> {
+    return this.withQueryRunner(async (qr) => {
+      // check that migrations table exists
+      const table = await qr.getTable("migrations");
+      if (!table) {
+        throw new Error("Migration table doesn't exist!");
+      }
 
-	public waitForMigrationsToComplete(): Promise<void> {
-		return this.withQueryRunner((qr) => qr
-				.getTable("migrations")
-				.then((table?: Table) => {
-					// check that migrations table exists
-					if (!table) {
-						throw new Error("Migration table doesn't exist!");
-					}
-				})
-				.then(() => {
-					// busy-check for migration status
-					const checkForMigrationStatus = (resolve: () => void, reject: (err?: any) => void) => {
-						qr.query("SELECT migration_in_progress FROM migrations;")
-								.then((results: IMigrationsTableRow[]) => {
-									if (results.length !== 1) {
-										reject(new Error("Migration table didn't contain exactly 1 row"));
-									}
+      // busy-check for migration status
+      let migrationInProgress: boolean;
+      do {
+        const migrationRows: IMigrationsTableRow[] = await qr.query("SELECT migration_in_progress FROM migrations;");
+        if (migrationRows.length !== 1) {
+          throw new Error("Migration table didn't contain exactly 1 row");
+        }
 
-									if (results[0].migration_in_progress) {
-										logger.debug("Migrations still running, sleeping 5000ms...");
-										setTimeout(() => checkForMigrationStatus(resolve, reject), 5000);
-									} else {
-										resolve();
-									}
-								});
-					};
+        migrationInProgress = migrationRows[0].migration_in_progress;
+        if (migrationInProgress) {
+          logger.debug("Migrations still running, sleeping 5000ms...");
+          await delayPromise(5000);
+        }
+      } while (migrationInProgress);
+    });
+  }
 
-					return new Promise((resolve, reject) => checkForMigrationStatus(resolve, reject));
-				}),
-		);
-	}
+  public runMigrations(): Promise<void> {
+    return this.withQueryRunner(async (qr) => {
+      // check that migrations table exists
+      const table = await qr.getTable("migrations");
+      if (!table) {
+        throw new Error("Migration table doesn't exist!");
+      }
 
-	public runMigrations(): Promise<void> {
-		return this.withQueryRunner((qr) => qr
-				.getTable("migrations")
-				.then((table?: Table) => {
-					// check that migrations table exists
-					if (!table) {
-						throw new Error("Migration table doesn't exist!");
-					}
-				})
-				.then(() => {
-					// check that migrations aren't in progress already
-					return qr
-							.query("SELECT migration_in_progress FROM migrations;")
-							.then((results: IMigrationsTableRow[]) => {
-								if (results.length !== 1) {
-									throw new Error("Migration table didn't contain exactly 1 row");
-								}
+      // check that migrations aren't in progress already
+      const migrationRows: IMigrationsTableRow[] = await qr.query("SELECT * FROM migrations;");
+      if (migrationRows.length !== 1) {
+        throw new Error("Migration table didn't contain exactly 1 row");
+      }
 
-								if (results[0].migration_in_progress) {
-									throw new Error("Migrations are already running. This probably means the last set of migrations failed.");
-								}
-							});
-				})
-				.then(() => {
-					return qr.query("UPDATE migrations SET migration_in_progress = true;");
-				})
-				.then(() => {
-					// get the latest migration
-					return qr
-							.query("SELECT last_migration FROM migrations;")
-							.then((results: IMigrationsTableRow[]) => {
-								if (results.length !== 1) {
-									throw new Error("Migration table didn't contain exactly 1 row");
-								}
+      const migrationRow = migrationRows[0];
+      if (migrationRow.migration_in_progress) {
+        throw new Error("Migrations are already running. This probably means the last set of migrations failed.");
+      }
 
-								return results[0].last_migration;
-							});
-				})
-				.then((lastMigration) => {
-					const outstandingMigrations = allMigrations.filter((m) => m.migrationNumber > lastMigration);
+      // mark migrations as in progress
+      await qr.query("UPDATE migrations SET migration_in_progress = true;");
 
-					const runNextMigration = (resolve: () => void, reject: (err?: any) => void) => {
-						if (outstandingMigrations.length === 0) {
-							resolve();
-							return;
-						}
+      // run outstanding migrations
+      const lastMigration = migrationRow.last_migration;
+      const outstandingMigrations = allMigrations.filter((m) => m.migrationNumber > lastMigration);
+      for (const migration of outstandingMigrations) {
+        logger.debug(`Running migration ${migration.migrationNumber}`);
+        await qr.startTransaction();
+        await migration.up(qr);
+        await qr.query(`UPDATE migrations SET last_migration = ${migration.migrationNumber};`);
+        await qr.commitTransaction();
+      }
 
-						const migration = outstandingMigrations.shift();
-						logger.debug(`Running migration ${migration.migrationNumber}`);
-						qr.startTransaction()
-								.then(() => migration.up(qr))
-								.then(() => qr.query(`UPDATE migrations SET last_migration = ${migration.migrationNumber};`))
-								.then(() => qr.commitTransaction())
-								.then(() => runNextMigration(resolve, reject))
-								.catch(reject);
-					};
+      // mark migrations as complete
+      await qr.query("UPDATE migrations SET migration_in_progress = false;");
+    });
+  }
 
-					return new Promise((resolve, reject) => runNextMigration(resolve, reject));
-				})
-				.then(() => {
-					return qr.query("UPDATE migrations SET migration_in_progress = false;");
-				}),
-		);
-	}
+  private async withQueryRunner(exec: (qr: QueryRunner) => void): Promise<void> {
+    const connection = await createConnection({ ...this.connectionOptions, synchronize: false });
+    const qr = connection.createQueryRunner("master");
 
-	private withQueryRunner(exec: (qr: QueryRunner) => void): Promise<void> {
-		let connection: Connection;
-		let qr: QueryRunner;
-
-		return createConnection({ ...this.connectionOptions, synchronize: false })
-				.then((c) => {
-					connection = c;
-					qr = connection.createQueryRunner("master");
-					return exec(qr);
-				})
-				.then(() => {
-					return qr.release().then(() => connection.close());
-				})
-				.catch((err) => {
-					return qr.release().then(() => connection.close()).then(() => {
-						throw err;
-					});
-				});
-	}
+    try {
+      await exec(qr);
+      await qr.release();
+      await connection.close();
+    } catch (err) {
+      await qr.release();
+      await connection.close();
+      throw err;
+    }
+  }
 }
 
-export {
-	MigrationRunner,
-};
+export { MigrationRunner };

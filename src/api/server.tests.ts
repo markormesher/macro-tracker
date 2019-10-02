@@ -4,9 +4,10 @@ import { testGlobals } from "../test-utils/global.tests";
 
 // blank placeholder to keep output folder structure aligned with source
 
-describe("server.ts", () => {
+testGlobals.init();
 
-	it("dummy test", () => {
-		expect(isTest()).to.equal(true);
-	});
+describe("server.ts", () => {
+  it("dummy test", () => {
+    expect(isTest()).to.equal(true);
+  });
 });
