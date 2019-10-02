@@ -83,6 +83,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
     this.fetchData();
   }
 
+  // eslint-disable-next-line react/no-deprecated
   public componentWillUpdate(nextProps: IDataTableProps<Model>, nextState: IDataTableState<Model>): void {
     // JSON.stringify(...) is a neat hack to do deep comparison of data-only structures
     if (
