@@ -15,6 +15,7 @@ import { IRootState } from "../../redux/root";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
 import { LoadingSpinner } from "../_ui/LoadingSpinner/LoadingSpinner";
 import * as style from "./DashboardPage.scss";
+import { Badge } from "@dragonlabs/react-ui-components";
 
 interface IDashboardPageProps {
   readonly loadedMacroSummariesByDate?: {
@@ -67,7 +68,10 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
       <ContentWrapper>
         <div className={bs.row}>
           <div className={bs.col}>
-            <h5>Today</h5>
+            <h5>
+              Today
+              <Badge>Test badge</Badge>
+            </h5>
           </div>
         </div>
 

@@ -763,6 +763,13 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
+"@dragonlabs/react-ui-components@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@dragonlabs/react-ui-components/-/react-ui-components-0.0.4.tgz#eee70235749f60d243dce0ad03f4123675bba6ac"
+  integrity sha512-49ezIkZS5yj2ZfEvp70Tt+c4+ePZbQxMGawnUbZ02k/PQZ+Lx4o9oveKhD2mzZfSe8/flzCG4t4H50z2VwTSqA==
+  dependencies:
+    bootstrap-scss "^4.3.1"
+
 "@fortawesome/fontawesome-common-types@^0.2.25":
   version "0.2.25"
   resolved "https://npm.fontawesome.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-0.2.25.tgz#6df015905081f2762e5cfddeb7a20d2e9b16c786"
@@ -1974,7 +1981,7 @@ boolbase@~1.0.0:
   resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
   integrity sha1-aN/1++YMUes3cl6p4+0xDcwed24=
 
-bootstrap-scss@^4.1.3:
+bootstrap-scss@^4.1.3, bootstrap-scss@^4.3.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/bootstrap-scss/-/bootstrap-scss-4.3.1.tgz#d0c5ae69957dcf677092d3d9dacfab2d15504e9c"
   integrity sha512-9S2yVFoiCALs8nIBR9Tljdh9zDaBODZwVWajTgGuzONUxotDj44/SgW8s5Z3siJSyT4mye9PDbs0OPMmOfwoyg==
