@@ -255,11 +255,13 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps, IFoodItemPick
       );
       const scores: { [key: string]: number } = {};
       searchSuggestions = allFoodItems
-        .filter((fi) => regex.test(fi.name))
+        .filter((fi) => regex.test(fi.name) || regex.test(fi.brand))
         .sort((a, b) => {
-          scores[a.name] = scores[a.name] || levenshteinDistance(searchTerm, a.name);
-          scores[b.name] = scores[b.name] || levenshteinDistance(searchTerm, b.name);
-          return scores[a.name] - scores[b.name];
+          scores[a.id] =
+            scores[a.id] || Math.min(levenshteinDistance(searchTerm, a.name), levenshteinDistance(searchTerm, a.brand));
+          scores[b.id] =
+            scores[b.id] || Math.min(levenshteinDistance(searchTerm, b.name), levenshteinDistance(searchTerm, b.brand));
+          return scores[a.id] - scores[b.id];
         });
     }
 

@@ -7,7 +7,7 @@ import { combine } from "./style-helpers";
 function renderFoodItemSummary(
   foodItem: IFoodItem,
   pClass?: string,
-  nameFormatter?: (name: string) => string | ReactNode,
+  stringHighlighter?: (str: string) => string | ReactNode,
 ): ReactNode {
   const infoChunks: ReactNode[] = [];
 
@@ -35,9 +35,11 @@ function renderFoodItemSummary(
 
   return (
     <p className={pClass}>
-      {nameFormatter ? nameFormatter(foodItem.name) : foodItem.name}
+      {stringHighlighter ? stringHighlighter(foodItem.name) : foodItem.name}
       <br />
-      <span className={combine(bs.textMuted, bs.small)}>{foodItem.brand}</span>
+      <span className={combine(bs.textMuted, bs.small)}>
+        {stringHighlighter ? stringHighlighter(foodItem.brand) : foodItem.brand}
+      </span>
       <br />
       <span className={combine(bs.textMuted, bs.small)}>
         Per {formatNutritionBaseSize(foodItem)}: {infoChunks}
