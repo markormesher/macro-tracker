@@ -1,4 +1,3 @@
-import { endOfDay, isAfter } from "date-fns";
 import { Meal } from "../enums";
 import { fixedDate } from "../utils/dates";
 import { cleanUuid } from "../utils/entities";
@@ -67,21 +66,12 @@ function validateDiaryEntry(diaryEntry?: Partial<IDiaryEntry>): IDiaryEntryValid
 
   let result: IDiaryEntryValidationResult = { isValid: true, errors: {} };
 
-  const now = endOfDay(fixedDate());
   if (!diaryEntry.date) {
     result = {
       isValid: false,
       errors: {
         ...result.errors,
         date: "A date must be selected",
-      },
-    };
-  } else if (isAfter(diaryEntry.date, now)) {
-    result = {
-      isValid: false,
-      errors: {
-        ...result.errors,
-        date: "The date must not be in the future",
       },
     };
   }
