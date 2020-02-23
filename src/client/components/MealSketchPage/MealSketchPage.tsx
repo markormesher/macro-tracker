@@ -413,7 +413,4 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
   }
 }
 
-export const MealSketchPage = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UCMealSketchPage);
+export const MealSketchPage = connect(mapStateToProps, mapDispatchToProps)(UCMealSketchPage);

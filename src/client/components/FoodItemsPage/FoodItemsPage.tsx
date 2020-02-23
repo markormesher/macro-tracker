@@ -215,7 +215,4 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
   }
 }
 
-export const FoodItemsPage = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UCFoodItemsPage);
+export const FoodItemsPage = connect(mapStateToProps, mapDispatchToProps)(UCFoodItemsPage);

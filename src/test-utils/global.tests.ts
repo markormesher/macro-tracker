@@ -1,5 +1,5 @@
 import * as chai from "chai";
-import * as chaiString from "chai-string";
+import chaiString from "chai-string";
 import * as Enzyme from "enzyme";
 import * as Adapter from "enzyme-adapter-react-16";
 
@@ -9,7 +9,9 @@ chai.should();
 
 const testGlobals = {
   mountWrapper: null as Enzyme.ReactWrapper,
-  init: (): void => {},
+  init: (): void => {
+    // do nothing
+  },
 };
 
 afterEach(() => {

@@ -326,7 +326,4 @@ class UCEditCloneMealPage extends PureComponent<IEditCloneMealPageProps, IEditCl
   }
 }
 
-export const CloneMealPage = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UCEditCloneMealPage);
+export const CloneMealPage = connect(mapStateToProps, mapDispatchToProps)(UCEditCloneMealPage);
