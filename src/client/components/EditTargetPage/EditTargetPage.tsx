@@ -490,7 +490,4 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
   }
 }
 
-export const EditTargetPage = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UCEditTargetPage);
+export const EditTargetPage = connect(mapStateToProps, mapDispatchToProps)(UCEditTargetPage);

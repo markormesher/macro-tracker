@@ -706,7 +706,4 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
   }
 }
 
-export const EditFoodItemPage = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UCEditFoodItemPage);
+export const EditFoodItemPage = connect(mapStateToProps, mapDispatchToProps)(UCEditFoodItemPage);

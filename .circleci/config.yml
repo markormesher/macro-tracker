@@ -36,6 +36,15 @@ jobs:
           name: Check linters
           command: yarn lint
 
+  lockfile-lint:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Run Lockfile Linter
+          command: yarn lockfile-lint -p yarn.lock
+
   bundlewatch:
     <<: *defaults
     steps:
@@ -95,6 +104,9 @@ workflows:
       - lint:
           requires:
             - setup
+      - lockfile-lint:
+          requires:
+            - setup
       - test:
           requires:
             - setup
@@ -104,5 +116,6 @@ workflows:
       - maybe_deploy:
           requires:
             - lint
+            - lockfile-lint
             - test
             - bundlewatch

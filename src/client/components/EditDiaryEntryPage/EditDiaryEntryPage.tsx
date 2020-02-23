@@ -357,7 +357,4 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
   }
 }
 
-export const EditDiaryEntryPage = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UCEditDiaryEntryPage);
+export const EditDiaryEntryPage = connect(mapStateToProps, mapDispatchToProps)(UCEditDiaryEntryPage);

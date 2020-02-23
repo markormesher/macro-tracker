@@ -325,7 +325,4 @@ class UCEditExerciseEntryPage extends PureComponent<IEditExerciseEntryPageProps,
   }
 }
 
-export const EditExerciseEntryPage = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UCEditExerciseEntryPage);
+export const EditExerciseEntryPage = connect(mapStateToProps, mapDispatchToProps)(UCEditExerciseEntryPage);

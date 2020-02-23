@@ -207,7 +207,4 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
   }
 }
 
-export const TargetsPage = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UCTargetsPage);
+export const TargetsPage = connect(mapStateToProps, mapDispatchToProps)(UCTargetsPage);

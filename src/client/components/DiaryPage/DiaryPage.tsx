@@ -374,7 +374,4 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
   }
 }
 
-export const DiaryPage = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UCDiaryPage);
+export const DiaryPage = connect(mapStateToProps, mapDispatchToProps)(UCDiaryPage);

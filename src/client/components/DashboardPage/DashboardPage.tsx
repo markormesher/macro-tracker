@@ -164,7 +164,11 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
         <div className={bs.row}>
           <div className={combine(bs.col, bs.mb3)}>
             <h6>Calories</h6>
-            {this.renderChart(dates, summaries.map((s) => s.totalCalories), summaries.map((s) => s.targetCalories))}
+            {this.renderChart(
+              dates,
+              summaries.map((s) => s.totalCalories),
+              summaries.map((s) => s.targetCalories),
+            )}
           </div>
         </div>
         <div className={bs.row}>
@@ -180,13 +184,21 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
         <div className={bs.row}>
           <div className={combine(bs.col, bs.mb3)}>
             <h6>Fat</h6>
-            {this.renderChart(dates, summaries.map((s) => s.totalFat), summaries.map((s) => s.targetFat))}
+            {this.renderChart(
+              dates,
+              summaries.map((s) => s.totalFat),
+              summaries.map((s) => s.targetFat),
+            )}
           </div>
         </div>
         <div className={bs.row}>
           <div className={bs.col}>
             <h6>Protein</h6>
-            {this.renderChart(dates, summaries.map((s) => s.totalProtein), summaries.map((s) => s.targetProtein))}
+            {this.renderChart(
+              dates,
+              summaries.map((s) => s.totalProtein),
+              summaries.map((s) => s.targetProtein),
+            )}
           </div>
         </div>
       </>
@@ -227,7 +239,4 @@ class UCDashboardPage extends PureComponent<IDashboardPageProps> {
   }
 }
 
-export const DashboardPage = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UCDashboardPage);
+export const DashboardPage = connect(mapStateToProps, mapDispatchToProps)(UCDashboardPage);

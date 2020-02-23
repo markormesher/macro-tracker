@@ -308,7 +308,4 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps, IFoodItemPick
   }
 }
 
-export const FoodItemPicker = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UCFoodItemPicker);
+export const FoodItemPicker = connect(mapStateToProps, mapDispatchToProps)(UCFoodItemPicker);
