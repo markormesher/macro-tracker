@@ -43,7 +43,7 @@ jobs:
           at: .
       - run:
           name: Run Lockfile Linter
-          command: yarn lint-lockfile
+          command: yarn lockfile-lint -p yarn.lock
 
   bundlewatch:
     <<: *defaults
