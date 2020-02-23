@@ -104,6 +104,9 @@ workflows:
       - lint:
           requires:
             - setup
+      - lockfile-lint:
+          requires:
+            - setup
       - test:
           requires:
             - setup
