@@ -1,5 +1,5 @@
 import * as chai from "chai";
-import chaiString from "chai-string";
+import * as chaiString from "chai-string";
 import * as Enzyme from "enzyme";
 import * as Adapter from "enzyme-adapter-react-16";
 
