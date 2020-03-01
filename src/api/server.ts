@@ -8,6 +8,7 @@ import * as Express from "express";
 import { Request, Response } from "express";
 import * as ExpressSession from "express-session";
 import * as Passport from "passport";
+import * as Redis from "redis";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { StatusError } from "../commons/StatusError";
@@ -26,10 +27,14 @@ const app = Express();
 ensureLogFilesAreCreated();
 
 // cookies and sessions
+const redisClient = Redis.createClient({
+  host: "redis",
+  port: 6379,
+});
 const RedisSessionStore = ConnectRedis(ExpressSession);
 app.use(
   ExpressSession({
-    store: new RedisSessionStore({ host: "redis" }),
+    store: new RedisSessionStore({ client: redisClient }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24, // 24h
     },
