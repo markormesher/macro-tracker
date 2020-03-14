@@ -903,10 +903,10 @@
     eslint-plugin-react "^7.19.0"
     prettier "^1.19.1"
 
-"@dragonlabs/redux-cache-key-util@^0.0.7":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@dragonlabs/redux-cache-key-util/-/redux-cache-key-util-0.0.7.tgz#8d8f070891388b1683844637e5fcb01e24cca4a1"
-  integrity sha512-mh5i9KLWAVegEiqcB9fuz22tMdtjegYnAFNjw5m4q4BOTA4KpA24RV+w4/KoEw/eEMWzcs9NjqPMhMt+ZYXZUQ==
+"@dragonlabs/redux-cache-key-util@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@dragonlabs/redux-cache-key-util/-/redux-cache-key-util-0.0.9.tgz#3464628393f19ee531b9fa2252a9b14a35772437"
+  integrity sha512-FdQT8WL8GvSQCi9kY//L9+GVY9OXT40UON4XdhUHAXQC0bJ5xKIKzDhO68DC8Gk8PIlC8bRmkf8rHUpENurwHA==
   dependencies:
     redux ">= 4.0.0"
 
