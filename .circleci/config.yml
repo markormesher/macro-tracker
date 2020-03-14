@@ -3,7 +3,7 @@ version: 2
 defaults: &defaults
   working_directory: ~/macro-tracker
   docker:
-    - image: circleci/node:carbon
+    - image: circleci/node:dubnium
 
 jobs:
   setup:
@@ -36,14 +36,17 @@ jobs:
           name: Check linters
           command: yarn lint
 
-  lockfile-lint:
+  check-lockfile:
     <<: *defaults
     steps:
       - attach_workspace:
           at: .
       - run:
-          name: Run Lockfile Linter
+          name: Run lockfile linter
           command: yarn lockfile-lint -p yarn.lock
+      - run:
+          name: Check for duplicate dependencies
+          command: yarn yarn-deduplicate -f -l
 
   bundlewatch:
     <<: *defaults
@@ -104,7 +107,7 @@ workflows:
       - lint:
           requires:
             - setup
-      - lockfile-lint:
+      - check-lockfile:
           requires:
             - setup
       - test:
@@ -116,6 +119,6 @@ workflows:
       - maybe_deploy:
           requires:
             - lint
-            - lockfile-lint
+            - check-lockfile
             - test
             - bundlewatch
