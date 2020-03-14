@@ -889,10 +889,10 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@dragonlabs/eslint-config@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@dragonlabs/eslint-config/-/eslint-config-0.0.2.tgz#58bb6484251db229bc845e39b1c6778a8d937c8f"
-  integrity sha512-4cXARlExx823RUBHsYrqocEG0pPwHtFN/io1HpiReJtvCwRgd19JLHpVg1Z7ibgH3u4gnsJbLDunYYoYs8+7VQ==
+"@dragonlabs/eslint-config@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@dragonlabs/eslint-config/-/eslint-config-0.0.4.tgz#5b11d0e8a19aeac397b0dc60d8ff717ddf4ce84e"
+  integrity sha512-hUR5AlZ8P5vo6zlX0OF4asQt5S4/5lsnsaoPGRu5OKCxGsG48++Lm07efAQBn/xX9j3QRoaHYV55cOIHXTHRFw==
   dependencies:
     "@typescript-eslint/eslint-plugin" "^2.22.0"
     "@typescript-eslint/parser" "^2.22.0"
@@ -9544,7 +9544,12 @@ ts-loader@^5.0.0:
     micromatch "^3.1.4"
     semver "^5.0.1"
 
-tslib@^1.8.1, tslib@^1.9.0:
+tslib@^1.8.1:
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.11.1.tgz#eb15d128827fbee2841549e171f45ed338ac7e35"
+  integrity sha512-aZW88SY8kQbU7gpV19lN24LtXh/yD4ZZg6qieAJDDg+YBsJcSmLGK9QpnUjAKVG/xefmvJGd1WUmfpT/g6AJGA==
+
+tslib@^1.9.0:
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.11.0.tgz#f1f3528301621a53220d58373ae510ff747a66bc"
   integrity sha512-BmndXUtiTn/VDDrJzQE7Mm22Ix3PxgLltW9bSNLoeCY31gnG2OPx0QqJnuc9oMIKioYrz487i6K9o4Pdn0j+Kg==

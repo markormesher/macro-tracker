@@ -98,7 +98,7 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.1.0",
-    "@dragonlabs/eslint-config": "^0.0.2",
+    "@dragonlabs/eslint-config": "^0.0.4",
     "@types/async": "^2.0.47",
     "@types/body-parser": "^1.16.8",
     "@types/chai": "^4.1.7",
