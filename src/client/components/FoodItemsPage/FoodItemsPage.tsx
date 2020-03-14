@@ -11,6 +11,7 @@ import React, { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IFoodItem, mapFoodItemFromJson } from "../../../commons/models/IFoodItem";
 import { servingSizeComparator } from "../../../commons/models/IServingSize";
 import { formatMeasurement } from "../../../commons/utils/formatters";
@@ -20,7 +21,6 @@ import * as gs from "../../global-styles/Global.scss";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
 import { foodItemsCacheKeys, startDeleteFoodItem } from "../../redux/food-items";
-import { KeyCache } from "../../redux/helpers/KeyCache";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { IRootState } from "../../redux/root";
 import { ContentWrapper } from "../_ui/ContentWrapper/ContentWrapper";
@@ -39,7 +39,7 @@ interface IFoodItemsPageProps {
 function mapStateToProps(state: IRootState, props: IFoodItemsPageProps): IFoodItemsPageProps {
   return {
     ...props,
-    updateTime: KeyCache.getKeyTime(foodItemsCacheKeys.latestUpdate),
+    updateTime: CacheKeyUtil.getKeyTime(foodItemsCacheKeys.latestUpdate),
   };
 }
 

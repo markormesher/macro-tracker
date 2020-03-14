@@ -1,5 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IExerciseEntry, mapExerciseEntryFromJson, mapExerciseEntryToJson } from "../../commons/models/IExerciseEntry";
 import { IJsonArray } from "../../commons/models/IJsonArray";
 import { IJsonObject } from "../../commons/models/IJsonObject";
@@ -8,7 +9,6 @@ import { safeMapEntities } from "../../commons/utils/entities";
 import { formatDate } from "../../commons/utils/formatters";
 import { setError } from "./global";
 import { ActionResult } from "./helpers/ActionResult";
-import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 
 interface IExerciseEntriesState {
@@ -133,7 +133,7 @@ function* loadExerciseEntrySaga(): Generator {
   yield takeEvery(ExerciseEntriesActions.START_LOAD_EXERCISE_ENTRY, function*(action: PayloadAction): Generator {
     const exerciseEntryId: string = action.payload.exerciseEntryId;
 
-    if (KeyCache.keyIsValid(exerciseEntriesCacheKeys.forEntry(exerciseEntryId))) {
+    if (CacheKeyUtil.keyIsValid(exerciseEntriesCacheKeys.forEntry(exerciseEntryId))) {
       return;
     }
 
@@ -146,7 +146,7 @@ function* loadExerciseEntrySaga(): Generator {
 
       yield all([
         put(setExerciseEntry(exerciseEntry)),
-        put(KeyCache.updateKey(exerciseEntriesCacheKeys.forEntry(exerciseEntryId))),
+        put(CacheKeyUtil.updateKey(exerciseEntriesCacheKeys.forEntry(exerciseEntryId))),
       ]);
     } catch (err) {
       yield put(setError(err));
@@ -160,7 +160,7 @@ function* loadExerciseEntriesForDateSaga(): Generator {
   ): Generator {
     const date: Date = action.payload.date;
 
-    if (KeyCache.keyIsValid(exerciseEntriesCacheKeys.forEntriesByDate(date))) {
+    if (CacheKeyUtil.keyIsValid(exerciseEntriesCacheKeys.forEntriesByDate(date))) {
       return;
     }
 
@@ -173,7 +173,7 @@ function* loadExerciseEntriesForDateSaga(): Generator {
 
       yield all([
         put(setExerciseEntriesForDate(date, exerciseEntries)),
-        put(KeyCache.updateKey(exerciseEntriesCacheKeys.forEntriesByDate(date))),
+        put(CacheKeyUtil.updateKey(exerciseEntriesCacheKeys.forEntriesByDate(date))),
       ]);
     } catch (err) {
       yield put(setError(err));
@@ -183,14 +183,14 @@ function* loadExerciseEntriesForDateSaga(): Generator {
 
 function* loadAllExerciseLabelsSaga(): Generator {
   yield takeEvery(ExerciseEntriesActions.START_LOAD_ALL_EXERCISE_LABELS, function*(): Generator {
-    if (KeyCache.keyIsValid(exerciseEntriesCacheKeys.allLabels)) {
+    if (CacheKeyUtil.keyIsValid(exerciseEntriesCacheKeys.allLabels)) {
       return;
     }
 
     try {
       const labels: string[] = yield call(() => axios.get("/api/exercise-entries/labels").then((res) => res.data));
 
-      yield all([put(setAllExerciseLabels(labels)), put(KeyCache.updateKey(exerciseEntriesCacheKeys.allLabels))]);
+      yield all([put(setAllExerciseLabels(labels)), put(CacheKeyUtil.updateKey(exerciseEntriesCacheKeys.allLabels))]);
     } catch (err) {
       yield put(setError(err));
     }
@@ -215,10 +215,10 @@ function* saveExerciseEntrySaga(): Generator {
       yield all([
         put(setEditorBusy(false)),
         put(setEditorResult("success")),
-        put(KeyCache.updateKey(exerciseEntriesCacheKeys.latestUpdate)),
-        put(KeyCache.invalidateKey(exerciseEntriesCacheKeys.allLabels)),
-        put(KeyCache.invalidateKey(exerciseEntriesCacheKeys.forEntry(exerciseEntry.id))),
-        put(KeyCache.invalidateKey(exerciseEntriesCacheKeys.forEntriesByDate(exerciseEntry.date))),
+        put(CacheKeyUtil.updateKey(exerciseEntriesCacheKeys.latestUpdate)),
+        put(CacheKeyUtil.invalidateKey(exerciseEntriesCacheKeys.allLabels)),
+        put(CacheKeyUtil.invalidateKey(exerciseEntriesCacheKeys.forEntry(exerciseEntry.id))),
+        put(CacheKeyUtil.invalidateKey(exerciseEntriesCacheKeys.forEntriesByDate(exerciseEntry.date))),
       ]);
     } catch (rawError) {
       const error = rawError as AxiosError;
@@ -234,10 +234,10 @@ function* deleteExerciseEntrySaga(): Generator {
       yield call(() => axios.post(`/api/exercise-entries/delete/${exerciseEntry.id}`));
 
       yield all([
-        put(KeyCache.updateKey(exerciseEntriesCacheKeys.latestUpdate)),
-        put(KeyCache.invalidateKey(exerciseEntriesCacheKeys.allLabels)),
-        put(KeyCache.invalidateKey(exerciseEntriesCacheKeys.forEntry(exerciseEntry.id))),
-        put(KeyCache.invalidateKey(exerciseEntriesCacheKeys.forEntriesByDate(exerciseEntry.date))),
+        put(CacheKeyUtil.updateKey(exerciseEntriesCacheKeys.latestUpdate)),
+        put(CacheKeyUtil.invalidateKey(exerciseEntriesCacheKeys.allLabels)),
+        put(CacheKeyUtil.invalidateKey(exerciseEntriesCacheKeys.forEntry(exerciseEntry.id))),
+        put(CacheKeyUtil.invalidateKey(exerciseEntriesCacheKeys.forEntriesByDate(exerciseEntry.date))),
       ]);
     } catch (err) {
       yield put(setError(err));

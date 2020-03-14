@@ -3,13 +3,13 @@ import React, { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { ITarget, mapTargetFromJson, TargetMode } from "../../../commons/models/ITarget";
 import { formatDate, formatLargeNumber, formatMeasurement, formatPercent } from "../../../commons/utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
-import { KeyCache } from "../../redux/helpers/KeyCache";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { IRootState } from "../../redux/root";
 import { startDeleteTarget, targetsCacheKeys } from "../../redux/targets";
@@ -29,7 +29,7 @@ interface ITargetsPageProps {
 function mapStateToProps(state: IRootState, props: ITargetsPageProps): ITargetsPageProps {
   return {
     ...props,
-    updateTime: KeyCache.getKeyTime(targetsCacheKeys.latestUpdate),
+    updateTime: CacheKeyUtil.getKeyTime(targetsCacheKeys.latestUpdate),
   };
 }
 

@@ -1,12 +1,12 @@
 import axios, { AxiosError } from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IJsonArray } from "../../commons/models/IJsonArray";
 import { IJsonObject } from "../../commons/models/IJsonObject";
 import { ITarget, mapTargetFromJson, mapTargetToJson } from "../../commons/models/ITarget";
 import { safeMapEntities } from "../../commons/utils/entities";
 import { setError } from "./global";
 import { ActionResult } from "./helpers/ActionResult";
-import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 
 interface ITargetsState {
@@ -100,7 +100,7 @@ function* loadTargetSaga(): Generator {
   yield takeEvery(TargetsActions.START_LOAD_TARGET, function*(action: PayloadAction): Generator {
     const targetId: string = action.payload.targetId;
 
-    if (KeyCache.keyIsValid(targetsCacheKeys.forTarget(targetId))) {
+    if (CacheKeyUtil.keyIsValid(targetsCacheKeys.forTarget(targetId))) {
       return;
     }
 
@@ -109,7 +109,7 @@ function* loadTargetSaga(): Generator {
         axios.get(`/api/targets/${targetId}`).then((res) => mapTargetFromJson(res.data as IJsonObject)),
       );
 
-      yield all([put(setTarget(target)), put(KeyCache.updateKey(targetsCacheKeys.forTarget(target.id)))]);
+      yield all([put(setTarget(target)), put(CacheKeyUtil.updateKey(targetsCacheKeys.forTarget(target.id)))]);
     } catch (err) {
       yield put(setError(err));
     }
@@ -118,7 +118,7 @@ function* loadTargetSaga(): Generator {
 
 function* loadAllTargetsSaga(): Generator {
   yield takeEvery(TargetsActions.START_LOAD_ALL_TARGETS, function*(): Generator {
-    if (KeyCache.keyIsValid(targetsCacheKeys.allTargets)) {
+    if (CacheKeyUtil.keyIsValid(targetsCacheKeys.allTargets)) {
       return;
     }
 
@@ -127,7 +127,7 @@ function* loadAllTargetsSaga(): Generator {
         axios.get("/api/targets/all").then((res) => safeMapEntities(mapTargetFromJson, res.data as IJsonArray)),
       );
 
-      yield all([put(setAllTargets(targets)), KeyCache.updateKey(targetsCacheKeys.allTargets)]);
+      yield all([put(setAllTargets(targets)), CacheKeyUtil.updateKey(targetsCacheKeys.allTargets)]);
     } catch (err) {
       yield put(setError(err));
     }
@@ -145,9 +145,9 @@ function* saveTargetSaga(): Generator {
       yield all([
         put(setEditorBusy(false)),
         put(setEditorResult("success")),
-        put(KeyCache.updateKey(targetsCacheKeys.latestUpdate)),
-        put(KeyCache.invalidateKey(targetsCacheKeys.allTargets)),
-        put(KeyCache.invalidateKey(targetsCacheKeys.forTarget(target.id))),
+        put(CacheKeyUtil.updateKey(targetsCacheKeys.latestUpdate)),
+        put(CacheKeyUtil.invalidateKey(targetsCacheKeys.allTargets)),
+        put(CacheKeyUtil.invalidateKey(targetsCacheKeys.forTarget(target.id))),
       ]);
     } catch (rawError) {
       const error = rawError as AxiosError;
@@ -163,9 +163,9 @@ function* deleteTargetSaga(): Generator {
       yield call(() => axios.post(`/api/targets/delete/${target.id}`));
 
       yield all([
-        put(KeyCache.updateKey(targetsCacheKeys.latestUpdate)),
-        put(KeyCache.invalidateKey(targetsCacheKeys.allTargets)),
-        put(KeyCache.invalidateKey(targetsCacheKeys.forTarget(target.id))),
+        put(CacheKeyUtil.updateKey(targetsCacheKeys.latestUpdate)),
+        put(CacheKeyUtil.invalidateKey(targetsCacheKeys.allTargets)),
+        put(CacheKeyUtil.invalidateKey(targetsCacheKeys.forTarget(target.id))),
       ]);
     } catch (err) {
       yield put(setError(err));

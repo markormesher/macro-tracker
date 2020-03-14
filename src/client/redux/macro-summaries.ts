@@ -1,5 +1,6 @@
 import axios from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IJsonObject } from "../../commons/models/IJsonObject";
 import { IMacroSummary, mapMacroSummaryFromJson } from "../../commons/models/IMacroSummary";
 import { dateToDateKey, dateToUrlString } from "../../commons/utils/dates";
@@ -8,7 +9,6 @@ import { diaryEntriesCacheKeys } from "./diary-entries";
 import { exerciseEntriesCacheKeys } from "./exercise-entries";
 import { foodItemsCacheKeys } from "./food-items";
 import { setError } from "./global";
-import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { targetsCacheKeys } from "./targets";
 
@@ -59,7 +59,7 @@ function* loadMacroSummaryForDateSaga(): Generator {
       targetsCacheKeys.latestUpdate,
     ];
 
-    if (KeyCache.keyIsValid(summaryKey, dependencyKeys)) {
+    if (CacheKeyUtil.keyIsValid(summaryKey, dependencyKeys)) {
       return;
     }
 
@@ -70,7 +70,7 @@ function* loadMacroSummaryForDateSaga(): Generator {
           .then((res) => mapMacroSummaryFromJson(res.data as IJsonObject)),
       );
 
-      yield all([put(setMacroSummariesForDate(date, macroSummaries)), put(KeyCache.updateKey(summaryKey))]);
+      yield all([put(setMacroSummariesForDate(date, macroSummaries)), put(CacheKeyUtil.updateKey(summaryKey))]);
     } catch (err) {
       yield put(setError(err));
     }

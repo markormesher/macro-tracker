@@ -4,6 +4,7 @@ import React, { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { match as Match } from "react-router-dom";
 import { Dispatch } from "redux";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { Meal } from "../../../commons/enums";
 import { IDiaryEntry } from "../../../commons/models/IDiaryEntry";
 import { IExerciseEntry } from "../../../commons/models/IExerciseEntry";
@@ -21,7 +22,6 @@ import {
   startDeleteExerciseEntry,
   startLoadExerciseEntriesForDate,
 } from "../../redux/exercise-entries";
-import { KeyCache } from "../../redux/helpers/KeyCache";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
 import { startLoadMacroSummaryForDate } from "../../redux/macro-summaries";
 import { IRootState } from "../../redux/root";
@@ -59,7 +59,7 @@ function mapStateToProps(state: IRootState, props: IDiaryPageProps): IDiaryPageP
 
   return {
     ...props,
-    updateTime: KeyCache.getMaxKeyTime([diaryEntriesCacheKeys.latestUpdate, exerciseEntriesCacheKeys.latestUpdate]),
+    updateTime: CacheKeyUtil.getMaxKeyTime([diaryEntriesCacheKeys.latestUpdate, exerciseEntriesCacheKeys.latestUpdate]),
     currentDate: date,
     loadedMacroSummariesByDate: state.macroSummaries.loadedMacroSummariesByDate,
     loadedExerciseEntriesByDate: state.exerciseEntries.loadedExerciseEntriesByDate,
