@@ -1,9 +1,9 @@
 import axios, { AxiosError } from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { ICloneMealRequest, mapCloneMealRequestToJson } from "../../commons/models/ICloneMealRequest";
 import { diaryEntriesCacheKeys } from "./diary-entries";
 import { ActionResult } from "./helpers/ActionResult";
-import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { macroSummariesCacheKeys } from "./macro-summaries";
 
@@ -69,8 +69,8 @@ function* saveCloneMealSaga(): Generator {
       yield all([
         put(setEditorBusy(false)),
         put(setEditorResult("success")),
-        put(KeyCache.invalidateKey(diaryEntriesCacheKeys.forEntriesByDate(cloneMealRequest.toDate))),
-        put(KeyCache.invalidateKey(macroSummariesCacheKeys.forDate(cloneMealRequest.toDate))),
+        put(CacheKeyUtil.invalidateKey(diaryEntriesCacheKeys.forEntriesByDate(cloneMealRequest.toDate))),
+        put(CacheKeyUtil.invalidateKey(macroSummariesCacheKeys.forDate(cloneMealRequest.toDate))),
       ]);
     } catch (rawError) {
       const error = rawError as AxiosError;

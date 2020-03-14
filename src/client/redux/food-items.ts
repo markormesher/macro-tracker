@@ -1,12 +1,12 @@
 import axios, { AxiosError } from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
+import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { IFoodItem, mapFoodItemFromJson, mapFoodItemToJson } from "../../commons/models/IFoodItem";
 import { IJsonArray } from "../../commons/models/IJsonArray";
 import { IJsonObject } from "../../commons/models/IJsonObject";
 import { safeMapEntities } from "../../commons/utils/entities";
 import { setError } from "./global";
 import { ActionResult } from "./helpers/ActionResult";
-import { KeyCache } from "./helpers/KeyCache";
 import { PayloadAction } from "./helpers/PayloadAction";
 
 interface IFoodItemsState {
@@ -110,7 +110,7 @@ function* loadFoodItemSaga(): Generator {
   yield takeEvery(FoodItemsActions.START_LOAD_FOOD_ITEM, function*(action: PayloadAction): Generator {
     const foodItemId: string = action.payload.foodItemId;
 
-    if (KeyCache.keyIsValid(foodItemsCacheKeys.forItem(foodItemId))) {
+    if (CacheKeyUtil.keyIsValid(foodItemsCacheKeys.forItem(foodItemId))) {
       return;
     }
 
@@ -119,7 +119,7 @@ function* loadFoodItemSaga(): Generator {
         axios.get(`/api/food-items/${foodItemId}`).then((res) => mapFoodItemFromJson(res.data as IJsonObject)),
       );
 
-      yield all([put(setFoodItem(foodItem)), put(KeyCache.updateKey(foodItemsCacheKeys.forItem(foodItemId)))]);
+      yield all([put(setFoodItem(foodItem)), put(CacheKeyUtil.updateKey(foodItemsCacheKeys.forItem(foodItemId)))]);
     } catch (err) {
       yield put(setError(err));
     }
@@ -128,7 +128,7 @@ function* loadFoodItemSaga(): Generator {
 
 function* loadAllFoodItemsSaga(): Generator {
   yield takeEvery(FoodItemsActions.START_LOAD_ALL_FOOD_ITEMS, function*(): Generator {
-    if (KeyCache.keyIsValid(foodItemsCacheKeys.allItems)) {
+    if (CacheKeyUtil.keyIsValid(foodItemsCacheKeys.allItems)) {
       return;
     }
 
@@ -137,7 +137,7 @@ function* loadAllFoodItemsSaga(): Generator {
         axios.get("/api/food-items/all").then((res) => safeMapEntities(mapFoodItemFromJson, res.data as IJsonArray)),
       );
 
-      yield all([put(setAllFoodItems(foodItems)), KeyCache.updateKey(foodItemsCacheKeys.allItems)]);
+      yield all([put(setAllFoodItems(foodItems)), CacheKeyUtil.updateKey(foodItemsCacheKeys.allItems)]);
     } catch (err) {
       yield put(setError(err));
     }
@@ -162,9 +162,9 @@ function* saveFoodItemSaga(): Generator {
       yield all([
         put(setEditorBusy(false)),
         put(setEditorResult("success")),
-        put(KeyCache.updateKey(foodItemsCacheKeys.latestUpdate)),
-        put(KeyCache.invalidateKey(foodItemsCacheKeys.allItems)),
-        put(KeyCache.invalidateKey(foodItemsCacheKeys.forItem(foodItem.id))),
+        put(CacheKeyUtil.updateKey(foodItemsCacheKeys.latestUpdate)),
+        put(CacheKeyUtil.invalidateKey(foodItemsCacheKeys.allItems)),
+        put(CacheKeyUtil.invalidateKey(foodItemsCacheKeys.forItem(foodItem.id))),
       ]);
     } catch (rawError) {
       const error = rawError as AxiosError;
@@ -180,9 +180,9 @@ function* deleteFoodItemSaga(): Generator {
       yield call(() => axios.post(`/api/food-items/delete/${foodItem.id}`));
 
       yield all([
-        put(KeyCache.updateKey(foodItemsCacheKeys.latestUpdate)),
-        put(KeyCache.invalidateKey(foodItemsCacheKeys.allItems)),
-        put(KeyCache.invalidateKey(foodItemsCacheKeys.forItem(foodItem.id))),
+        put(CacheKeyUtil.updateKey(foodItemsCacheKeys.latestUpdate)),
+        put(CacheKeyUtil.invalidateKey(foodItemsCacheKeys.allItems)),
+        put(CacheKeyUtil.invalidateKey(foodItemsCacheKeys.forItem(foodItem.id))),
       ]);
     } catch (err) {
       yield put(setError(err));

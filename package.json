@@ -51,6 +51,7 @@
     "check-cross-refs": "./.scripts/check-cross-project-references.sh"
   },
   "dependencies": {
+    "@dragonlabs/redux-cache-key-util": "^0.0.7",
     "@fortawesome/fontawesome-svg-core": "^1.2.6",
     "@fortawesome/free-brands-svg-icons": "^5.8.1",
     "@fortawesome/pro-light-svg-icons": "^5.8.1",
