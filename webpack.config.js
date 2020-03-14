@@ -212,13 +212,19 @@ const config = {
         // bundle dependencies and global styles separately so they can be cached for longer
         vendor: {
           test: /[\\/]node_modules[\\/]/,
-          name: (m) => "npm." + m.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1].replace("@", ""),
+          name: (module) =>
+            "npm~" +
+            module
+              .identifier()
+              .match(/\/node_modules\/((@.*?\/.*?)|(.*?))[/]/)[1]
+              .replace("/", "~")
+              .replace("@", ""),
         },
         globalStyles: {
           test: /[\\/]global-styles[\\/]/,
           name: (m) => {
-            const res = m.resource || m.issuer.resource;
-            return "styles." + res.match(/[\\/]global-styles[\\/](.*?)\.(s?)css/)[1].toLowerCase();
+            const resource = m.resource || m.issuer.resource;
+            return "style~" + resource.match(/\/global-styles\/(.*?)\.(s?)css/)[1].toLowerCase();
           },
         },
       },
