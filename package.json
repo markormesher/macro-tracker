@@ -112,7 +112,7 @@
     "@types/express": "^4.11.1",
     "@types/express-session": "^1.15.8",
     "@types/md5": "^2.1.33",
-    "@types/mocha": "^5.2.5",
+    "@types/mocha": "^7.0.2",
     "@types/node": "^10.12.18",
     "@types/passport": "^1.0.0",
     "@types/passport-google-oauth": "^1.0.39",
@@ -152,7 +152,7 @@
     "lockfile-lint": "^4.0.0",
     "md5": "^2.2.1",
     "mini-css-extract-plugin": "^0.5.0",
-    "mocha": "^5.2.0",
+    "mocha": "^7.1.1",
     "node-sass": "^4.9.2",
     "node-wait-for-it": "^0.2.0",
     "npm-run-all": "^4.1.5",
@@ -175,6 +175,7 @@
     "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^3.1.11",
     "webpack-hot-middleware": "^2.23.1",
+    "webpack-node-externals": "^1.7.2",
     "yarn-deduplicate": "^2.0.0"
   },
   "resolutions": {

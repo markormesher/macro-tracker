@@ -4,6 +4,7 @@ const glob = require("glob");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const md5 = require("md5");
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+const WebpackNodeExternals = require("webpack-node-externals");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ReplaceInFileWebpackPlugin = require("replace-in-file-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
@@ -98,6 +99,7 @@ const config = {
     hotUpdateMainFilename: "hot-update.[hash:6].json",
     hotUpdateChunkFilename: "hot-update.[hash:6].js",
   },
+  externals: [IS_TEST && WebpackNodeExternals()].filter(notFalse),
   node: {
     fs: "empty",
     __filename: true,
