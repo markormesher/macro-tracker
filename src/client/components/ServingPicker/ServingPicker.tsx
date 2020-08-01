@@ -72,11 +72,14 @@ class ServingPicker<Payload = {}> extends PureComponent<IServingPickerProps<Payl
           disabled={disabled || !foodItem}
         >
           {foodItem &&
-            foodItem.servingSizes.sort(servingSizeComparator).map((ss) => (
-              <option value={ss.id} key={ss.id}>
-                {ss.label} ({formatMeasurement(ss.measurement, foodItem.measurementUnit)})
-              </option>
-            ))}
+            foodItem.servingSizes
+              .filter((s) => !s.deleted)
+              .sort(servingSizeComparator)
+              .map((ss) => (
+                <option value={ss.id} key={ss.id}>
+                  {ss.label} ({formatMeasurement(ss.measurement, foodItem.measurementUnit)})
+                </option>
+              ))}
           {foodItem && <option value={""}>{formatMeasurementUnit(foodItem.measurementUnit)}</option>}
         </ControlledSelectInput>
       );
