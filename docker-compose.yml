@@ -35,9 +35,9 @@ services:
     restart: always
     depends_on:
       - redis
-      - postgres_master
-      - postgres_slave_1
-      - postgres_slave_2
+      - postgres_primary
+      - postgres_replica_1
+      - postgres_replica_2
     secrets:
       - google.client.id
       - google.client.secret
@@ -55,8 +55,8 @@ services:
     volumes:
       - ./logs:/logs
 
-  postgres_master:
-    build: ./docker/postgres-master
+  postgres_primary:
+    build: ./docker/postgres-primary
     restart: always
     secrets:
       - postgres.password
@@ -68,10 +68,10 @@ services:
       - POSTGRES_REP_USER=macro_tracker_rep
       - POSTGRES_REP_PASSWORD_FILE=/run/secrets/postgres-rep.password
     volumes:
-      - postgres-master-data:/var/lib/postgresql/data
+      - postgres-primary-data:/var/lib/postgresql/data
 
-  postgres_slave_1:
-    build: ./docker/postgres-slave
+  postgres_replica_1:
+    build: ./docker/postgres-replica
     restart: always
     secrets:
       - postgres.password
@@ -83,10 +83,10 @@ services:
       - POSTGRES_REP_USER=macro_tracker_rep
       - POSTGRES_REP_PASSWORD_FILE=/run/secrets/postgres-rep.password
     volumes:
-      - postgres-slave-1-data:/var/lib/postgresql/data
+      - postgres-replica-1-data:/var/lib/postgresql/data
 
-  postgres_slave_2:
-    build: ./docker/postgres-slave
+  postgres_replica_2:
+    build: ./docker/postgres-replica
     restart: always
     secrets:
       - postgres.password
@@ -98,7 +98,7 @@ services:
       - POSTGRES_REP_USER=macro_tracker_rep
       - POSTGRES_REP_PASSWORD_FILE=/run/secrets/postgres-rep.password
     volumes:
-      - postgres-slave-2-data:/var/lib/postgresql/data
+      - postgres-replica-2-data:/var/lib/postgresql/data
 
   redis:
     image: redis:3.2-alpine
@@ -108,9 +108,9 @@ services:
       - redis-data:/data
 
 volumes:
-  postgres-master-data:
-  postgres-slave-1-data:
-  postgres-slave-2-data:
+  postgres-primary-data:
+  postgres-replica-1-data:
+  postgres-replica-2-data:
   redis-data:
 
 secrets:
