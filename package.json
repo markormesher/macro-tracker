@@ -178,6 +178,7 @@
     "yarn-deduplicate": "^2.0.0"
   },
   "resolutions": {
+    "jpeg-js": "^0.4.0",
     "mem": "^4.0.0"
   }
 }
