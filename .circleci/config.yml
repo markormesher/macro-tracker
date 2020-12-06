@@ -12,15 +12,26 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-            - dependency-cache-{{ checksum "package.json" }}-
+            # components are ordered least- to most-often updated
+            - dependency-cache-{{ checksum ".scripts/get-assets.sh" }}-{{ checksum "package.json-versionless" }}-{{ checksum "yarn.lock" }}
+            - dependency-cache-{{ checksum ".scripts/get-assets.sh" }}-{{ checksum "package.json-versionless" }}
+            - dependency-cache-{{ checksum ".scripts/get-assets.sh" }}
             - dependency-cache-
+      - run:
+          name: Download assets
+          command: |
+            source ./.scripts/remote-settings.sh
+            mkdir -p ~/.ssh
+            touch ~/.ssh/known_hosts
+            ssh-keyscan ${REMOTE_HOST} >> ~/.ssh/known_hosts
+            ./.scripts/get-assets.sh
       - run:
           name: Install dependencies
           command: yarn install
       - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+          key: dependency-cache-{{ checksum ".scripts/get-assets.sh" }}-{{ checksum "package.json-versionless" }}-{{ checksum "yarn.lock" }}
           paths:
+            - assets
             - node_modules
       - persist_to_workspace:
           root: .
@@ -94,31 +105,51 @@ jobs:
           command: |
             # deploy tagged commits only
             if ! git describe --exact-match HEAD > /dev/null 2>&1; then echo "Not on tagged commit - nothing to do"; exit 0; fi
+            source ./.scripts/remote-settings.sh
             mkdir -p ~/.ssh
             touch ~/.ssh/known_hosts
-            ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
-            ssh $DEPLOY_USER@$DEPLOY_HOST "cd $DEPLOY_DIR && git pull && ./.scripts/deploy-remote.sh"
+            ssh-keyscan ${REMOTE_HOST} >> ~/.ssh/known_hosts
+            ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${REMOTE_DEPLOY_DIR} && git pull && ./.scripts/deploy-remote.sh"
 
 workflows:
   version: 2
   build_test_deploy:
     jobs:
-      - setup
+      - setup:
+          filters:
+            tags:
+              only: /.*/
       - lint:
+          filters:
+            tags:
+              only: /.*/
           requires:
             - setup
       - check-lockfile:
-          requires:
-            - setup
-      - test:
+          filters:
+            tags:
+              only: /.*/
           requires:
             - setup
       - bundlewatch:
+          filters:
+            tags:
+              only: /.*/
           requires:
             - setup
-      - maybe_deploy:
+      - test:
+          filters:
+            tags:
+              only: /.*/
           requires:
             - lint
             - check-lockfile
+      - maybe_deploy:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+          requires:
             - test
             - bundlewatch

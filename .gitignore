@@ -11,10 +11,6 @@ yarn-*.log*
 logs/**
 !logs/.gitkeep
 
-# Helper scripts
-.scripts/pull-data-from-prod.sh
-.scripts/push-data-to-prod.sh
-
 # IntelliJ
 *.iml
 .idea/

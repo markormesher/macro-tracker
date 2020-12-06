@@ -1,38 +1,35 @@
 version: '3.3'
 
 services:
-  nginx:
-    build: ./docker/nginx
-    restart: always
-    depends_on:
-      - api
-      - client
-    ports:
-      - "3008:3008"
-
   client:
     build:
       context: .
       dockerfile: docker/client/Dockerfile
-      args:
-        - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
     restart: always
+    networks:
+      - traefik
+      - internal
     depends_on:
       - api
     environment:
       - NPM_EXECPATH=yarn
       - npm_execpath=yarn
-      - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
     volumes:
       - ./logs:/logs
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik_default
+      - traefik.http.routers.macros-client.rule=Host(`macros.markormesher.co.uk`, `www.macros.markormesher.co.uk`)
+      - traefik.http.routers.macros-client.tls.certresolver=letsencrypt
 
   api:
     build:
       context: .
       dockerfile: docker/api/Dockerfile
-      args:
-        - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
     restart: always
+    networks:
+      - traefik
+      - internal
     depends_on:
       - redis
       - postgres_primary
@@ -50,14 +47,20 @@ services:
       - NPM_EXECPATH=yarn
       - npm_execpath=yarn
       - RUNNING_IN=docker
-      - NPM_FONT_AWESOME_TOKEN=${NPM_FONT_AWESOME_TOKEN}
       - IS_PRIMARY_SERVER=yes
     volumes:
       - ./logs:/logs
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik_default
+      - traefik.http.routers.macros-api.rule=Host(`macros.markormesher.co.uk`, `www.macros.markormesher.co.uk`) && PathPrefix(`/api`)
+      - traefik.http.routers.macros-api.tls.certresolver=letsencrypt
 
   postgres_primary:
     build: ./docker/postgres-primary
     restart: always
+    networks:
+      - internal
     secrets:
       - postgres.password
       - postgres-rep.password
@@ -73,6 +76,8 @@ services:
   postgres_replica_1:
     build: ./docker/postgres-replica
     restart: always
+    networks:
+      - internal
     secrets:
       - postgres.password
       - postgres-rep.password
@@ -88,6 +93,8 @@ services:
   postgres_replica_2:
     build: ./docker/postgres-replica
     restart: always
+    networks:
+      - internal
     secrets:
       - postgres.password
       - postgres-rep.password
@@ -103,6 +110,8 @@ services:
   redis:
     image: redis:3.2-alpine
     restart: always
+    networks:
+      - internal
     command: redis-server --appendonly yes
     volumes:
       - redis-data:/data
@@ -130,3 +139,10 @@ secrets:
     file: ./src/api/config/secrets/session.secret
   tesco-api.key:
     file: ./src/api/config/secrets/tesco-api.key
+
+networks:
+  internal:
+    external: false
+  traefik:
+    external:
+      name: traefik_default
