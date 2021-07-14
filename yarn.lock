@@ -843,10 +843,10 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@dragonlabs/eslint-config@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@dragonlabs/eslint-config/-/eslint-config-0.0.4.tgz#5b11d0e8a19aeac397b0dc60d8ff717ddf4ce84e"
-  integrity sha512-hUR5AlZ8P5vo6zlX0OF4asQt5S4/5lsnsaoPGRu5OKCxGsG48++Lm07efAQBn/xX9j3QRoaHYV55cOIHXTHRFw==
+"@dragonlabs/eslint-config@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@dragonlabs/eslint-config/-/eslint-config-0.0.8.tgz#ed2f6cc1f3715c1bd91ba4248681765ed3e736f3"
+  integrity sha512-a66cx7A/AnXWKwFxzl2Wqf0jMb8vPY/bAZk94e99nJc5mHQ4Hy4711iyFZPlZZSlfdVAwUjBGsUZ3iU000Ebew==
   dependencies:
     "@typescript-eslint/eslint-plugin" "^2.22.0"
     "@typescript-eslint/parser" "^2.22.0"
@@ -857,10 +857,10 @@
     eslint-plugin-react "^7.19.0"
     prettier "^1.19.1"
 
-"@dragonlabs/redux-cache-key-util@^0.0.10":
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/@dragonlabs/redux-cache-key-util/-/redux-cache-key-util-0.0.10.tgz#0cbf26a56b2f420c3847ba019b796f922b277b4c"
-  integrity sha512-RqiONnEx7QDH0kJY1YzIAJyI/rM99eJUb/3kxV4p62iWOi3oBkPohRzq2juLrmxlR78H20ciFotWLmALgxAzWg==
+"@dragonlabs/redux-cache-key-util@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@dragonlabs/redux-cache-key-util/-/redux-cache-key-util-0.0.12.tgz#7239a8621c396ba28dc74f90767e50c0ad77e316"
+  integrity sha512-827LAxuc5tctbaRaySy5P7E4bcFw2pPFyYFMU+ijxWLNE2KCVNckBu493TI4a59hpq5yApEDtUS+xuT8xNSlpw==
   dependencies:
     redux ">= 4.0.0"
 
