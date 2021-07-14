@@ -51,7 +51,7 @@
     "check-cross-refs": "./.scripts/check-cross-project-references.sh"
   },
   "dependencies": {
-    "@dragonlabs/redux-cache-key-util": "^0.0.12",
+    "@dragonlabs/redux-cache-key-util": "^0.0.13",
     "@fortawesome/fontawesome-svg-core": "^1.2.6",
     "@fortawesome/free-brands-svg-icons": "^5.8.1",
     "@fortawesome/pro-light-svg-icons": "./assets/fortawesome-pro-light-svg-icons-5.14.0.tgz",
@@ -96,7 +96,7 @@
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/plugin-syntax-dynamic-import": "^7.0.0",
-    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-env": "^7.9.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.1.0",
     "@dragonlabs/eslint-config": "^0.0.8",
