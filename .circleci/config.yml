@@ -13,25 +13,20 @@ jobs:
       - restore_cache:
           keys:
             # components are ordered least- to most-often updated
-            - dependency-cache-{{ checksum ".scripts/get-assets.sh" }}-{{ checksum "package.json-versionless" }}-{{ checksum "yarn.lock" }}
-            - dependency-cache-{{ checksum ".scripts/get-assets.sh" }}-{{ checksum "package.json-versionless" }}
-            - dependency-cache-{{ checksum ".scripts/get-assets.sh" }}
+            - dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}-{{ checksum "package.json-versionless" }}-{{ checksum "yarn.lock" }}
+            - dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}-{{ checksum "package.json-versionless" }}
+            - dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}
             - dependency-cache-
       - run:
-          name: Download assets
-          command: |
-            source ./.scripts/remote-settings.sh
-            mkdir -p ~/.ssh
-            touch ~/.ssh/known_hosts
-            ssh-keyscan ${REMOTE_HOST} >> ~/.ssh/known_hosts
-            ./.scripts/get-assets.sh
+          name: Download private packages
+          command: ./.scripts/get-private-packages.sh
       - run:
           name: Install dependencies
           command: yarn install
       - save_cache:
-          key: dependency-cache-{{ checksum ".scripts/get-assets.sh" }}-{{ checksum "package.json-versionless" }}-{{ checksum "yarn.lock" }}
+          key: dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}-{{ checksum "package.json-versionless" }}-{{ checksum "yarn.lock" }}
           paths:
-            - assets
+            - private-packages
             - node_modules
       - persist_to_workspace:
           root: .
@@ -91,29 +86,9 @@ jobs:
       - store_test_results:
           path: test-results
 
-  maybe_deploy:
-    # Tag filtering in CircleCI is unreliable - this is hacky, but it works
-    <<: *defaults
-    steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "98:46:b4:aa:3e:3f:5a:09:66:f0:97:cc:60:e0:4d:e9"
-      - attach_workspace:
-          at: .
-      - run:
-          name: Maybe Deploy
-          command: |
-            # deploy tagged commits only
-            if ! git describe --exact-match HEAD > /dev/null 2>&1; then echo "Not on tagged commit - nothing to do"; exit 0; fi
-            source ./.scripts/remote-settings.sh
-            mkdir -p ~/.ssh
-            touch ~/.ssh/known_hosts
-            ssh-keyscan ${REMOTE_HOST} >> ~/.ssh/known_hosts
-            ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${REMOTE_DEPLOY_DIR} && git pull && ./.scripts/deploy-remote.sh"
-
 workflows:
   version: 2
-  build_test_deploy:
+  build_test:
     jobs:
       - setup:
           filters:
@@ -144,12 +119,3 @@ workflows:
           requires:
             - lint
             - check-lockfile
-      - maybe_deploy:
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
-          requires:
-            - test
-            - bundlewatch
