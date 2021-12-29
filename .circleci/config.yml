@@ -19,12 +19,7 @@ jobs:
             - dependency-cache-
       - run:
           name: Download private packages
-          command: |
-            source ./.scripts/remote-settings.sh
-            mkdir -p ~/.ssh
-            touch ~/.ssh/known_hosts
-            ssh-keyscan ${REMOTE_HOST} >> ~/.ssh/known_hosts
-            ./.scripts/get-private-packages.sh
+          command: ./.scripts/get-private-packages.sh
       - run:
           name: Install dependencies
           command: yarn install
