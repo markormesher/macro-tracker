@@ -12,9 +12,7 @@ import * as Redis from "redis";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { StatusError } from "../commons/StatusError";
-import { isPrimaryServer } from "../commons/utils/env";
 import { ensureLogFilesAreCreated, logger } from "../commons/utils/logging";
-import { delayPromise } from "../commons/utils/utils";
 import { getSecret } from "./config/config-loader";
 import { typeormConf } from "./db/db-config";
 import { MigrationRunner } from "./db/migrations/MigrationRunner";
@@ -65,20 +63,11 @@ app.use((error: StatusError, req: Request, res: Response) => {
   res.status(status).json({ status, name, message });
 });
 
-// make non-primary servers sleep during start-up to allow the primary to acquire migration locks
-const startUpDelay = isPrimaryServer() ? 0 : 5000;
-logger.info(`Sleeping for ${startUpDelay}ms before starting...`);
-
 async function initDb(): Promise<void> {
   // DB migrations
-  await delayPromise(startUpDelay);
   logger.info("Starting DB migrations");
   const migrationRunner = new MigrationRunner(typeormConf);
-  if (isPrimaryServer()) {
-    await migrationRunner.runMigrations().then(() => logger.info("Migrations finished"));
-  } else {
-    await migrationRunner.waitForMigrationsToComplete().then(() => logger.info("Migrations finished"));
-  }
+  await migrationRunner.runMigrations().then(() => logger.info("Migrations finished"));
 
   // DB connection
   return createConnection(typeormConf).then(() => {
