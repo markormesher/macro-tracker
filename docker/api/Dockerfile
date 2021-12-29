@@ -3,7 +3,7 @@ FROM node:dubnium
 WORKDIR /macro-tracker
 
 # dependencies
-COPY ./assets ./assets
+COPY ./private-packages ./private-packages
 COPY package.json-versionless .yarnrc yarn.lock ./
 RUN mv package.json-versionless package.json
 RUN yarn install

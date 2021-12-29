@@ -54,7 +54,7 @@
     "@dragonlabs/redux-cache-key-util": "^0.0.13",
     "@fortawesome/fontawesome-svg-core": "^1.2.6",
     "@fortawesome/free-brands-svg-icons": "^5.8.1",
-    "@fortawesome/pro-light-svg-icons": "./assets/fortawesome-pro-light-svg-icons-5.14.0.tgz",
+    "@fortawesome/pro-light-svg-icons": "./private-packages/fortawesome-pro-light-svg-icons-5.14.0.tgz",
     "@fortawesome/react-fontawesome": "^0.1.4",
     "@zxing/library": "^0.12.3",
     "async": "^2.6.0",
@@ -178,7 +178,6 @@
     "yarn-deduplicate": "^2.0.0"
   },
   "resolutions": {
-    "jpeg-js": "^0.4.0",
     "mem": "^4.0.0"
   }
 }
