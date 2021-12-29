@@ -45,7 +45,6 @@ services:
       - NPM_EXECPATH=yarn
       - npm_execpath=yarn
       - RUNNING_IN=docker
-      - IS_PRIMARY_SERVER=yes
     volumes:
       - ./logs:/logs
     labels:
