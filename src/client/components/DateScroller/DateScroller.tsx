@@ -2,8 +2,8 @@ import { faAngleLeft, faAngleRight } from "@fortawesome/pro-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { addDays, endOfDay, isBefore, subDays } from "date-fns";
 import React, { PureComponent, ReactNode } from "react";
-import { fixedDate } from "../../../commons/utils/dates";
-import { formatDate } from "../../../commons/utils/formatters";
+import { fixedDate } from "../../../utils/dates";
+import { formatDate } from "../../../utils/formatters";
 import { combine } from "../../helpers/style-helpers";
 import * as style from "./DateScroller.scss";
 

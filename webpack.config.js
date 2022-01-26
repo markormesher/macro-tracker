@@ -50,7 +50,7 @@ const tsLoader = {
   loader: "ts-loader",
   options: {
     transpileOnly: true,
-    configFile: IS_TEST ? "tsconfig.client-test.json" : "tsconfig.client.json",
+    configFile: IS_TEST ? "tsconfig.test.json" : "tsconfig.json",
     compilerOptions: {
       module: "esnext",
     },

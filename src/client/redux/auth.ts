@@ -1,6 +1,6 @@
 import axios from "axios";
 import { all, call, put, select, take, takeEvery } from "redux-saga/effects";
-import { IUser, mapUserFromApi } from "../../commons/models/IUser";
+import { IUser, mapUserFromApi } from "../../models/IUser";
 import { addWait, removeWait, setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { IRootState } from "./root";

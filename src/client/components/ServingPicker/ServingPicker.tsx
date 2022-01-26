@@ -1,7 +1,7 @@
 import React, { PureComponent, ReactNode } from "react";
-import { IFoodItem } from "../../../commons/models/IFoodItem";
-import { IServingSize, servingSizeComparator } from "../../../commons/models/IServingSize";
-import { formatMeasurement, formatMeasurementUnit } from "../../../commons/utils/formatters";
+import { IFoodItem } from "../../../models/IFoodItem";
+import { IServingSize, servingSizeComparator } from "../../../models/IServingSize";
+import { formatMeasurement, formatMeasurementUnit } from "../../../utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";

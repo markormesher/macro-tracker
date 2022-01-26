@@ -1,9 +1,9 @@
 import axios from "axios";
 import { all, call, put, select, takeEvery } from "redux-saga/effects";
-import { IFoodItem, mapFoodItemFromJson } from "../../commons/models/IFoodItem";
-import { IJsonArray } from "../../commons/models/IJsonArray";
-import { IJsonObject } from "../../commons/models/IJsonObject";
-import { safeMapEntities } from "../../commons/utils/entities";
+import { IFoodItem, mapFoodItemFromJson } from "../../models/IFoodItem";
+import { IJsonArray } from "../../models/IJsonArray";
+import { IJsonObject } from "../../models/IJsonObject";
+import { safeMapEntities } from "../../utils/entities";
 import { setError } from "./global";
 import { PayloadAction } from "./helpers/PayloadAction";
 import { IRootState } from "./root";

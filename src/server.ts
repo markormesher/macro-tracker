@@ -1,0 +1,80 @@
+// TODO: fix duplicate Express import
+
+import * as BodyParser from "body-parser";
+import * as ConnectRedis from "connect-redis";
+// eslint-disable-next-line import/no-duplicates
+import * as Express from "express";
+// eslint-disable-next-line import/no-duplicates
+import { Request, Response } from "express";
+import * as ExpressSession from "express-session";
+import * as Redis from "redis";
+import "reflect-metadata";
+import { createConnection } from "typeorm";
+import { StatusError } from "./utils/StatusError";
+import { ensureLogFilesAreCreated, logger } from "./utils/logging";
+import { getSecret } from "./config/config-loader";
+import { typeormConf } from "./db/db-config";
+import { MigrationRunner } from "./db/migrations/MigrationRunner";
+import { setupApiRoutes } from "./middleware/api-routes";
+import { setupClientRoutes } from "./middleware/client-routes";
+import { loadUser } from "./middleware/auth-middleware";
+
+(async function(): Promise<void> {
+  const app = Express();
+
+  // logging
+  ensureLogFilesAreCreated();
+
+  // cookies and sessions
+  const redisClient = Redis.createClient({
+    host: "redis",
+    port: 6379,
+  });
+  const RedisSessionStore = ConnectRedis(ExpressSession);
+  app.use(
+    ExpressSession({
+      store: new RedisSessionStore({ client: redisClient }),
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24, // 24h
+      },
+      secret: getSecret("session.secret"),
+      resave: false,
+      rolling: true,
+      saveUninitialized: false,
+    }),
+  );
+
+  // DB migrations
+  logger.info("Starting DB migrations");
+  const migrationRunner = new MigrationRunner(typeormConf);
+  await migrationRunner.runMigrations();
+  logger.info("Migrations finished");
+
+  // DB connection
+  await createConnection(typeormConf);
+  logger.info("Database connection created successfully");
+
+  // middleware
+  app.use(BodyParser.json());
+  app.use(loadUser);
+
+  // routes
+  setupApiRoutes(app);
+  setupClientRoutes(app);
+
+  // error handlers
+  app.use((error: StatusError, req: Request, res: Response) => {
+    const status = error.status || 500;
+    const name = error.name || "Internal Server Error";
+    const message = error.message || undefined;
+    logger.error(`Error: ${name} - ${message}`, error);
+    res.status(status).json({ status, name, message });
+  });
+
+  // server start!
+  const port = 3000;
+  const server = app.listen(port, () => {
+    logger.info(`Server listening on port ${port}`);
+  });
+  process.on("SIGTERM", () => server.close(() => process.exit(0)));
+})();

@@ -5,16 +5,11 @@ import { match as Match } from "react-router";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
 import { v4 } from "uuid";
-import { FoodMeasurementUnit } from "../../../commons/enums";
-import {
-  getDefaultFoodItem,
-  IFoodItem,
-  IFoodItemValidationResult,
-  validateFoodItem,
-} from "../../../commons/models/IFoodItem";
-import { getDefaultServingSize, IServingSize } from "../../../commons/models/IServingSize";
-import { formatMeasurementUnit, formatNutritionBaseSize, uniqueArray } from "../../../commons/utils/formatters";
-import { getFoodItemDataWarnings } from "../../../commons/utils/helpers";
+import { FoodMeasurementUnit } from "../../../utils/enums";
+import { getDefaultFoodItem, IFoodItem, IFoodItemValidationResult, validateFoodItem } from "../../../models/IFoodItem";
+import { getDefaultServingSize, IServingSize } from "../../../models/IServingSize";
+import { formatMeasurementUnit, formatNutritionBaseSize, uniqueArray } from "../../../utils/formatters";
+import { getFoodItemDataWarnings } from "../../../utils/helpers";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";

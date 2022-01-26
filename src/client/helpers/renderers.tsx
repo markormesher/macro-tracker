@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
-import { IFoodItem } from "../../commons/models/IFoodItem";
-import { formatLargeNumber, formatMeasurement, formatNutritionBaseSize } from "../../commons/utils/formatters";
+import { IFoodItem } from "../../models/IFoodItem";
+import { formatLargeNumber, formatMeasurement, formatNutritionBaseSize } from "../../utils/formatters";
 import * as bs from "../global-styles/Bootstrap.scss";
 import { combine } from "./style-helpers";
 

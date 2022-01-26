@@ -9,9 +9,9 @@ import {
   IExerciseEntry,
   IExerciseEntryValidationResult,
   validateExerciseEntry,
-} from "../../../commons/models/IExerciseEntry";
-import { dateToUrlString, urlStringToDate } from "../../../commons/utils/dates";
-import { formatDate } from "../../../commons/utils/formatters";
+} from "../../../models/IExerciseEntry";
+import { dateToUrlString, urlStringToDate } from "../../../utils/dates";
+import { formatDate } from "../../../utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";

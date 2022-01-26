@@ -19,7 +19,7 @@ $border-color: $gray-500;
 
   .summary-item {
     flex-grow: 1;
-    margin: $spacer #{$spacer / 4};
+    margin: $spacer #{$spacer * 0.25};
     text-align: center;
 
     span {

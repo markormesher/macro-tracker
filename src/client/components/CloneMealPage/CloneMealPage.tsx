@@ -3,15 +3,15 @@ import React, { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
-import { ALL_MEAL_VALUES, Meal } from "../../../commons/enums";
+import { ALL_MEAL_VALUES, Meal } from "../../../utils/enums";
 import {
   getDefaultCloneMealRequest,
   ICloneMealRequest,
   ICloneMealRequestValidationResult,
   validateCloneMealRequest,
-} from "../../../commons/models/ICloneMealRequest";
-import { dateToUrlString, urlStringToDate } from "../../../commons/utils/dates";
-import { formatDate, getMealTitle } from "../../../commons/utils/formatters";
+} from "../../../models/ICloneMealRequest";
+import { dateToUrlString, urlStringToDate } from "../../../utils/dates";
+import { formatDate, getMealTitle } from "../../../utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";

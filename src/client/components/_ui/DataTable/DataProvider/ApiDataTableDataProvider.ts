@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { stringify } from "qs";
-import { IDataTableResponse } from "../../../../../commons/models/IDataTableResponse";
+import { IDataTableResponse } from "../../../../../models/IDataTableResponse";
 import { IColumnSortEntry } from "../DataTable";
 import { IDataTableDataProvider } from "./IDataTableDataProvider";
 

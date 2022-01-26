@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { IMacroSummary } from "../../commons/models/IMacroSummary";
+import { IMacroSummary } from "../../models/IMacroSummary";
 import { ProgressBar } from "../components/_ui/ProgressBar/ProgressBar";
 import * as bs from "../global-styles/Bootstrap.scss";
 

@@ -1,19 +1,10 @@
-version: '3.3'
+version: "3.3"
 
 services:
-  api:
+  app:
     build:
       args:
         - BUILD_TYPE=development
-    command: yarn start-api-dev
+    command: yarn start-dev
     volumes:
       - ./src:/macro-tracker/src
-
-  client:
-    build:
-      args:
-        - BUILD_TYPE=development
-    command: yarn start-client-dev
-    volumes:
-      - ./src:/macro-tracker/src
-

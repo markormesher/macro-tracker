@@ -13,8 +13,8 @@ jobs:
       - restore_cache:
           keys:
             # components are ordered least- to most-often updated
-            - dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}-{{ checksum "package.json-versionless" }}-{{ checksum "yarn.lock" }}
-            - dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}-{{ checksum "package.json-versionless" }}
+            - dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}-{{ checksum "yarn.lock" }}
+            - dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}
             - dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}
             - dependency-cache-
       - run:
@@ -24,7 +24,7 @@ jobs:
           name: Install dependencies
           command: yarn install
       - save_cache:
-          key: dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}-{{ checksum "package.json-versionless" }}-{{ checksum "yarn.lock" }}
+          key: dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}-{{ checksum "yarn.lock" }}
           paths:
             - private-packages
             - node_modules
@@ -53,21 +53,6 @@ jobs:
       - run:
           name: Check for duplicate dependencies
           command: yarn yarn-deduplicate -f -l
-
-  bundlewatch:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: .
-      - run:
-          name: Build client packages
-          command: yarn build-client
-      - run:
-          name: Remove non-shipped files
-          command: ./.bundlewatch/remove-non-watched-files.sh
-      - run:
-          name: Run BundleWatch
-          command: yarn bundlewatch
 
   test:
     <<: *defaults
@@ -101,12 +86,6 @@ workflows:
           requires:
             - setup
       - check-lockfile:
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - setup
-      - bundlewatch:
           filters:
             tags:
               only: /.*/

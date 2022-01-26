@@ -4,15 +4,15 @@ import { connect } from "react-redux";
 import { match as Match } from "react-router";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
-import { generateMacroSummary } from "../../../commons/models/IMacroSummary";
+import { generateMacroSummary } from "../../../models/IMacroSummary";
 import {
   getDefaultTarget,
   ITarget,
   ITargetValidationResult,
   TargetMode,
   validateTarget,
-} from "../../../commons/models/ITarget";
-import { formatDate, formatLargeNumber, formatMeasurement, formatPercent } from "../../../commons/utils/formatters";
+} from "../../../models/ITarget";
+import { formatDate, formatLargeNumber, formatMeasurement, formatPercent } from "../../../utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
