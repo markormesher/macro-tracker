@@ -35,15 +35,19 @@ class ControlledBarcodeInput extends PureComponent<IControlledBarcodeInputProps,
     const { hasBeenTouched } = this.state;
     return (
       <>
-        {label && <label htmlFor={id}>{label}</label>}
-        <div className={bs.dFlex}>
+        {label && (
+          <label htmlFor={id} className={bs.formLabel}>
+            {label}
+          </label>
+        )}
+        <div className={bs.inputGroup}>
           <input
             id={id}
             name={id}
             type="barcode"
             onChange={this.handleChange}
             disabled={disabled !== false}
-            className={combine(bs.flexGrow1, bs.formControl, hasBeenTouched && error && bs.isInvalid)}
+            className={combine(bs.formControl, hasBeenTouched && error && bs.isInvalid)}
             placeholder={placeholder || ""}
             value={value}
             onBlur={this.handleBlur}
@@ -52,7 +56,7 @@ class ControlledBarcodeInput extends PureComponent<IControlledBarcodeInputProps,
           <BarcodeScannerBtn
             onScan={this.handleScan}
             btnProps={{
-              className: combine(bs.btnOutlineDark, bs.flexGrow0, bs.ml1),
+              className: bs.btnOutlineDark,
             }}
           />
         </div>

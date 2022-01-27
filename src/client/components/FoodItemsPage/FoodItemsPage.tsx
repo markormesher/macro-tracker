@@ -146,14 +146,14 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
     if (foodItem.apiSource === "tesco") {
       infoChunks.push(
         <span key={`info-chunk-api`}>
-          <FontAwesomeIcon icon={faLink} className={bs.mr1} />
+          <FontAwesomeIcon icon={faLink} className={bs.me1} />
           Tesco
         </span>,
       );
     } else if (foodItem.apiSource === "nutritionix") {
       infoChunks.push(
         <span key={`info-chunk-api`}>
-          <FontAwesomeIcon icon={faPlug} className={bs.mr1} />
+          <FontAwesomeIcon icon={faPlug} className={bs.me1} />
           Nutritionix
         </span>,
       );
@@ -163,7 +163,7 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
     if (warnings.length > 0) {
       infoChunks.push(
         <span key={`info-chunk-warning`} className={bs.textDanger}>
-          <FontAwesomeIcon icon={faExclamationTriangle} className={bs.mr1} />
+          <FontAwesomeIcon icon={faExclamationTriangle} className={bs.me1} />
           {warnings.length} warning{warnings.length > 1 ? "s" : ""}
         </span>,
       );

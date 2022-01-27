@@ -50,7 +50,7 @@ class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
       const sortIcon = sorted ? (sortEntry.dir === "ASC" ? faSortAmountUp : faSortAmountDown) : faExchange;
       const sortIconFlip = sorted && sortEntry.dir === "ASC" ? "vertical" : undefined;
       const sortIconRotate = sortIcon === faExchange ? 90 : undefined;
-      const sortIconClasses = combine(bs.mr1, !sorted && styles.sortInactive);
+      const sortIconClasses = combine(bs.me1, !sorted && styles.sortInactive);
 
       const clickHandler = sortable ? (): void => this.toggleColumnSortOrder(col) : undefined;
       const className = sortable ? styles.sortable : undefined;

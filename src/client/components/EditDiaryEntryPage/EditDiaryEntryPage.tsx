@@ -196,7 +196,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
             <h1>{creatingNew ? "Create" : "Edit"} Diary Entry</h1>
             <ControlledForm onSubmit={this.handleSubmit}>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <FoodItemPicker
                     value={currentValue.foodItem}
                     preSelectedId={urlFoodItemId}
@@ -206,7 +206,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
                 </div>
               </div>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledDateInput
                     id={"date"}
                     label={"Date"}
@@ -218,7 +218,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
                 </div>
               </div>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledSelectInput
                     id={"meal"}
                     label={"Meal"}
@@ -237,8 +237,8 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
                 </div>
               </div>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
-                  <label>How Much?</label>
+                <div className={combine(bs.col12, bs.mb3)}>
+                  <label className={bs.formLabel}>How Much?</label>
                   <ServingPicker
                     foodItem={currentValue.foodItem}
                     servingQty={currentValue.servingQty}
@@ -250,7 +250,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
                 </div>
               </div>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <IconBtn
                     icon={editorBusy ? faCircleNotch : faSave}
                     text={"Save"}

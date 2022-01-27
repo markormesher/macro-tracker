@@ -276,7 +276,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
     if (activeEditPositions.indexOf(index) >= 0) {
       return (
         <div className={bs.dFlex} key={index}>
-          <div className={combine(bs.flexGrow1, bs.my1, bs.mr2)}>
+          <div className={combine(bs.flexGrow1, bs.my1, bs.me2)}>
             <ServingPicker
               foodItem={foodItem}
               servingQty={entry.servingQty}

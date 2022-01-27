@@ -1,10 +1,6 @@
 const { resolve, join } = require("path");
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const md5 = require("md5");
-const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const ReplaceInFileWebpackPlugin = require("replace-in-file-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
 const webpack = require("webpack");
 
@@ -143,44 +139,9 @@ const config = {
       alwaysWriteToDisk: IS_DEV,
     }),
     IS_PROD &&
-      new ReplaceInFileWebpackPlugin([
-        {
-          test: /\.[jt]s(x?)$/,
-          dir: outputDir,
-          rules: [
-            {
-              // replace redux action strings with hashes
-              search: /"([A-Za-z]+)Actions\.([_A-Z]+)"/g,
-              replace: (str) => '"' + md5(str).substring(0, 6) + '"',
-            },
-            {
-              // replace redux cache keys with hashes
-              search: /"([A-Za-z]+)CacheKeys\.([_A-Z]+)"/g,
-              replace: (str) => '"' + md5(str).substring(0, 6) + '"',
-            },
-          ],
-        },
-        {
-          test: /\.(s?)css$/,
-          dir: outputDir,
-          rules: [
-            {
-              // trim a couple of bytes from the (S)CSS output
-              search: /\n/g,
-              replace: "",
-            },
-          ],
-        },
-      ]),
-    IS_PROD &&
       new MiniCssExtractPlugin({
         minimize: true,
         filename: "[name].css",
-      }),
-    IS_PROD &&
-      new BundleAnalyzerPlugin({
-        analyzerMode: "static",
-        openAnalyzer: false,
       }),
     IS_DEV && new webpack.HotModuleReplacementPlugin(),
   ].filter(notFalse),
@@ -228,4 +189,4 @@ const config = {
   stats: "minimal",
 };
 
-module.exports = IS_DEV || IS_PROD ? new SpeedMeasurePlugin().wrap(config) : config;
+module.exports = config;

@@ -153,7 +153,7 @@ class UCEditCloneMealPage extends PureComponent<IEditCloneMealPageProps, IEditCl
             <h1>Clone Entry</h1>
             <ControlledForm onSubmit={this.handleSubmit}>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledDateInput
                     id={"fromDate"}
                     label={"From Date"}
@@ -165,7 +165,7 @@ class UCEditCloneMealPage extends PureComponent<IEditCloneMealPageProps, IEditCl
                 </div>
               </div>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledSelectInput
                     id={"fromMeal"}
                     label={"From Meal"}
@@ -184,7 +184,7 @@ class UCEditCloneMealPage extends PureComponent<IEditCloneMealPageProps, IEditCl
                 </div>
               </div>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledDateInput
                     id={"toDate"}
                     label={"To Date"}
@@ -196,7 +196,7 @@ class UCEditCloneMealPage extends PureComponent<IEditCloneMealPageProps, IEditCl
                 </div>
               </div>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledSelectInput
                     id={"toMeal"}
                     label={"To Meal"}
@@ -215,7 +215,7 @@ class UCEditCloneMealPage extends PureComponent<IEditCloneMealPageProps, IEditCl
                 </div>
               </div>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <IconBtn
                     icon={editorBusy ? faCircleNotch : faCopy}
                     text={"Clone"}

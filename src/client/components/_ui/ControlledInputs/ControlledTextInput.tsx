@@ -42,7 +42,11 @@ class ControlledTextInput extends PureComponent<IControlledTextInputProps, ICont
     const { hasBeenTouched } = this.state;
     return (
       <>
-        {label && <label htmlFor={id}>{label}</label>}
+        {label && (
+          <label htmlFor={id} className={bs.formLabel}>
+            {label}
+          </label>
+        )}
         <input
           id={id}
           name={id}

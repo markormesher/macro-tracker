@@ -215,7 +215,7 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps, IFoodItemPick
               text={"Cancel"}
               onClick={this.closeSearch}
               btnProps={{
-                className: combine(bs.btnOutlineDark, bs.ml1),
+                className: combine(bs.btnOutlineDark, bs.ms1),
               }}
             />
           </div>
