@@ -34,7 +34,6 @@ function formatDate(date: Date, format: "short" | "user" | "title" | "system" = 
 
   const adjustedDate = fixedDate(date);
 
-  /* istanbul ignore else: protected by type system */
   if (format === "short") {
     return dateFnsFormat(adjustedDate, "DD/MM");
   } else if (format === "user") {

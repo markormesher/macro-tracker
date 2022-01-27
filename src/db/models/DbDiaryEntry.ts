@@ -22,17 +22,13 @@ class DbDiaryEntry extends BaseModel implements IDiaryEntry {
   public servingQty: number;
 
   @ManyToOne(
-    /* istanbul ignore next */
     () => DbFoodItem,
-    /* istanbul ignore next */
     (fi) => fi.diaryEntries,
   )
   public foodItem: DbFoodItem;
 
   @ManyToOne(
-    /* istanbul ignore next */
     () => DbServingSize,
-    /* istanbul ignore next */
     (ss) => ss.diaryEntries,
   )
   public servingSize: DbServingSize;

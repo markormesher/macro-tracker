@@ -1,10 +1,8 @@
 const { resolve, join } = require("path");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
-const glob = require("glob");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const md5 = require("md5");
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
-const WebpackNodeExternals = require("webpack-node-externals");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ReplaceInFileWebpackPlugin = require("replace-in-file-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
@@ -12,24 +10,21 @@ const webpack = require("webpack");
 
 const notFalse = (val) => val !== false;
 const nodeEnv = process.env.NODE_ENV.toLowerCase();
-const IS_TEST = nodeEnv === "test";
 const IS_PROD = nodeEnv === "production";
 const IS_DEV = nodeEnv === "development";
 
-if (!IS_TEST && !IS_PROD && !IS_DEV) {
-  throw new Error("NODE_ENV was not set to one of test, production or development (it was '" + nodeEnv + "'");
+if (!IS_PROD && !IS_DEV) {
+  throw new Error("NODE_ENV was not set production or development (it was '" + nodeEnv + "'");
 }
 
 const outputDir = resolve(__dirname, "build", "client");
-const entryPoints = IS_TEST
-  ? glob.sync("./src/client/**/*.tests.{ts,tsx}")
-  : resolve(__dirname, "src", "client", "index.tsx");
+const entryPoints = resolve(__dirname, "src", "client", "index.tsx");
 
 const babelLoader = {
   loader: "babel-loader",
   options: {
     cacheDirectory: true,
-    plugins: [IS_TEST && "istanbul", "@babel/plugin-syntax-dynamic-import", "date-fns"].filter(notFalse),
+    plugins: ["@babel/plugin-syntax-dynamic-import", "date-fns"].filter(notFalse),
     presets: [
       [
         "@babel/preset-env",
@@ -50,7 +45,7 @@ const tsLoader = {
   loader: "ts-loader",
   options: {
     transpileOnly: true,
-    configFile: IS_TEST ? "tsconfig.test.json" : "tsconfig.json",
+    configFile: "tsconfig.json",
     compilerOptions: {
       module: "esnext",
     },
@@ -99,16 +94,12 @@ const config = {
     hotUpdateMainFilename: "hot-update.[hash:6].json",
     hotUpdateChunkFilename: "hot-update.[hash:6].js",
   },
-  externals: [IS_TEST && WebpackNodeExternals()].filter(notFalse),
   node: {
     fs: "empty",
     __filename: true,
     __dirname: true,
   },
   module: {
-    // in test mode, disable this warning
-    exprContextCritical: !IS_TEST,
-
     rules: [
       {
         test: /\.ts(x?)$/,
@@ -144,14 +135,13 @@ const config = {
   plugins: [
     new webpack.WatchIgnorePlugin([/css\.d\.ts$/]),
     new webpack.EnvironmentPlugin(["NODE_ENV"]),
-    !IS_TEST &&
-      new HtmlWebpackPlugin({
-        template: resolve(__dirname, "src", "client", "index.html"),
-        inject: true,
-        hash: IS_DEV,
-        minify: IS_PROD,
-        alwaysWriteToDisk: IS_DEV,
-      }),
+    new HtmlWebpackPlugin({
+      template: resolve(__dirname, "src", "client", "index.html"),
+      inject: true,
+      hash: IS_DEV,
+      minify: IS_PROD,
+      alwaysWriteToDisk: IS_DEV,
+    }),
     IS_PROD &&
       new ReplaceInFileWebpackPlugin([
         {
@@ -206,7 +196,7 @@ const config = {
     minimize: IS_PROD,
     minimizer: IS_PROD ? [terserMinimiser] : [],
     namedModules: IS_DEV,
-    splitChunks: !IS_TEST && {
+    splitChunks: {
       chunks: "all",
       maxInitialRequests: Infinity,
       minSize: 0,
@@ -235,7 +225,7 @@ const config = {
   performance: {
     hints: IS_PROD ? "warning" : false,
   },
-  stats: IS_TEST ? "errors-only" : "minimal",
+  stats: "minimal",
 };
 
 module.exports = IS_DEV || IS_PROD ? new SpeedMeasurePlugin().wrap(config) : config;

@@ -51,17 +51,13 @@ class DbFoodItem extends BaseModel implements IFoodItem {
   public saltPerBaseAmount: number;
 
   @OneToMany(
-    /* istanbul ignore next */
     () => DbServingSize,
-    /* istanbul ignore next */
     (s) => s.foodItem,
   )
   public servingSizes: DbServingSize[];
 
   @OneToMany(
-    /* istanbul ignore next */
     () => DbDiaryEntry,
-    /* istanbul ignore next */
     (de) => de.foodItem,
   )
   public diaryEntries: DbDiaryEntry[];

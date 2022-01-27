@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync } from "fs";
 import { format } from "logform";
 import * as Winston from "winston";
-import { isDev, isTest } from "./env";
+import { isDev } from "./env";
 
 const consoleLogFormat = format.combine(
   format.colorize({
@@ -33,8 +33,7 @@ const logger = Winston.createLogger({
   ],
 });
 
-/* istanbul ignore else: tests never run in prod mode */
-if (isDev() || isTest()) {
+if (isDev()) {
   logger.add(
     new Winston.transports.Console({
       format: consoleLogFormat,

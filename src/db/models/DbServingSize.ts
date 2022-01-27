@@ -19,17 +19,13 @@ class DbServingSize extends BaseEntity implements IServingSize {
   public measurement: number;
 
   @ManyToOne(
-    /* istanbul ignore next */
     () => DbFoodItem,
-    /* istanbul ignore next */
     (f) => f.servingSizes,
   )
   public foodItem: DbFoodItem;
 
   @OneToMany(
-    /* istanbul ignore next */
     () => DbDiaryEntry,
-    /* istanbul ignore next */
     (de) => de.servingSize,
   )
   public diaryEntries: DbDiaryEntry[];
