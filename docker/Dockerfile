@@ -10,7 +10,7 @@ RUN yarn install
 # source
 COPY ./docker ./docker
 COPY ./src ./src
-COPY ./tsconfig.json ./tsconfig.api*.json ./webpack.config.js ./
+COPY ./tsconfig.json ./webpack.config.js ./
 
 # build
 ARG BUILD_TYPE=production

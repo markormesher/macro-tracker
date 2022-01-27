@@ -60,8 +60,6 @@ class MigrationRunner {
         throw new Error("Migration table doesn't exist!");
       }
 
-      logger.info("Got table");
-
       // check that migrations aren't in progress already
       const migrationRows: IMigrationsTableRow[] = await qr.query("SELECT * FROM migrations;");
       if (migrationRows.length !== 1) {

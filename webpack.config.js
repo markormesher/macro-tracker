@@ -10,7 +10,7 @@ const IS_PROD = nodeEnv === "production";
 const IS_DEV = nodeEnv === "development";
 
 if (!IS_PROD && !IS_DEV) {
-  throw new Error("NODE_ENV was not set production or development (it was '" + nodeEnv + "'");
+  throw new Error("NODE_ENV was not set production or development (it was '" + nodeEnv + "')");
 }
 
 const outputDir = resolve(__dirname, "build", "client");
