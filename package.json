@@ -30,7 +30,8 @@
     "lint-style-fix": "prettier --write \"src/**/*.{css,scss}\"",
     "// misc": "//",
     "clean": "rimraf ./build ./coverage ./.nyc_output",
-    "copy-config": "copyfiles -u 1 -e \"./**/*.ts\" \"./src/config/**\" ./build/."
+    "copy-config": "copyfiles -u 1 -e \"./**/*.ts\" \"./src/config/**\" ./build/.",
+    "get-private-packages": "./.scripts/get-private-packages.sh"
   },
   "dependencies": {
     "@dragonlabs/redux-cache-key-util": "^0.0.13",

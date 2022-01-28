@@ -1,6 +1,5 @@
 .circleci/
 .idea/
-.scripts/
 
 .git/
 .gitignore
