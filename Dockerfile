@@ -8,7 +8,6 @@ COPY package.json yarn.lock ./
 RUN yarn install
 
 # source
-COPY ./docker ./docker
 COPY ./src ./src
 COPY ./tsconfig.json ./webpack.config.js ./
 

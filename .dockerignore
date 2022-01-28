@@ -7,8 +7,6 @@
 
 .dockerignore
 docker-compose*
-docker/
-!docker/*.sh
 
 build/
 coverage/
