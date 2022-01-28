@@ -184,7 +184,7 @@ const config = {
     },
   },
   performance: {
-    hints: IS_PROD ? "warning" : false,
+    hints: false,
   },
   stats: "minimal",
 };
