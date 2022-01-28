@@ -1,10 +1,10 @@
 import axios, { AxiosError } from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { IJsonArray } from "../../commons/models/IJsonArray";
-import { IJsonObject } from "../../commons/models/IJsonObject";
-import { ITarget, mapTargetFromJson, mapTargetToJson } from "../../commons/models/ITarget";
-import { safeMapEntities } from "../../commons/utils/entities";
+import { IJsonArray } from "../../models/IJsonArray";
+import { IJsonObject } from "../../models/IJsonObject";
+import { ITarget, mapTargetFromJson, mapTargetToJson } from "../../models/ITarget";
+import { safeMapEntities } from "../../utils/entities";
 import { setError } from "./global";
 import { ActionResult } from "./helpers/ActionResult";
 import { PayloadAction } from "./helpers/PayloadAction";

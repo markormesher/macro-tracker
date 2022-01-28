@@ -2,7 +2,7 @@ import { faSearch, faTimes } from "@fortawesome/pro-light-svg-icons";
 import React, { MouseEvent, PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { foodItemComparator, IFoodItem } from "../../../commons/models/IFoodItem";
+import { foodItemComparator, IFoodItem } from "../../../models/IFoodItem";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { levenshteinDistance } from "../../helpers/levenshtein-distance";
 import { renderFoodItemSummary } from "../../helpers/renderers";
@@ -215,7 +215,7 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps, IFoodItemPick
               text={"Cancel"}
               onClick={this.closeSearch}
               btnProps={{
-                className: combine(bs.btnOutlineDark, bs.ml1),
+                className: combine(bs.btnOutlineDark, bs.ms1),
               }}
             />
           </div>

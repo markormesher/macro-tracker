@@ -1,5 +1,5 @@
 import React, { FormEvent, InputHTMLAttributes, PureComponent, ReactElement, ReactNode } from "react";
-import { fixedDate } from "../../../../commons/utils/dates";
+import { fixedDate } from "../../../../utils/dates";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 
@@ -33,7 +33,11 @@ class ControlledDateInput extends PureComponent<IControlledDateInputProps, ICont
     const { hasBeenTouched } = this.state;
     return (
       <>
-        {label && <label htmlFor={id}>{label}</label>}
+        {label && (
+          <label htmlFor={id} className={bs.formLabel}>
+            {label}
+          </label>
+        )}
         <input
           id={id}
           name={id}

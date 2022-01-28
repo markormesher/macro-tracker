@@ -1,7 +1,7 @@
 import React, { PureComponent, ReactNode } from "react";
-import { IDiaryEntry } from "../../../commons/models/IDiaryEntry";
-import { formatLargeNumber, formatMeasurement } from "../../../commons/utils/formatters";
-import { getNutritionBaseAmount, getTotalDiaryEntryMeasurement } from "../../../commons/utils/helpers";
+import { IDiaryEntry } from "../../../models/IDiaryEntry";
+import { formatLargeNumber, formatMeasurement } from "../../../utils/formatters";
+import { getNutritionBaseAmount, getTotalDiaryEntryMeasurement } from "../../../utils/helpers";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { combine } from "../../helpers/style-helpers";
 

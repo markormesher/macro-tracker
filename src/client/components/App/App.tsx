@@ -1,7 +1,7 @@
 import React, { ErrorInfo, PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
-import { Redirect, Route, Switch } from "react-router";
-import { IUser } from "../../../commons/models/IUser";
+import { Route, Switch } from "react-router";
+import { IUser } from "../../../models/IUser";
 import { DetailedError } from "../../helpers/errors/DetailedError";
 import { Http404Error } from "../../helpers/errors/Http404Error";
 import { IRootState } from "../../redux/root";
@@ -17,7 +17,6 @@ import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { FoodItemEntryChooser } from "../FoodItemEntryChooser/FoodItemEntryChooser";
 import { FoodItemSearchPage } from "../FoodItemSearchPage/FoodItemSearchPage";
 import { FoodItemsPage } from "../FoodItemsPage/FoodItemsPage";
-import { LoginPage } from "../Login/LoginPage";
 import { MealSketchPage } from "../MealSketchPage/MealSketchPage";
 import { Nav } from "../Nav/Nav";
 import { TargetsPage } from "../TargetsPage/TargetsPage";
@@ -60,7 +59,7 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
   }
 
   public render(): ReactNode {
-    const { waitingFor, globalError, activeUser } = this.props;
+    const { waitingFor, globalError } = this.props;
     const { caughtError, caughtErrorInfo } = this.state;
 
     if (globalError) {
@@ -79,15 +78,6 @@ class UCApp extends PureComponent<IAppProps, IAppState> {
 
     if (waitingFor.length > 0) {
       return <FullPageSpinner />;
-    }
-
-    if (!activeUser) {
-      return (
-        <Switch>
-          <Route exact={true} path="/auth/login" component={LoginPage} />
-          <Redirect to="/auth/login" />
-        </Switch>
-      );
     }
 
     return (

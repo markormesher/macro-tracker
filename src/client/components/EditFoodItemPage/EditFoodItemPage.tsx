@@ -5,16 +5,11 @@ import { match as Match } from "react-router";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
 import { v4 } from "uuid";
-import { FoodMeasurementUnit } from "../../../commons/enums";
-import {
-  getDefaultFoodItem,
-  IFoodItem,
-  IFoodItemValidationResult,
-  validateFoodItem,
-} from "../../../commons/models/IFoodItem";
-import { getDefaultServingSize, IServingSize } from "../../../commons/models/IServingSize";
-import { formatMeasurementUnit, formatNutritionBaseSize, uniqueArray } from "../../../commons/utils/formatters";
-import { getFoodItemDataWarnings } from "../../../commons/utils/helpers";
+import { FoodMeasurementUnit } from "../../../utils/enums";
+import { getDefaultFoodItem, IFoodItem, IFoodItemValidationResult, validateFoodItem } from "../../../models/IFoodItem";
+import { getDefaultServingSize, IServingSize } from "../../../models/IServingSize";
+import { formatMeasurementUnit, formatNutritionBaseSize, uniqueArray } from "../../../utils/formatters";
+import { getFoodItemDataWarnings } from "../../../utils/helpers";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
@@ -212,7 +207,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
             <h1>{creatingNew ? "Create" : "Edit"} Food Item</h1>
             <ControlledForm onSubmit={this.handleSubmit}>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <SuggestionTextInput
                     id={"brand"}
                     label={"Brand"}
@@ -227,7 +222,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                     }}
                   />
                 </div>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledTextInput
                     id={"name"}
                     label={"Name"}
@@ -241,9 +236,9 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                     }}
                   />
                 </div>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <div className={combine(bs.dFlex, bs.alignItemsEnd, (currentValue.upcs || []).length && bs.mb2)}>
-                    <div className={bs.flexGrow1}>
+                    <div className={combine(bs.flexGrow1, bs.me1)}>
                       <ControlledBarcodeInput
                         id={"upcs"}
                         label={"UPCs"}
@@ -262,14 +257,14 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                         onClick={this.handleAddUpc}
                         btnProps={{
                           disabled: editorBusy || !this.state.upcInput,
-                          className: combine(bs.btnOutlineDark, bs.ml1),
+                          className: combine(bs.btnOutlineDark, bs.ms1),
                         }}
                       />
                     </div>
                   </div>
                   {(currentValue.upcs || []).map((upc) => (
-                    <span key={upc} className={combine(bs.dInlineBlock, bs.mr3)}>
-                      <kbd className={bs.mr2}>{upc}</kbd>
+                    <span key={upc} className={combine(bs.dInlineBlock, bs.me3)}>
+                      <kbd className={bs.me2}>{upc}</kbd>
                       <IconBtn
                         icon={faTrash}
                         payload={upc}
@@ -282,7 +277,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                     </span>
                   ))}
                 </div>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <label>Measurement Unit</label>
                   <div className={bs.row}>
                     <div className={bs.col4}>
@@ -320,7 +315,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                     </div>
                   </div>
                 </div>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledTextInput
                     id={"caloriesPerBaseAmount"}
                     label={`Calories per ${formatNutritionBaseSize(currentValue)}`}
@@ -334,7 +329,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                     }}
                   />
                 </div>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledTextInput
                     id={"fatPerBaseAmount"}
                     label={`Fat per ${formatNutritionBaseSize(currentValue)}`}
@@ -348,7 +343,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                     }}
                   />
                 </div>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledTextInput
                     id={"satFatPerBaseAmount"}
                     label={`Sat. Fat per ${formatNutritionBaseSize(currentValue)}`}
@@ -362,7 +357,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                     }}
                   />
                 </div>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledTextInput
                     id={"carbohydratesPerBaseAmount"}
                     label={`Carbohydrates per ${formatNutritionBaseSize(currentValue)}`}
@@ -376,7 +371,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                     }}
                   />
                 </div>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledTextInput
                     id={"sugarPerBaseAmount"}
                     label={`Sugar per ${formatNutritionBaseSize(currentValue)}`}
@@ -390,7 +385,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                     }}
                   />
                 </div>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledTextInput
                     id={"fibrePerBaseAmount"}
                     label={`Fibre per ${formatNutritionBaseSize(currentValue)}`}
@@ -404,7 +399,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                     }}
                   />
                 </div>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledTextInput
                     id={"proteinPerBaseAmount"}
                     label={`Protein per ${formatNutritionBaseSize(currentValue)}`}
@@ -418,7 +413,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                     }}
                   />
                 </div>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledTextInput
                     id={"saltPerBaseAmount"}
                     label={`Salt per ${formatNutritionBaseSize(currentValue)}`}
@@ -434,8 +429,8 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                 </div>
                 {currentValue.measurementUnit !== "single_serving" && (
                   <>
-                    <div className={combine(bs.col12, bs.formGroup)}>
-                      <label>Serving Sizes</label>
+                    <div className={combine(bs.col12, bs.mb3)}>
+                      <label className={bs.formLabel}>Serving Sizes</label>
                       {this.renderServingSizeInputs()}
                     </div>
                   </>
@@ -445,7 +440,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
               {this.renderInaccurateDataWarning()}
 
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <IconBtn
                     icon={editorBusy ? faCircleNotch : faSave}
                     text={"Save"}
@@ -482,7 +477,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
 
     return servingSizesToShow.map((ss, idx) => (
       <div className={combine(bs.dFlex, idx > 0 && bs.mt2)} key={`serving_size_${ss.id}`}>
-        <div className={combine(bs.flexGrow0, bs.pr1, bs.mAuto)}>1</div>
+        <div className={combine(bs.flexGrow0, bs.pe1, bs.mAuto)}>1</div>
         <div className={bs.flexGrow1}>
           <ControlledTextInput
             id={`serving_size_label_${ss.id}`}
@@ -508,7 +503,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
             }}
           />
         </div>
-        <div className={combine(bs.flexGrow0, bs.pl1, bs.mAuto)}>
+        <div className={combine(bs.flexGrow0, bs.ps1, bs.mAuto)}>
           {formatMeasurementUnit(currentValue.measurementUnit)}
         </div>
       </div>

@@ -12,10 +12,10 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { IFoodItem, mapFoodItemFromJson } from "../../../commons/models/IFoodItem";
-import { servingSizeComparator } from "../../../commons/models/IServingSize";
-import { formatMeasurement } from "../../../commons/utils/formatters";
-import { getFoodItemDataWarnings } from "../../../commons/utils/helpers";
+import { IFoodItem, mapFoodItemFromJson } from "../../../models/IFoodItem";
+import { servingSizeComparator } from "../../../models/IServingSize";
+import { formatMeasurement } from "../../../utils/formatters";
+import { getFoodItemDataWarnings } from "../../../utils/helpers";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { history } from "../../helpers/single-history";
@@ -146,14 +146,14 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
     if (foodItem.apiSource === "tesco") {
       infoChunks.push(
         <span key={`info-chunk-api`}>
-          <FontAwesomeIcon icon={faLink} className={bs.mr1} />
+          <FontAwesomeIcon icon={faLink} className={bs.me1} />
           Tesco
         </span>,
       );
     } else if (foodItem.apiSource === "nutritionix") {
       infoChunks.push(
         <span key={`info-chunk-api`}>
-          <FontAwesomeIcon icon={faPlug} className={bs.mr1} />
+          <FontAwesomeIcon icon={faPlug} className={bs.me1} />
           Nutritionix
         </span>,
       );
@@ -163,7 +163,7 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
     if (warnings.length > 0) {
       infoChunks.push(
         <span key={`info-chunk-warning`} className={bs.textDanger}>
-          <FontAwesomeIcon icon={faExclamationTriangle} className={bs.mr1} />
+          <FontAwesomeIcon icon={faExclamationTriangle} className={bs.me1} />
           {warnings.length} warning{warnings.length > 1 ? "s" : ""}
         </span>,
       );

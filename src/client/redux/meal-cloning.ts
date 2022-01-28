@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { all, call, put, takeEvery } from "redux-saga/effects";
 import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
-import { ICloneMealRequest, mapCloneMealRequestToJson } from "../../commons/models/ICloneMealRequest";
+import { ICloneMealRequest, mapCloneMealRequestToJson } from "../../models/ICloneMealRequest";
 import { diaryEntriesCacheKeys } from "./diary-entries";
 import { ActionResult } from "./helpers/ActionResult";
 import { PayloadAction } from "./helpers/PayloadAction";

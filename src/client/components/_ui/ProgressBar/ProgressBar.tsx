@@ -1,6 +1,6 @@
 import React, { PureComponent, ReactNode } from "react";
-import { FoodMeasurementUnit } from "../../../../commons/enums";
-import { formatLargeNumber, formatMeasurement, formatPercent } from "../../../../commons/utils/formatters";
+import { FoodMeasurementUnit } from "../../../../utils/enums";
+import { formatLargeNumber, formatMeasurement, formatPercent } from "../../../../utils/formatters";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 

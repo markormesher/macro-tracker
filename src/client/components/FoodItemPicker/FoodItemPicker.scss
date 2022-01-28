@@ -21,7 +21,7 @@ $highlight-colour: rgba(red($blue), green($blue), blue($blue), 0.2);
   .input-wrapper {
     border-bottom: 1px solid $search-border-colour;
     flex-grow: 0;
-    padding: #{$spacer / 2};
+    padding: #{$spacer * 0.5};
   }
 
   .candidates-wrapper {

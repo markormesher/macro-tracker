@@ -1,8 +1,7 @@
 ![CircleCI](https://img.shields.io/circleci/build/github/markormesher/macro-tracker)
-![Codecov](https://img.shields.io/codecov/c/github/markormesher/macro-tracker)
 
 # Macro Tracker
 
-A web-based tracker for nutrition and exercise.
+A web-based tracker for food and exercise, supporting complex nutrition targets and integration with Nutritionix and supermarket APIs for food data.
 
-*Note:* this is a tool that I've built for personal use; it is **not** something that I'll be releasing for public use at any point in the foreseeable future.
+Feel free to clone it and have a play - see [docker-compose.yml](./docker-compose.yml) for an example setup. Note that this is an opinionated tool that I've built for personal use, not something I intend to formally "release" and support for anyone else.

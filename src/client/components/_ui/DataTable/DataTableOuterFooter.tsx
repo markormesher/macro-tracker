@@ -39,7 +39,7 @@ class DataTableOuterFooter extends PureComponent<IDataTableOuterFooterProps> {
 
     return (
       <div className={styles.tableFooter}>
-        <p className={bs.floatRight}>
+        <p className={bs.floatEnd}>
           Showing rows {rowRangeFrom} to {rowRangeTo} of {filteredRowCount}
           {showTotal && <> (filtered from {totalRowCount} total)</>}
           {sortedColumns && sortedColumns.length > 0 && <> &bull; {sortingOrder}</>}

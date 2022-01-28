@@ -3,13 +3,13 @@ import React, { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { AnyAction, Dispatch } from "redux";
-import { ALL_MEAL_VALUES, Meal } from "../../../commons/enums";
-import { getDefaultDiaryEntry, IDiaryEntry } from "../../../commons/models/IDiaryEntry";
-import { IFoodItem } from "../../../commons/models/IFoodItem";
-import { generateMacroSummary } from "../../../commons/models/IMacroSummary";
-import { IServingSize } from "../../../commons/models/IServingSize";
-import { getDefaultTarget } from "../../../commons/models/ITarget";
-import { formatLargeNumber, formatMeasurement, getMealTitle } from "../../../commons/utils/formatters";
+import { ALL_MEAL_VALUES, Meal } from "../../../utils/enums";
+import { getDefaultDiaryEntry, IDiaryEntry } from "../../../models/IDiaryEntry";
+import { IFoodItem } from "../../../models/IFoodItem";
+import { generateMacroSummary } from "../../../models/IMacroSummary";
+import { IServingSize } from "../../../models/IServingSize";
+import { getDefaultTarget } from "../../../models/ITarget";
+import { formatLargeNumber, formatMeasurement, getMealTitle } from "../../../utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
@@ -276,7 +276,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
     if (activeEditPositions.indexOf(index) >= 0) {
       return (
         <div className={bs.dFlex} key={index}>
-          <div className={combine(bs.flexGrow1, bs.my1, bs.mr2)}>
+          <div className={combine(bs.flexGrow1, bs.my1, bs.me2)}>
             <ServingPicker
               foodItem={foodItem}
               servingQty={entry.servingQty}

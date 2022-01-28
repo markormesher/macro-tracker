@@ -22,3 +22,6 @@ logs/**
 # OSX
 .DS_Store
 ._*
+
+# Local dev
+docker-compose.dev.yml

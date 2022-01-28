@@ -37,7 +37,7 @@ class ErrorPage extends PureComponent<IErrorPageProps> {
         </div>
 
         <h1 className={bs.h2}>
-          <FontAwesomeIcon icon={faExclamationTriangle} className={combine(bs.mr2, bs.textMuted)} />
+          <FontAwesomeIcon icon={faExclamationTriangle} className={combine(bs.me2, bs.textMuted)} />
           {errorMessage}
         </h1>
 

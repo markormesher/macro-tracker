@@ -4,17 +4,17 @@ import { connect } from "react-redux";
 import { match as Match } from "react-router";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
-import { ALL_MEAL_VALUES, Meal } from "../../../commons/enums";
+import { ALL_MEAL_VALUES, Meal } from "../../../utils/enums";
 import {
   getDefaultDiaryEntry,
   IDiaryEntry,
   IDiaryEntryValidationResult,
   validateDiaryEntry,
-} from "../../../commons/models/IDiaryEntry";
-import { IFoodItem } from "../../../commons/models/IFoodItem";
-import { IServingSize, servingSizeComparator } from "../../../commons/models/IServingSize";
-import { dateToUrlString, urlStringToDate } from "../../../commons/utils/dates";
-import { formatDate, getMealTitle } from "../../../commons/utils/formatters";
+} from "../../../models/IDiaryEntry";
+import { IFoodItem } from "../../../models/IFoodItem";
+import { IServingSize, servingSizeComparator } from "../../../models/IServingSize";
+import { dateToUrlString, urlStringToDate } from "../../../utils/dates";
+import { formatDate, getMealTitle } from "../../../utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
@@ -196,7 +196,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
             <h1>{creatingNew ? "Create" : "Edit"} Diary Entry</h1>
             <ControlledForm onSubmit={this.handleSubmit}>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <FoodItemPicker
                     value={currentValue.foodItem}
                     preSelectedId={urlFoodItemId}
@@ -206,7 +206,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
                 </div>
               </div>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledDateInput
                     id={"date"}
                     label={"Date"}
@@ -218,7 +218,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
                 </div>
               </div>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledSelectInput
                     id={"meal"}
                     label={"Meal"}
@@ -237,8 +237,8 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
                 </div>
               </div>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
-                  <label>How Much?</label>
+                <div className={combine(bs.col12, bs.mb3)}>
+                  <label className={bs.formLabel}>How Much?</label>
                   <ServingPicker
                     foodItem={currentValue.foodItem}
                     servingQty={currentValue.servingQty}
@@ -250,7 +250,7 @@ class UCEditDiaryEntryPage extends PureComponent<IEditDiaryEntryPageProps, IEdit
                 </div>
               </div>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <IconBtn
                     icon={editorBusy ? faCircleNotch : faSave}
                     text={"Save"}

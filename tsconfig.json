@@ -9,12 +9,11 @@
     "emitDecoratorMetadata": true,
     "alwaysStrict": true,
     "baseUrl": "./",
-    "allowJs": true,
+    "allowJs": false,
     "removeComments": false,
     "sourceMap": true,
     "allowSyntheticDefaultImports": true
   },
-  "exclude": [
-    "./node_modules"
-  ]
+  "include": ["./src/server.ts"],
+  "exclude": ["./node_modules", "./build"]
 }

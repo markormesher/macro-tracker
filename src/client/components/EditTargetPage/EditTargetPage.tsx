@@ -4,15 +4,15 @@ import { connect } from "react-redux";
 import { match as Match } from "react-router";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
-import { generateMacroSummary } from "../../../commons/models/IMacroSummary";
+import { generateMacroSummary } from "../../../models/IMacroSummary";
 import {
   getDefaultTarget,
   ITarget,
   ITargetValidationResult,
   TargetMode,
   validateTarget,
-} from "../../../commons/models/ITarget";
-import { formatDate, formatLargeNumber, formatMeasurement, formatPercent } from "../../../commons/utils/formatters";
+} from "../../../models/ITarget";
+import { formatDate, formatLargeNumber, formatMeasurement, formatPercent } from "../../../utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
@@ -182,7 +182,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
             <h1>{creatingNew ? "Create" : "Edit"} Target</h1>
             <ControlledForm onSubmit={this.handleSubmit}>
               <div className={bs.row}>
-                <div className={combine(bs.col6, bs.formGroup)}>
+                <div className={combine(bs.col6, bs.mb3)}>
                   <ControlledDateInput
                     id={"startDate"}
                     label={"Start Date"}
@@ -192,7 +192,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
                     error={errors.startDate}
                   />
                 </div>
-                <div className={combine(bs.col6, bs.formGroup)}>
+                <div className={combine(bs.col6, bs.mb3)}>
                   <ControlledTextInput
                     id={"bodyWeightKg"}
                     label={"Body Weight (kg)"}
@@ -208,7 +208,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
                 </div>
               </div>
               <div className={bs.row}>
-                <div className={combine(bs.col6, bs.formGroup)}>
+                <div className={combine(bs.col6, bs.mb3)}>
                   <ControlledTextInput
                     id={"maintenanceCalories"}
                     label={"Maintenance Calories"}
@@ -222,7 +222,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
                     }}
                   />
                 </div>
-                <div className={combine(bs.col6, bs.formGroup)}>
+                <div className={combine(bs.col6, bs.mb3)}>
                   <ControlledSelectInput
                     id={"calorieAdjustment"}
                     label={"Calorie Adjustment"}
@@ -279,7 +279,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
                 </>
               )}
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <IconBtn
                     icon={editorBusy ? faCircleNotch : faSave}
                     text={"Save"}
@@ -317,7 +317,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
 
     return (
       <div className={bs.row}>
-        <div className={combine(bs.col6, bs.formGroup)}>
+        <div className={combine(bs.col6, bs.mb3)}>
           <ControlledSelectInput
             id={`${macroName}TargetMode`}
             label={`${macroName} Target Mode`}
@@ -332,7 +332,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
             <option value={TargetMode.REMAINDER_OF_CALORIES}>Remainder of calories</option>
           </ControlledSelectInput>
         </div>
-        <div className={combine(bs.col6, bs.formGroup)}>
+        <div className={combine(bs.col6, bs.mb3)}>
           <ControlledTextInput
             id={`${macroName}TargetValue`}
             label={`${macroName} Target Value`}

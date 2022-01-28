@@ -3,8 +3,8 @@ import React, { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Dispatch } from "redux";
-import { IFoodItem } from "../../../commons/models/IFoodItem";
-import { formatLargeNumber, formatMeasurement, formatNutritionBaseSize } from "../../../commons/utils/formatters";
+import { IFoodItem } from "../../../models/IFoodItem";
+import { formatLargeNumber, formatMeasurement, formatNutritionBaseSize } from "../../../utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
@@ -156,7 +156,7 @@ class UCFoodItemSearchPage extends PureComponent<IFoodItemSearchPageProps, IFood
           </div>
         </div>
         <div className={bs.row}>
-          <div className={combine(bs.col12, bs.formGroup)}>
+          <div className={combine(bs.col12, bs.mb3)}>
             <ControlledBarcodeInput
               id={"upc"}
               label={"UPC"}
@@ -171,7 +171,7 @@ class UCFoodItemSearchPage extends PureComponent<IFoodItemSearchPageProps, IFood
           </div>
         </div>
         <div className={bs.row}>
-          <div className={combine(bs.col12, bs.formGroup)}>
+          <div className={combine(bs.col12, bs.mb3)}>
             <ControlledTextInput
               id={"keyword"}
               label={"Keyword"}
@@ -183,7 +183,7 @@ class UCFoodItemSearchPage extends PureComponent<IFoodItemSearchPageProps, IFood
           </div>
         </div>
         <div className={bs.row}>
-          <div className={combine(bs.col12, bs.formGroup)}>
+          <div className={combine(bs.col12, bs.mb3)}>
             <IconBtn
               icon={searchBusy ? faCircleNotch : faSearch}
               text={"Search"}

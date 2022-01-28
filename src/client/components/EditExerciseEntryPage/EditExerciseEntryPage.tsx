@@ -9,9 +9,9 @@ import {
   IExerciseEntry,
   IExerciseEntryValidationResult,
   validateExerciseEntry,
-} from "../../../commons/models/IExerciseEntry";
-import { dateToUrlString, urlStringToDate } from "../../../commons/utils/dates";
-import { formatDate } from "../../../commons/utils/formatters";
+} from "../../../models/IExerciseEntry";
+import { dateToUrlString, urlStringToDate } from "../../../utils/dates";
+import { formatDate } from "../../../utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
@@ -190,7 +190,7 @@ class UCEditExerciseEntryPage extends PureComponent<IEditExerciseEntryPageProps,
             <h1>{creatingNew ? "Create" : "Edit"} Exercise Entry</h1>
             <ControlledForm onSubmit={this.handleSubmit}>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledDateInput
                     id={"date"}
                     label={"Date"}
@@ -202,7 +202,7 @@ class UCEditExerciseEntryPage extends PureComponent<IEditExerciseEntryPageProps,
                 </div>
               </div>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <SuggestionTextInput
                     id={"label"}
                     label={"Label"}
@@ -215,7 +215,7 @@ class UCEditExerciseEntryPage extends PureComponent<IEditExerciseEntryPageProps,
                 </div>
               </div>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <ControlledTextInput
                     id={"caloriesBurned"}
                     label={"Calories Burned"}
@@ -231,7 +231,7 @@ class UCEditExerciseEntryPage extends PureComponent<IEditExerciseEntryPageProps,
                 </div>
               </div>
               <div className={bs.row}>
-                <div className={combine(bs.col12, bs.formGroup)}>
+                <div className={combine(bs.col12, bs.mb3)}>
                   <IconBtn
                     icon={editorBusy ? faCircleNotch : faSave}
                     text={"Save"}
