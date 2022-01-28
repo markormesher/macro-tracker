@@ -90,7 +90,7 @@ class MigrationRunner {
     });
   }
 
-  private async withQueryRunner(exec: (qr: QueryRunner) => void): Promise<void> {
+  private async withQueryRunner(exec: (qr: QueryRunner) => Promise<void>): Promise<void> {
     const connection = await createConnection({ ...this.connectionOptions, synchronize: false });
     const qr = connection.createQueryRunner("master");
 

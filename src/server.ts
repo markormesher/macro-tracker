@@ -14,12 +14,27 @@ import { MigrationRunner } from "./db/migrations/MigrationRunner";
 import { setupApiRoutes } from "./middleware/api-routes";
 import { setupClientRoutes } from "./middleware/client-routes";
 import { loadUser } from "./middleware/auth-middleware";
+import { delayPromise } from "./utils/utils";
 
 (async function(): Promise<void> {
   const app = Express();
 
   // logging
   ensureLogFilesAreCreated();
+
+  // DB connectivity
+  logger.info("Checking whether database is available...");
+  for (;;) {
+    try {
+      const conn = await createConnection({ ...typeormConf, synchronize: false });
+      logger.info("Database is available");
+      await conn.close();
+      break;
+    } catch {
+      logger.error("Couldn't connect to database, retrying in 10s");
+      await delayPromise(10000);
+    }
+  }
 
   // DB migrations
   logger.info("Starting DB migrations");
@@ -28,6 +43,7 @@ import { loadUser } from "./middleware/auth-middleware";
   logger.info("Migrations finished");
 
   // DB connection
+  logger.info("Creating database connection");
   await createConnection(typeormConf);
   logger.info("Database connection created successfully");
 

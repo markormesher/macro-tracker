@@ -19,5 +19,4 @@ RUN if [ $BUILD_TYPE = development ]; then yarn build-dev; fi
 
 # run
 EXPOSE 3000
-ENTRYPOINT ["./docker/docker-entrypoint.sh"]
 CMD yarn start
