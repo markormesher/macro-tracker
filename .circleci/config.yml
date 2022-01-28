@@ -1,11 +1,9 @@
-version: 2
+version: 2.1
 
 defaults: &defaults
   working_directory: ~/macro-tracker
   docker:
     - image: circleci/node:dubnium
-  context:
-    - Private NPM Packages
 
 jobs:
   setup:
@@ -70,6 +68,8 @@ workflows:
   build:
     jobs:
       - setup:
+          context:
+            - Private NPM Packages
           filters:
             tags:
               only: /.*/
