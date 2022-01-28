@@ -7,7 +7,7 @@ import { INutritionixUpcSearchResponse } from "../models/INutritionixUpcSearchRe
 import { isDev } from "../utils/env";
 import { logger } from "../utils/logging";
 import { roundToDp } from "../utils/utils";
-import { getSecret } from "../config/config-loader";
+import { getEnvConfig, getFileConfig } from "../config/config-loader";
 
 async function getFoodItemsFromNutritionixByUpc(upc: string): Promise<IFoodItem[]> {
   const agent = new https.Agent({
@@ -15,8 +15,8 @@ async function getFoodItemsFromNutritionixByUpc(upc: string): Promise<IFoodItem[
   });
 
   const headers = {
-    "x-app-id": getSecret("nutritionix-api.id"),
-    "x-app-key": getSecret("nutritionix-api.key"),
+    "x-app-id": getFileConfig(getEnvConfig("NUTRITIONIX_API_ID_FILE")),
+    "x-app-key": getFileConfig(getEnvConfig("NUTRITIONIX_API_KEY_FILE")),
     "x-user-id": 0,
   };
 
@@ -50,8 +50,8 @@ async function getFoodItemSuggestionsFromNutritionixByKeyword(keyword: string): 
   });
 
   const headers = {
-    "x-app-id": getSecret("nutritionix-api.id"),
-    "x-app-key": getSecret("nutritionix-api.key"),
+    "x-app-id": getFileConfig(getEnvConfig("NUTRITIONIX_API_ID_FILE")),
+    "x-app-key": getFileConfig(getEnvConfig("NUTRITIONIX_API_KEY_FILE")),
     "x-user-id": 0,
   };
 

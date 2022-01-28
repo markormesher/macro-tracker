@@ -1,13 +1,11 @@
-function isProd(): boolean {
-  return process.env.NODE_ENV.toLowerCase() === "production";
-}
+import * as fs from "fs";
 
 function isDev(): boolean {
   return process.env.NODE_ENV.toLowerCase() === "development";
 }
 
 function runningInDocker(): boolean {
-  return process.env.RUNNING_IN === "docker";
+  return fs.existsSync("/.dockerenv");
 }
 
-export { runningInDocker, isProd, isDev };
+export { runningInDocker, isDev };

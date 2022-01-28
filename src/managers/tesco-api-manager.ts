@@ -5,7 +5,7 @@ import { ITescoProduct } from "../models/ITescoProduct";
 import { ITescoUpcSearchResponse } from "../models/ITescoUpcSearchResponse";
 import { isDev } from "../utils/env";
 import { logger } from "../utils/logging";
-import { getSecret } from "../config/config-loader";
+import { getFileConfig, getEnvConfig } from "../config/config-loader";
 
 async function getFoodItemsFromTescoByUpc(upc: string): Promise<IFoodItem[]> {
   const agent = new https.Agent({
@@ -13,7 +13,7 @@ async function getFoodItemsFromTescoByUpc(upc: string): Promise<IFoodItem[]> {
   });
 
   const headers = {
-    "Ocp-Apim-Subscription-Key": getSecret("tesco-api.key"),
+    "Ocp-Apim-Subscription-Key": getFileConfig(getEnvConfig("TESCO_API_SECRET_FILE")),
   };
 
   try {

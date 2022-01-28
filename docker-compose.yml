@@ -15,9 +15,13 @@ services:
       - postgres.password
       - tesco-api.key
     environment:
-      - NPM_EXECPATH=yarn
-      - npm_execpath=yarn
-      - RUNNING_IN=docker
+      - POSTGRES_HOST=postgres_primary
+      - POSTGRES_DATABASE=macro_tracker
+      - POSTGRES_USER=macro_tracker
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres.password
+      - TESCO_API_SECRET_FILE=/run/secrets/tesco-api.key
+      - NUTRITIONIX_API_ID_FILE=/run/secrets/nutritionix-api.id
+      - NUTRITIONIX_API_KEY_FILE=/run/secrets/nutritionix-api.key
     volumes:
       - ./logs:/logs
     labels:

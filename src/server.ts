@@ -15,9 +15,14 @@ import { setupApiRoutes } from "./middleware/api-routes";
 import { setupClientRoutes } from "./middleware/client-routes";
 import { loadUser } from "./middleware/auth-middleware";
 import { delayPromise } from "./utils/utils";
+import { runningInDocker } from "./utils/env";
 
 (async function(): Promise<void> {
   const app = Express();
+
+  if (!runningInDocker()) {
+    throw new Error("This app is designed to be run in a Docker container");
+  }
 
   // logging
   ensureLogFilesAreCreated();
