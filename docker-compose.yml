@@ -10,13 +10,11 @@ services:
       - traefik
       - internal
     depends_on:
-      - redis
       - postgres_primary
     secrets:
       - nutritionix-api.id
       - nutritionix-api.key
       - postgres.password
-      - session.secret
       - tesco-api.key
     environment:
       - NPM_EXECPATH=yarn
@@ -45,18 +43,8 @@ services:
     volumes:
       - postgres-primary-data:/var/lib/postgresql/data
 
-  redis:
-    image: redis:3.2-alpine
-    restart: always
-    networks:
-      - internal
-    command: redis-server --appendonly yes
-    volumes:
-      - redis-data:/data
-
 volumes:
   postgres-primary-data:
-  redis-data:
 
 secrets:
   nutritionix-api.id:
@@ -65,8 +53,6 @@ secrets:
     file: ./src/config/secrets/nutritionix-api.key
   postgres.password:
     file: ./src/config/secrets/postgres.password
-  session.secret:
-    file: ./src/config/secrets/session.secret
   tesco-api.key:
     file: ./src/config/secrets/tesco-api.key
 
