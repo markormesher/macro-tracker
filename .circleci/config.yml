@@ -15,8 +15,7 @@ jobs:
             # components are ordered least- to most-often updated
             - dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}-{{ checksum "yarn.lock" }}
             - dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}
-            - dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}
-            - dependency-cache-
+            - dependency-cache
       - run:
           name: Download private packages
           command: ./.scripts/get-private-packages.sh
