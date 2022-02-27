@@ -14,8 +14,8 @@
     "start": "cross-env NODE_ENV=production node ./build/server.js",
     "start-dev": "cross-env NODE_ENV=development node ./build/server.js",
     "// root build jobs": "//",
-    "build": "run-s build-tsc build-webpack copy-config",
-    "build-dev": "run-s build-dev-tsc build-dev-webpack copy-config",
+    "build": "run-s build-tsc build-webpack",
+    "build-dev": "run-s build-dev-tsc build-dev-webpack",
     "// inner build jobs": "//",
     "build-tsc": "tsc -p ./tsconfig.json",
     "build-dev-tsc": "tsc -p ./tsconfig.json",
@@ -30,7 +30,6 @@
     "lint-style-fix": "prettier --write \"src/**/*.{css,scss}\"",
     "// misc": "//",
     "clean": "rimraf ./build ./coverage ./.nyc_output",
-    "copy-config": "copyfiles -u 1 -e \"./**/*.ts\" \"./src/config/**\" ./build/.",
     "get-private-packages": "./.scripts/get-private-packages.sh"
   },
   "dependencies": {
@@ -92,7 +91,6 @@
     "@types/webpack-hot-middleware": "^2.16.4",
     "babel-loader": "^8.0.4",
     "babel-plugin-date-fns": "^0.2.1",
-    "copyfiles": "^2.1.0",
     "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",
     "eslint": "^6.5.0",
