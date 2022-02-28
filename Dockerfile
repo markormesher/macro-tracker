@@ -7,7 +7,7 @@ ARG PRIVATE_PACKAGE_REPO PRIVATE_PACKAGE_REPO_TOKEN
 COPY ./.scripts/get-private-packages.sh ./.scripts/
 COPY package.json yarn.lock ./
 RUN yarn get-private-packages
-RUN yarn install
+RUN yarn install && rm -rf /usr/local/share/.cache/yarn
 
 # source
 COPY ./src ./src
