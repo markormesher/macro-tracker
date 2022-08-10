@@ -6,9 +6,7 @@ function getFileConfig(path: string): string {
   if (loadedFileConfig[path] === undefined) {
     loadedFileConfig = {
       ...loadedFileConfig,
-      [path]: readFileSync(path)
-        .toString()
-        .trim(),
+      [path]: readFileSync(path).toString().trim(),
     };
   }
   return loadedFileConfig[path];

@@ -25,9 +25,9 @@ async function getExerciseEntriesForDate(date: Date): Promise<DbExerciseEntry[]>
 }
 
 async function getAllExerciseLabels(): Promise<string[]> {
-  const rawResults = (await getExerciseEntryQueryBuilder()
-    .select("DISTINCT label")
-    .getRawMany()) as Array<{ label: string }>;
+  const rawResults = (await getExerciseEntryQueryBuilder().select("DISTINCT label").getRawMany()) as Array<{
+    label: string;
+  }>;
 
   return rawResults.map((r) => r.label);
 }

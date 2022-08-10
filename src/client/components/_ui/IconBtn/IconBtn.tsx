@@ -4,7 +4,7 @@ import React, { PureComponent, ReactNode } from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
 
-interface IIconBtnProps<Payload = {}> {
+interface IIconBtnProps<Payload = unknown> {
   readonly icon: IconProp;
   readonly text?: string;
   readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
@@ -13,7 +13,7 @@ interface IIconBtnProps<Payload = {}> {
   readonly payload?: Payload;
 }
 
-class IconBtn<Payload = {}> extends PureComponent<IIconBtnProps<Payload>> {
+class IconBtn<Payload = unknown> extends PureComponent<IIconBtnProps<Payload>> {
   constructor(props: IIconBtnProps<Payload>) {
     super(props);
     this.handleClick = this.handleClick.bind(this);

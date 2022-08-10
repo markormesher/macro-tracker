@@ -107,7 +107,7 @@ function startDeleteFoodItem(foodItem: IFoodItem): PayloadAction {
 }
 
 function* loadFoodItemSaga(): Generator {
-  yield takeEvery(FoodItemsActions.START_LOAD_FOOD_ITEM, function*(action: PayloadAction): Generator {
+  yield takeEvery(FoodItemsActions.START_LOAD_FOOD_ITEM, function* (action: PayloadAction): Generator {
     const foodItemId: string = action.payload.foodItemId;
 
     if (CacheKeyUtil.keyIsValid(foodItemsCacheKeys.forItem(foodItemId))) {
@@ -127,7 +127,7 @@ function* loadFoodItemSaga(): Generator {
 }
 
 function* loadAllFoodItemsSaga(): Generator {
-  yield takeEvery(FoodItemsActions.START_LOAD_ALL_FOOD_ITEMS, function*(): Generator {
+  yield takeEvery(FoodItemsActions.START_LOAD_ALL_FOOD_ITEMS, function* (): Generator {
     if (CacheKeyUtil.keyIsValid(foodItemsCacheKeys.allItems)) {
       return;
     }
@@ -145,7 +145,7 @@ function* loadAllFoodItemsSaga(): Generator {
 }
 
 function* saveFoodItemSaga(): Generator {
-  yield takeEvery(FoodItemsActions.START_SAVE_FOOD_ITEM, function*(action: PayloadAction): Generator {
+  yield takeEvery(FoodItemsActions.START_SAVE_FOOD_ITEM, function* (action: PayloadAction): Generator {
     try {
       const foodItem: IFoodItem = action.payload.foodItem;
       const foodItemId = foodItem.id || "";
@@ -174,7 +174,7 @@ function* saveFoodItemSaga(): Generator {
 }
 
 function* deleteFoodItemSaga(): Generator {
-  yield takeEvery(FoodItemsActions.START_DELETE_FOOD_ITEM, function*(action: PayloadAction): Generator {
+  yield takeEvery(FoodItemsActions.START_DELETE_FOOD_ITEM, function* (action: PayloadAction): Generator {
     try {
       const foodItem: IFoodItem = action.payload.foodItem;
       yield call(() => axios.post(`/api/food-items/delete/${foodItem.id}`));

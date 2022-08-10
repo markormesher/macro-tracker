@@ -97,7 +97,7 @@ function startDeleteTarget(target: ITarget): PayloadAction {
 }
 
 function* loadTargetSaga(): Generator {
-  yield takeEvery(TargetsActions.START_LOAD_TARGET, function*(action: PayloadAction): Generator {
+  yield takeEvery(TargetsActions.START_LOAD_TARGET, function* (action: PayloadAction): Generator {
     const targetId: string = action.payload.targetId;
 
     if (CacheKeyUtil.keyIsValid(targetsCacheKeys.forTarget(targetId))) {
@@ -117,7 +117,7 @@ function* loadTargetSaga(): Generator {
 }
 
 function* loadAllTargetsSaga(): Generator {
-  yield takeEvery(TargetsActions.START_LOAD_ALL_TARGETS, function*(): Generator {
+  yield takeEvery(TargetsActions.START_LOAD_ALL_TARGETS, function* (): Generator {
     if (CacheKeyUtil.keyIsValid(targetsCacheKeys.allTargets)) {
       return;
     }
@@ -135,7 +135,7 @@ function* loadAllTargetsSaga(): Generator {
 }
 
 function* saveTargetSaga(): Generator {
-  yield takeEvery(TargetsActions.START_SAVE_TARGET, function*(action: PayloadAction): Generator {
+  yield takeEvery(TargetsActions.START_SAVE_TARGET, function* (action: PayloadAction): Generator {
     try {
       const target: ITarget = action.payload.target;
       const targetId = target.id || "";
@@ -157,7 +157,7 @@ function* saveTargetSaga(): Generator {
 }
 
 function* deleteTargetSaga(): Generator {
-  yield takeEvery(TargetsActions.START_DELETE_TARGET, function*(action: PayloadAction): Generator {
+  yield takeEvery(TargetsActions.START_DELETE_TARGET, function* (action: PayloadAction): Generator {
     try {
       const target: ITarget = action.payload.target;
       yield call(() => axios.post(`/api/targets/delete/${target.id}`));

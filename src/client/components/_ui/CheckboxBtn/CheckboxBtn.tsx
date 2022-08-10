@@ -2,7 +2,7 @@ import { faCheckSquare, faSquare } from "@fortawesome/pro-light-svg-icons";
 import React, { PureComponent, ReactNode } from "react";
 import { IconBtn } from "../IconBtn/IconBtn";
 
-interface ICheckboxBtnProps<Payload = {}> {
+interface ICheckboxBtnProps<Payload = unknown> {
   readonly text?: string;
   readonly checked?: boolean;
   readonly payload?: Payload;
@@ -10,7 +10,7 @@ interface ICheckboxBtnProps<Payload = {}> {
   readonly btnProps?: React.HTMLProps<HTMLButtonElement>;
 }
 
-class CheckboxBtn<Payload = {}> extends PureComponent<ICheckboxBtnProps<Payload>> {
+class CheckboxBtn<Payload = unknown> extends PureComponent<ICheckboxBtnProps<Payload>> {
   constructor(props: ICheckboxBtnProps<Payload>) {
     super(props);
 

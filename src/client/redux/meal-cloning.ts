@@ -56,7 +56,7 @@ function startCloneMeal(cloneMealRequest: ICloneMealRequest): PayloadAction {
 }
 
 function* saveCloneMealSaga(): Generator {
-  yield takeEvery(MealCloningActions.START_CLONE_MEAL, function*(action: PayloadAction): Generator {
+  yield takeEvery(MealCloningActions.START_CLONE_MEAL, function* (action: PayloadAction): Generator {
     const cloneMealRequest: ICloneMealRequest = action.payload.cloneMealRequest;
     try {
       yield put(setEditorBusy(true));

@@ -13,7 +13,7 @@ interface IDataTableOuterHeaderProps {
   readonly onSearchTermChange?: (term: string) => void;
 }
 
-class DataTableOuterHeader<Model> extends PureComponent<IDataTableOuterHeaderProps> {
+class DataTableOuterHeader extends PureComponent<IDataTableOuterHeaderProps> {
   public render(): ReactNode {
     const { pageSize, loading, currentPage, rowCount } = this.props;
     const totalPages = rowCount === 0 ? 0 : Math.ceil(rowCount / pageSize);

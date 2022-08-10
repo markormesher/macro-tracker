@@ -138,7 +138,7 @@ function startDeleteDiaryEntry(diaryEntry: IDiaryEntry): PayloadAction {
 }
 
 function* loadDiaryEntrySaga(): Generator {
-  yield takeEvery(DiaryEntriesActions.START_LOAD_DIARY_ENTRY, function*(action: PayloadAction): Generator {
+  yield takeEvery(DiaryEntriesActions.START_LOAD_DIARY_ENTRY, function* (action: PayloadAction): Generator {
     const diaryEntryId: string = action.payload.diaryEntryId;
 
     if (CacheKeyUtil.keyIsValid(diaryEntriesCacheKeys.forEntry(diaryEntryId))) {
@@ -161,7 +161,7 @@ function* loadDiaryEntrySaga(): Generator {
 }
 
 function* loadDiaryEntriesForDateSaga(): Generator {
-  yield takeEvery(DiaryEntriesActions.START_LOAD_DIARY_ENTRIES_FOR_DATE, function*(action: PayloadAction): Generator {
+  yield takeEvery(DiaryEntriesActions.START_LOAD_DIARY_ENTRIES_FOR_DATE, function* (action: PayloadAction): Generator {
     const date: Date = action.payload.date;
 
     if (CacheKeyUtil.keyIsValid(diaryEntriesCacheKeys.forEntriesByDate(date))) {
@@ -186,7 +186,7 @@ function* loadDiaryEntriesForDateSaga(): Generator {
 }
 
 function* saveDiaryEntrySaga(): Generator {
-  yield takeEvery(DiaryEntriesActions.START_SAVE_DIARY_ENTRY, function*(action: PayloadAction): Generator {
+  yield takeEvery(DiaryEntriesActions.START_SAVE_DIARY_ENTRY, function* (action: PayloadAction): Generator {
     const diaryEntry: IDiaryEntry = action.payload.diaryEntry;
     const diaryEntryId = diaryEntry.id || "";
     try {
@@ -216,7 +216,7 @@ function* saveDiaryEntrySaga(): Generator {
 }
 
 function* multiSaveDiaryEntriesSaga(): Generator {
-  yield takeEvery(DiaryEntriesActions.START_MULTI_SAVE_DIARY_ENTRIES, function*(action: PayloadAction): Generator {
+  yield takeEvery(DiaryEntriesActions.START_MULTI_SAVE_DIARY_ENTRIES, function* (action: PayloadAction): Generator {
     const diaryEntries: IDiaryEntry[] = action.payload.diaryEntries;
     try {
       yield put(setMultiSaveEditorBusy(true));
@@ -248,7 +248,7 @@ function* multiSaveDiaryEntriesSaga(): Generator {
 }
 
 function* deleteDiaryEntrySaga(): Generator {
-  yield takeEvery(DiaryEntriesActions.START_DELETE_DIARY_ENTRY, function*(action: PayloadAction): Generator {
+  yield takeEvery(DiaryEntriesActions.START_DELETE_DIARY_ENTRY, function* (action: PayloadAction): Generator {
     try {
       const diaryEntry: IDiaryEntry = action.payload.diaryEntry;
       yield call(() => axios.post(`/api/diary-entries/delete/${diaryEntry.id}`));

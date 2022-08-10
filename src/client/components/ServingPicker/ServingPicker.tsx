@@ -6,7 +6,7 @@ import * as bs from "../../global-styles/Bootstrap.scss";
 import { ControlledSelectInput } from "../_ui/ControlledInputs/ControlledSelectInput";
 import { ControlledTextInput } from "../_ui/ControlledInputs/ControlledTextInput";
 
-interface IServingPickerProps<Payload = {}> {
+interface IServingPickerProps<Payload = unknown> {
   readonly foodItem?: IFoodItem;
   readonly servingQty?: number;
   readonly servingSize?: IServingSize;
@@ -16,7 +16,7 @@ interface IServingPickerProps<Payload = {}> {
   readonly onServingSizeChange?: (servingSize?: IServingSize, payload?: Payload) => void;
 }
 
-class ServingPicker<Payload = {}> extends PureComponent<IServingPickerProps<Payload>> {
+class ServingPicker<Payload = unknown> extends PureComponent<IServingPickerProps<Payload>> {
   constructor(props: IServingPickerProps<Payload>) {
     super(props);
 

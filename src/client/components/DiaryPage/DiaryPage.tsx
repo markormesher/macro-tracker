@@ -162,12 +162,8 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
   }
 
   private renderInner(): ReactNode {
-    const {
-      currentDate,
-      loadedMacroSummariesByDate,
-      loadedDiaryEntriesByDate,
-      loadedExerciseEntriesByDate,
-    } = this.props;
+    const { currentDate, loadedMacroSummariesByDate, loadedDiaryEntriesByDate, loadedExerciseEntriesByDate } =
+      this.props;
 
     const summary = loadedMacroSummariesByDate[dateToDateKey(currentDate)];
     const diaryEntries = loadedDiaryEntriesByDate[dateToDateKey(currentDate)];

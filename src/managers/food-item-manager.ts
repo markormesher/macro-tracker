@@ -48,9 +48,7 @@ async function getFoodItemsByKeyword(
 }
 
 async function getAllFoodItems(): Promise<DbFoodItem[]> {
-  return getFoodItemQueryBuilder({ includeServingSizes: true })
-    .where("food_item.deleted = FALSE")
-    .getMany();
+  return getFoodItemQueryBuilder({ includeServingSizes: true }).where("food_item.deleted = FALSE").getMany();
 }
 
 async function saveFoodItem(foodItemId: string, values: IFoodItem): Promise<DbFoodItem> {

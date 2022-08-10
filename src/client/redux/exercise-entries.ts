@@ -130,7 +130,7 @@ function startDeleteExerciseEntry(exerciseEntry: IExerciseEntry): PayloadAction 
 }
 
 function* loadExerciseEntrySaga(): Generator {
-  yield takeEvery(ExerciseEntriesActions.START_LOAD_EXERCISE_ENTRY, function*(action: PayloadAction): Generator {
+  yield takeEvery(ExerciseEntriesActions.START_LOAD_EXERCISE_ENTRY, function* (action: PayloadAction): Generator {
     const exerciseEntryId: string = action.payload.exerciseEntryId;
 
     if (CacheKeyUtil.keyIsValid(exerciseEntriesCacheKeys.forEntry(exerciseEntryId))) {
@@ -155,34 +155,35 @@ function* loadExerciseEntrySaga(): Generator {
 }
 
 function* loadExerciseEntriesForDateSaga(): Generator {
-  yield takeEvery(ExerciseEntriesActions.START_LOAD_EXERCISE_ENTRIES_FOR_DATE, function*(
-    action: PayloadAction,
-  ): Generator {
-    const date: Date = action.payload.date;
+  yield takeEvery(
+    ExerciseEntriesActions.START_LOAD_EXERCISE_ENTRIES_FOR_DATE,
+    function* (action: PayloadAction): Generator {
+      const date: Date = action.payload.date;
 
-    if (CacheKeyUtil.keyIsValid(exerciseEntriesCacheKeys.forEntriesByDate(date))) {
-      return;
-    }
+      if (CacheKeyUtil.keyIsValid(exerciseEntriesCacheKeys.forEntriesByDate(date))) {
+        return;
+      }
 
-    try {
-      const exerciseEntries: IExerciseEntry[] = yield call(() =>
-        axios
-          .get(`/api/exercise-entries/for-date/${dateToUrlString(date)}`)
-          .then((res) => safeMapEntities(mapExerciseEntryFromJson, res.data as IJsonArray)),
-      );
+      try {
+        const exerciseEntries: IExerciseEntry[] = yield call(() =>
+          axios
+            .get(`/api/exercise-entries/for-date/${dateToUrlString(date)}`)
+            .then((res) => safeMapEntities(mapExerciseEntryFromJson, res.data as IJsonArray)),
+        );
 
-      yield all([
-        put(setExerciseEntriesForDate(date, exerciseEntries)),
-        put(CacheKeyUtil.updateKey(exerciseEntriesCacheKeys.forEntriesByDate(date))),
-      ]);
-    } catch (err) {
-      yield put(setError(err));
-    }
-  });
+        yield all([
+          put(setExerciseEntriesForDate(date, exerciseEntries)),
+          put(CacheKeyUtil.updateKey(exerciseEntriesCacheKeys.forEntriesByDate(date))),
+        ]);
+      } catch (err) {
+        yield put(setError(err));
+      }
+    },
+  );
 }
 
 function* loadAllExerciseLabelsSaga(): Generator {
-  yield takeEvery(ExerciseEntriesActions.START_LOAD_ALL_EXERCISE_LABELS, function*(): Generator {
+  yield takeEvery(ExerciseEntriesActions.START_LOAD_ALL_EXERCISE_LABELS, function* (): Generator {
     if (CacheKeyUtil.keyIsValid(exerciseEntriesCacheKeys.allLabels)) {
       return;
     }
@@ -198,7 +199,7 @@ function* loadAllExerciseLabelsSaga(): Generator {
 }
 
 function* saveExerciseEntrySaga(): Generator {
-  yield takeEvery(ExerciseEntriesActions.START_SAVE_EXERCISE_ENTRY, function*(action: PayloadAction): Generator {
+  yield takeEvery(ExerciseEntriesActions.START_SAVE_EXERCISE_ENTRY, function* (action: PayloadAction): Generator {
     const exerciseEntry: IExerciseEntry = action.payload.exerciseEntry;
     const exerciseEntryId = exerciseEntry.id || "";
     try {
@@ -228,7 +229,7 @@ function* saveExerciseEntrySaga(): Generator {
 }
 
 function* deleteExerciseEntrySaga(): Generator {
-  yield takeEvery(ExerciseEntriesActions.START_DELETE_EXERCISE_ENTRY, function*(action: PayloadAction): Generator {
+  yield takeEvery(ExerciseEntriesActions.START_DELETE_EXERCISE_ENTRY, function* (action: PayloadAction): Generator {
     try {
       const exerciseEntry: IExerciseEntry = action.payload.exerciseEntry;
       yield call(() => axios.post(`/api/exercise-entries/delete/${exerciseEntry.id}`));

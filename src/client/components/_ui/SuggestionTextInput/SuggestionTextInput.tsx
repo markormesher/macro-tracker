@@ -192,14 +192,7 @@ class SuggestionTextInput extends PureComponent<ISuggestionTextInputProps, ISugg
     const { suggestionOptions } = this.props;
     const { selectedSuggestion } = this.state;
 
-    const regex = new RegExp(
-      ".*" +
-        SuggestionTextInput.removeRegexChars(value)
-          .split("")
-          .join(".*") +
-        ".*",
-      "i",
-    );
+    const regex = new RegExp(".*" + SuggestionTextInput.removeRegexChars(value).split("").join(".*") + ".*", "i");
     const scores: { [key: string]: number } = {};
     const suggestions = suggestionOptions
       .filter((s) => regex.test(s))

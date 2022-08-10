@@ -76,7 +76,7 @@ function startSearchFoodItemByKeyword(keyword: string): PayloadAction {
 }
 
 function* searchFoodItemByUpcSaga(): Generator {
-  yield takeEvery(FoodSearchApiActions.START_SEARCH_FOOD_ITEMS_BY_UPC, function*(action: PayloadAction): Generator {
+  yield takeEvery(FoodSearchApiActions.START_SEARCH_FOOD_ITEMS_BY_UPC, function* (action: PayloadAction): Generator {
     const upc: string = action.payload.upc;
 
     const existingResults = yield select((state: IRootState) => {
@@ -120,41 +120,44 @@ function* searchFoodItemByUpcSaga(): Generator {
 }
 
 function* searchFoodItemByKeywordSaga(): Generator {
-  yield takeEvery(FoodSearchApiActions.START_SEARCH_FOOD_ITEMS_BY_KEYWORD, function*(action: PayloadAction): Generator {
-    const keyword: string = action.payload.keyword;
+  yield takeEvery(
+    FoodSearchApiActions.START_SEARCH_FOOD_ITEMS_BY_KEYWORD,
+    function* (action: PayloadAction): Generator {
+      const keyword: string = action.payload.keyword;
 
-    const existingResults = yield select((state: IRootState) => {
-      return state.foodSearchApi.searchedFoodItemsByKeyword[keyword];
-    });
-    if (existingResults !== undefined) {
-      return;
-    }
+      const existingResults = yield select((state: IRootState) => {
+        return state.foodSearchApi.searchedFoodItemsByKeyword[keyword];
+      });
+      if (existingResults !== undefined) {
+        return;
+      }
 
-    yield put(setKeywordSearchBusy(true));
+      yield put(setKeywordSearchBusy(true));
 
-    try {
-      const existingFoodItems: IFoodItem[] = yield call(() =>
-        axios
-          .get(`/api/food-items/by-keyword/${keyword}`)
-          .then((res) => safeMapEntities(mapFoodItemFromJson, res.data as IJsonArray)),
-      );
+      try {
+        const existingFoodItems: IFoodItem[] = yield call(() =>
+          axios
+            .get(`/api/food-items/by-keyword/${keyword}`)
+            .then((res) => safeMapEntities(mapFoodItemFromJson, res.data as IJsonArray)),
+        );
 
-      const nutritionixFoodItems: IFoodItem[] = yield call(() =>
-        axios
-          .get(`/api/nutritionix-api/search-keyword/${keyword}`)
-          .then((res) => safeMapEntities(mapFoodItemFromJson, res.data as IJsonArray)),
-      );
+        const nutritionixFoodItems: IFoodItem[] = yield call(() =>
+          axios
+            .get(`/api/nutritionix-api/search-keyword/${keyword}`)
+            .then((res) => safeMapEntities(mapFoodItemFromJson, res.data as IJsonArray)),
+        );
 
-      const foodItems = [
-        ...existingFoodItems,
-        ...nutritionixFoodItems.filter((nfi) => !existingFoodItems.some((efi) => efi.apiId === nfi.apiId)),
-      ];
+        const foodItems = [
+          ...existingFoodItems,
+          ...nutritionixFoodItems.filter((nfi) => !existingFoodItems.some((efi) => efi.apiId === nfi.apiId)),
+        ];
 
-      yield all([put(setFoodItemsByKeyword(keyword, foodItems)), put(setKeywordSearchBusy(false))]);
-    } catch (err) {
-      yield put(setError(err));
-    }
-  });
+        yield all([put(setFoodItemsByKeyword(keyword, foodItems)), put(setKeywordSearchBusy(false))]);
+      } catch (err) {
+        yield put(setError(err));
+      }
+    },
+  );
 }
 
 function* foodSearchApiSagas(): Generator {

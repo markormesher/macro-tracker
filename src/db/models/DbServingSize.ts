@@ -18,16 +18,10 @@ class DbServingSize extends BaseEntity implements IServingSize {
   @Column({ type: "double precision" })
   public measurement: number;
 
-  @ManyToOne(
-    () => DbFoodItem,
-    (f) => f.servingSizes,
-  )
+  @ManyToOne(() => DbFoodItem, (f) => f.servingSizes)
   public foodItem: DbFoodItem;
 
-  @OneToMany(
-    () => DbDiaryEntry,
-    (de) => de.servingSize,
-  )
+  @OneToMany(() => DbDiaryEntry, (de) => de.servingSize)
   public diaryEntries: DbDiaryEntry[];
 }
 

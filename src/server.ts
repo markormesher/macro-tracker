@@ -17,7 +17,7 @@ import { loadUser } from "./middleware/auth-middleware";
 import { delayPromise } from "./utils/utils";
 import { runningInDocker } from "./utils/env";
 
-(async function(): Promise<void> {
+(async function (): Promise<void> {
   const app = Express();
 
   if (!runningInDocker()) {

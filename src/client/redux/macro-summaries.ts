@@ -47,34 +47,37 @@ function startLoadMacroSummaryForDate(date: Date): PayloadAction {
 }
 
 function* loadMacroSummaryForDateSaga(): Generator {
-  yield takeEvery(MacroSummariesActions.START_LOAD_MACRO_SUMMARY_FOR_DATE, function*(action: PayloadAction): Generator {
-    const date: Date = action.payload.date;
+  yield takeEvery(
+    MacroSummariesActions.START_LOAD_MACRO_SUMMARY_FOR_DATE,
+    function* (action: PayloadAction): Generator {
+      const date: Date = action.payload.date;
 
-    // the summary must be newer than all diary, exercise, food item and target changes
-    const summaryKey = macroSummariesCacheKeys.forDate(date);
-    const dependencyKeys = [
-      diaryEntriesCacheKeys.latestUpdate,
-      exerciseEntriesCacheKeys.latestUpdate,
-      foodItemsCacheKeys.latestUpdate,
-      targetsCacheKeys.latestUpdate,
-    ];
+      // the summary must be newer than all diary, exercise, food item and target changes
+      const summaryKey = macroSummariesCacheKeys.forDate(date);
+      const dependencyKeys = [
+        diaryEntriesCacheKeys.latestUpdate,
+        exerciseEntriesCacheKeys.latestUpdate,
+        foodItemsCacheKeys.latestUpdate,
+        targetsCacheKeys.latestUpdate,
+      ];
 
-    if (CacheKeyUtil.keyIsValid(summaryKey, dependencyKeys)) {
-      return;
-    }
+      if (CacheKeyUtil.keyIsValid(summaryKey, dependencyKeys)) {
+        return;
+      }
 
-    try {
-      const macroSummaries: IMacroSummary = yield call(() =>
-        axios
-          .get(`/api/macro-summary/for-date/${dateToUrlString(date)}`)
-          .then((res) => mapMacroSummaryFromJson(res.data as IJsonObject)),
-      );
+      try {
+        const macroSummaries: IMacroSummary = yield call(() =>
+          axios
+            .get(`/api/macro-summary/for-date/${dateToUrlString(date)}`)
+            .then((res) => mapMacroSummaryFromJson(res.data as IJsonObject)),
+        );
 
-      yield all([put(setMacroSummariesForDate(date, macroSummaries)), put(CacheKeyUtil.updateKey(summaryKey))]);
-    } catch (err) {
-      yield put(setError(err));
-    }
-  });
+        yield all([put(setMacroSummariesForDate(date, macroSummaries)), put(CacheKeyUtil.updateKey(summaryKey))]);
+      } catch (err) {
+        yield put(setError(err));
+      }
+    },
+  );
 }
 
 function* macroSummariesSagas(): Generator {

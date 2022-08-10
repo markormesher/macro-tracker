@@ -245,14 +245,7 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps, IFoodItemPick
     if (!searchTerm || searchTerm.trim() === "") {
       searchSuggestions = allFoodItems.sort(foodItemComparator);
     } else {
-      const regex = new RegExp(
-        ".*" +
-          UCFoodItemPicker.removeRegexChars(searchTerm)
-            .split("")
-            .join(".*") +
-          ".*",
-        "i",
-      );
+      const regex = new RegExp(".*" + UCFoodItemPicker.removeRegexChars(searchTerm).split("").join(".*") + ".*", "i");
       const scores: { [key: string]: number } = {};
       searchSuggestions = allFoodItems
         .filter((fi) => regex.test(fi.name) || regex.test(fi.brand))

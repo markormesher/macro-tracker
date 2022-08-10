@@ -21,16 +21,10 @@ class DbDiaryEntry extends BaseModel implements IDiaryEntry {
   @Column({ type: "double precision" })
   public servingQty: number;
 
-  @ManyToOne(
-    () => DbFoodItem,
-    (fi) => fi.diaryEntries,
-  )
+  @ManyToOne(() => DbFoodItem, (fi) => fi.diaryEntries)
   public foodItem: DbFoodItem;
 
-  @ManyToOne(
-    () => DbServingSize,
-    (ss) => ss.diaryEntries,
-  )
+  @ManyToOne(() => DbServingSize, (ss) => ss.diaryEntries)
   public servingSize: DbServingSize;
 }
 

@@ -46,7 +46,7 @@ function unsetCurrentUser(): PayloadAction {
 }
 
 function* loadUserSaga(): Generator {
-  yield takeEvery(AuthActions.START_LOAD_CURRENT_USER, function*(): Generator {
+  yield takeEvery(AuthActions.START_LOAD_CURRENT_USER, function* (): Generator {
     // only use global waits if a user wasn't already loaded
     const currentUser = yield select((state: IRootState) => state.auth.activeUser);
     const useWaits = !currentUser;

@@ -50,16 +50,10 @@ class DbFoodItem extends BaseModel implements IFoodItem {
   @Column({ type: "double precision" })
   public saltPerBaseAmount: number;
 
-  @OneToMany(
-    () => DbServingSize,
-    (s) => s.foodItem,
-  )
+  @OneToMany(() => DbServingSize, (s) => s.foodItem)
   public servingSizes: DbServingSize[];
 
-  @OneToMany(
-    () => DbDiaryEntry,
-    (de) => de.foodItem,
-  )
+  @OneToMany(() => DbDiaryEntry, (de) => de.foodItem)
   public diaryEntries: DbDiaryEntry[];
 }
 

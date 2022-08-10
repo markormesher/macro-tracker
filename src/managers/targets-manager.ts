@@ -26,9 +26,7 @@ async function getTargetForDate(date: Date): Promise<DbTarget> {
 }
 
 async function getAllTargets(): Promise<DbTarget[]> {
-  return getTargetQueryBuilder()
-    .where("target.deleted = FALSE")
-    .getMany();
+  return getTargetQueryBuilder().where("target.deleted = FALSE").getMany();
 }
 
 async function saveTarget(targetId: string, values: ITarget): Promise<DbTarget> {

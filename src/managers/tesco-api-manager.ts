@@ -61,7 +61,7 @@ function mapFoodItemFromTescoApi(product?: ITescoProduct, upc?: string): IFoodIt
     if (product.calcNutrition.per100Header) {
       if (product.calcNutrition.per100Header.indexOf("g") >= 0) {
         foodItem = { ...foodItem, measurementUnit: "g" };
-      } else if (product.calcNutrition.per100Header.indexOf("g") >= 0) {
+      } else if (product.calcNutrition.per100Header.indexOf("ml") >= 0) {
         foodItem = { ...foodItem, measurementUnit: "ml" };
       } else {
         logger.debug(`Could not handle per-100 header: ${product.calcNutrition.per100Header}`, { product });
