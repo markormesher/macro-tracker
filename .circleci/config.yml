@@ -3,7 +3,7 @@ version: 2.1
 defaults: &defaults
   working_directory: ~/macro-tracker
   docker:
-    - image: circleci/node:dubnium
+    - image: circleci/node:gallium
 
 jobs:
   setup:
