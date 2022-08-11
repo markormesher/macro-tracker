@@ -2,6 +2,7 @@
   font-family: "Material Symbols Outlined";
   font-style: normal;
   font-weight: 400;
+  font-display: block;
   src: url("./fonts/material-symbols-outlined.woff") format("woff2");
 }
 
@@ -14,11 +15,10 @@
   }
 }
 
-.material-symbols-outlined {
+.icon {
   font-family: "Material Symbols Outlined";
   font-weight: normal;
   font-style: normal;
-  // font-size: 24px; // TODO: figure out sizing properly
   line-height: 1;
   letter-spacing: normal;
   text-transform: none;
@@ -33,5 +33,5 @@
 }
 
 .spin {
-  animation: spin 1s linear infinite;
+  animation: spin 1.5s ease-in-out infinite;
 }

@@ -1,2 +1,2 @@
-export const materialSymbolsOutlined: string;
+export const icon: string;
 export const spin: string;

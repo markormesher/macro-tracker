@@ -8,7 +8,11 @@ interface ILoadingSpinnerProps {
 
 class LoadingSpinner extends PureComponent<ILoadingSpinnerProps> {
   public render(): ReactNode {
-    const spinner = <MaterialIcon icon={"hourglass_empty"} spin={true} scale={2} />;
+    const spinner = (
+      <span style={{ fontSize: "2rem" }}>
+        <MaterialIcon icon={"hourglass_empty"} spin={true} scale={2} />
+      </span>
+    );
 
     if (this.props.centre) {
       return <div className={bs.textCenter}>{spinner}</div>;
