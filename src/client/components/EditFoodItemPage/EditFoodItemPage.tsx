@@ -10,7 +10,6 @@ import { getDefaultServingSize, IServingSize } from "../../../models/IServingSiz
 import { formatMeasurementUnit, formatNutritionBaseSize, uniqueArray } from "../../../utils/formatters";
 import { getFoodItemDataWarnings } from "../../../utils/helpers";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
 import { setEditorResult, startLoadAllFoodItems, startLoadFoodItem, startSaveFoodItem } from "../../redux/food-items";
 import { ActionResult } from "../../redux/helpers/ActionResult";
@@ -270,7 +269,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                         onClick={this.handleRemoveUpc}
                         btnProps={{
                           disabled: editorBusy,
-                          className: combine(bs.btnOutlineDark, gs.btnMini),
+                          className: combine(bs.btnOutlineDark),
                         }}
                       />
                     </span>

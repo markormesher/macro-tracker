@@ -6,7 +6,6 @@ import { CacheKeyUtil } from "@dragonlabs/redux-cache-key-util";
 import { ITarget, mapTargetFromJson, TargetMode } from "../../../models/ITarget";
 import { formatDate, formatLargeNumber, formatMeasurement, formatPercent } from "../../../utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
 import { PayloadAction } from "../../redux/helpers/PayloadAction";
@@ -191,14 +190,14 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
           payload={target}
           onClick={UCTargetsPage.startEditTarget}
           btnProps={{
-            className: combine(bs.btnOutlineDark, gs.btnMini),
+            className: combine(bs.btnOutlineDark),
           }}
         />
         <DeleteBtn
           payload={target}
           onConfirmedClick={this.props.actions.deleteTarget}
           btnProps={{
-            className: combine(bs.btnOutlineDark, gs.btnMini),
+            className: combine(bs.btnOutlineDark),
           }}
         />
       </div>

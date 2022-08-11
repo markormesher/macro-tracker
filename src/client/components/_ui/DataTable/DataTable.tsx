@@ -122,7 +122,11 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 
         <div className={styles.tableBodyWrapper}>
           <div className={styles.loadingIconWrapper}>
-            {loading && <MaterialIcon icon={"hourglass_empty"} spin={true} />}
+            {loading && (
+              <span style={{ fontSize: "2rem" }}>
+                <MaterialIcon icon={"hourglass_empty"} spin={true} />
+              </span>
+            )}
           </div>
 
           <div className={bs.tableResponsive}>

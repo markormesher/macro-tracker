@@ -5,7 +5,6 @@ import { Dispatch } from "redux";
 import { IFoodItem } from "../../../models/IFoodItem";
 import { formatLargeNumber, formatMeasurement, formatNutritionBaseSize } from "../../../utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
 import { setEditorResult, startSaveFoodItem } from "../../redux/food-items";
 import { startSearchFoodItemByKeyword, startSearchFoodItemByUpc } from "../../redux/food-search-api";
@@ -265,7 +264,7 @@ class UCFoodItemSearchPage extends PureComponent<IFoodItemSearchPageProps, IFood
                 icon={"today"}
                 text={"Add to Diary"}
                 btnProps={{
-                  className: combine(bs.btnOutlineDark, gs.btnMini),
+                  className: combine(bs.btnOutlineDark),
                 }}
               />
             </Link>
@@ -279,7 +278,7 @@ class UCFoodItemSearchPage extends PureComponent<IFoodItemSearchPageProps, IFood
               payload={fi}
               onClick={this.createFoodItem}
               btnProps={{
-                className: combine(bs.btnOutlineDark, gs.btnMini),
+                className: combine(bs.btnOutlineDark),
               }}
             />
           );

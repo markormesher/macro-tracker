@@ -10,7 +10,6 @@ import { IServingSize } from "../../../models/IServingSize";
 import { getDefaultTarget } from "../../../models/ITarget";
 import { formatLargeNumber, formatMeasurement, getMealTitle } from "../../../utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
 import { startMultiSaveDiaryEntries } from "../../redux/diary-entries";
 import { ActionResult } from "../../redux/helpers/ActionResult";
@@ -292,7 +291,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
               payload={index}
               onClick={this.handleToggleEditFoodItem}
               btnProps={{
-                className: combine(bs.btnOutlineDark, gs.btnMini),
+                className: combine(bs.btnOutlineDark),
               }}
             />
           </div>
@@ -314,7 +313,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
               payload={index}
               onClick={this.handleToggleEditFoodItem}
               btnProps={{
-                className: combine(bs.btnOutlineDark, gs.btnMini),
+                className: combine(bs.btnOutlineDark),
                 disabled: multiSaveEditorBusy,
               }}
             />
@@ -322,7 +321,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
               payload={index}
               onConfirmedClick={this.handleDeleteFoodItem}
               btnProps={{
-                className: combine(bs.btnOutlineDark, gs.btnMini),
+                className: combine(bs.btnOutlineDark),
                 disabled: multiSaveEditorBusy,
               }}
             />

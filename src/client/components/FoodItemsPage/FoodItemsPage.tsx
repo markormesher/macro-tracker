@@ -8,7 +8,6 @@ import { servingSizeComparator } from "../../../models/IServingSize";
 import { formatMeasurement } from "../../../utils/formatters";
 import { getFoodItemDataWarnings } from "../../../utils/helpers";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
 import { foodItemsCacheKeys, startDeleteFoodItem } from "../../redux/food-items";
@@ -192,14 +191,14 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
           payload={foodItem}
           onClick={UCFoodItemsPage.startEditFoodItem}
           btnProps={{
-            className: combine(bs.btnOutlineDark, gs.btnMini),
+            className: combine(bs.btnOutlineDark),
           }}
         />
         <DeleteBtn
           payload={foodItem}
           onConfirmedClick={this.props.actions.deleteFoodItem}
           btnProps={{
-            className: combine(bs.btnOutlineDark, gs.btnMini),
+            className: combine(bs.btnOutlineDark),
           }}
         />
       </div>
