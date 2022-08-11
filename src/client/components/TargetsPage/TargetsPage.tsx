@@ -1,4 +1,3 @@
-import { faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import React, { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -98,7 +97,7 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
             <p>
               <Link to={"/targets/edit"}>
                 <IconBtn
-                  icon={faPlus}
+                  icon={"add"}
                   text={"Create Target"}
                   btnProps={{
                     className: bs.btnOutlineSuccess,
@@ -187,7 +186,7 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
     return (
       <div className={combine(bs.btnGroup, bs.btnGroupSm)}>
         <IconBtn
-          icon={faPencil}
+          icon={"edit"}
           text={"Edit"}
           payload={target}
           onClick={UCTargetsPage.startEditTarget}

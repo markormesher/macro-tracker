@@ -1,9 +1,8 @@
-import { faCircleNotch } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { PureComponent, ReactElement, ReactNode } from "react";
 import { IDataTableResponse } from "../../../../models/IDataTableResponse";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
+import { MaterialIcon } from "../MaterialIcon/MaterialIcon";
 import { IDataTableDataProvider } from "./DataProvider/IDataTableDataProvider";
 import * as styles from "./DataTable.scss";
 import { DataTableInnerHeader } from "./DataTableInnerHeader";
@@ -123,7 +122,7 @@ class DataTable<Model> extends PureComponent<IDataTableProps<Model>, IDataTableS
 
         <div className={styles.tableBodyWrapper}>
           <div className={styles.loadingIconWrapper}>
-            {loading && <FontAwesomeIcon icon={faCircleNotch} spin={true} size={"2x"} />}
+            {loading && <MaterialIcon icon={"hourglass_empty"} spin={true} />}
           </div>
 
           <div className={bs.tableResponsive}>

@@ -1,4 +1,3 @@
-import { faCalendarDay, faCircleNotch, faCopy, faRedoAlt } from "@fortawesome/pro-light-svg-icons";
 import React, { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -109,7 +108,7 @@ class UCEditCloneMealPage extends PureComponent<IEditCloneMealPageProps, IEditCl
             <div className={bs.col6}>
               <Link to={`/diary-entries/${dateToUrlString(currentValue.toDate)}`}>
                 <IconBtn
-                  icon={faCalendarDay}
+                  icon={"today"}
                   text={"Back to the Diary"}
                   btnProps={{
                     className: bs.btnOutlineDark,
@@ -122,7 +121,7 @@ class UCEditCloneMealPage extends PureComponent<IEditCloneMealPageProps, IEditCl
             </div>
             <div className={bs.col6}>
               <IconBtn
-                icon={faRedoAlt}
+                icon={"refresh"}
                 text={"Clone Another"}
                 onClick={this.resetEditor}
                 btnProps={{
@@ -217,7 +216,7 @@ class UCEditCloneMealPage extends PureComponent<IEditCloneMealPageProps, IEditCl
               <div className={bs.row}>
                 <div className={combine(bs.col12, bs.mb3)}>
                   <IconBtn
-                    icon={editorBusy ? faCircleNotch : faCopy}
+                    icon={editorBusy ? "hourglass_empty" : "content_copy"}
                     text={"Clone"}
                     onClick={this.handleSubmit}
                     btnProps={{

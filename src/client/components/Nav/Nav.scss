@@ -24,7 +24,8 @@ $icon-colour: #fff;
       border-right: 0;
     }
 
-    svg {
+    svg,
+    span {
       color: $icon-colour;
     }
   }

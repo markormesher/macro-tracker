@@ -1,4 +1,3 @@
-import { faAppleAlt, faCalendarDay, faCheck, faCircleNotch, faPencil, faSave } from "@fortawesome/pro-light-svg-icons";
 import React, { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -158,7 +157,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
               <div className={bs.col6}>
                 <Link to={"/food-items"}>
                   <IconBtn
-                    icon={faAppleAlt}
+                    icon={"lunch_dining"}
                     text={"All Food Items"}
                     btnProps={{
                       className: bs.btnOutlineDark,
@@ -172,7 +171,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
               <div className={bs.col6}>
                 <Link to={"/diary-entries"}>
                   <IconBtn
-                    icon={faCalendarDay}
+                    icon={"today"}
                     text={"Back to the Diary"}
                     btnProps={{
                       className: bs.btnOutlineDark,
@@ -225,7 +224,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
               </div>
               <div className={bs.col6}>
                 <IconBtn
-                  icon={multiSaveEditorBusy ? faCircleNotch : faSave}
+                  icon={multiSaveEditorBusy ? "hourglass_empty" : "save"}
                   text={"Add to Diary"}
                   onClick={this.handleSaveEntries}
                   btnProps={{
@@ -288,7 +287,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
           </div>
           <div className={combine(bs.dInlineBlock, bs.flexGrow0, bs.myAuto)}>
             <IconBtn
-              icon={faCheck}
+              icon={"done"}
               text={"Done"}
               payload={index}
               onClick={this.handleToggleEditFoodItem}
@@ -310,7 +309,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
             style={{ whiteSpace: "nowrap" }}
           >
             <IconBtn
-              icon={faPencil}
+              icon={"edit"}
               text={"Edit"}
               payload={index}
               onClick={this.handleToggleEditFoodItem}

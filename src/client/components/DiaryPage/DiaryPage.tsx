@@ -1,4 +1,3 @@
-import { faCopy, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import { isSameDay } from "date-fns";
 import React, { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -230,7 +229,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
             style={{ whiteSpace: "nowrap" }}
           >
             <IconBtn
-              icon={faPlus}
+              icon={"add"}
               text={"Add"}
               payload={currentDate}
               onClick={UCDiaryPage.startAddExerciseEntry}
@@ -279,7 +278,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
             style={{ whiteSpace: "nowrap" }}
           >
             <IconBtn
-              icon={faPlus}
+              icon={"add"}
               text={"Add"}
               payload={{ date: currentDate, meal }}
               onClick={UCDiaryPage.startAddDiaryEntry}
@@ -288,7 +287,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
               }}
             />
             <IconBtn
-              icon={faCopy}
+              icon={"content_copy"}
               text={"Clone"}
               payload={{ date: currentDate, meal }}
               onClick={UCDiaryPage.startCloneMeal}
@@ -318,7 +317,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
           style={{ whiteSpace: "nowrap" }}
         >
           <IconBtn
-            icon={faPencil}
+            icon={"edit"}
             text={"Edit"}
             payload={entry}
             onClick={UCDiaryPage.startEditExerciseEntry}
@@ -349,7 +348,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
           style={{ whiteSpace: "nowrap" }}
         >
           <IconBtn
-            icon={faPencil}
+            icon={"edit"}
             text={"Edit"}
             payload={entry}
             onClick={UCDiaryPage.startEditDiaryEntry}

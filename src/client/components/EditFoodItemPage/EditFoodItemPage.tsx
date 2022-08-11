@@ -1,4 +1,3 @@
-import { faArrowLeft, faCalendarDay, faCircleNotch, faPlus, faSave, faTrash } from "@fortawesome/pro-light-svg-icons";
 import React, { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { match as Match } from "react-router";
@@ -162,7 +161,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
             <div className={bs.col6}>
               <Link to={"/food-items"}>
                 <IconBtn
-                  icon={faArrowLeft}
+                  icon={"arrow_forward"}
                   text={"All Food Items"}
                   btnProps={{
                     className: bs.btnOutlineDark,
@@ -176,7 +175,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
             <div className={bs.col6}>
               <Link to={`/diary-entries/edit?initFood=${lastFoodItemSaved.id}`}>
                 <IconBtn
-                  icon={faCalendarDay}
+                  icon={"today"}
                   text={"Add to Diary"}
                   btnProps={{
                     className: bs.btnOutlineDark,
@@ -251,7 +250,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                     </div>
                     <div className={bs.flexGrow0}>
                       <IconBtn
-                        icon={faPlus}
+                        icon={"add"}
                         text={"Add UPC"}
                         payload={this.state.upcInput}
                         onClick={this.handleAddUpc}
@@ -266,7 +265,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                     <span key={upc} className={combine(bs.dInlineBlock, bs.me3)}>
                       <kbd className={bs.me2}>{upc}</kbd>
                       <IconBtn
-                        icon={faTrash}
+                        icon={"delete"}
                         payload={upc}
                         onClick={this.handleRemoveUpc}
                         btnProps={{
@@ -442,7 +441,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
               <div className={bs.row}>
                 <div className={combine(bs.col12, bs.mb3)}>
                   <IconBtn
-                    icon={editorBusy ? faCircleNotch : faSave}
+                    icon={editorBusy ? "hourglass_empty" : "save"}
                     text={"Save"}
                     onClick={this.handleSubmit}
                     btnProps={{

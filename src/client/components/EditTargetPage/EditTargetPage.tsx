@@ -1,4 +1,3 @@
-import { faBullseyeArrow, faCircleNotch, faRedoAlt, faSave } from "@fortawesome/pro-light-svg-icons";
 import React, { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { match as Match } from "react-router";
@@ -138,7 +137,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
             <div className={bs.col6}>
               <Link to={"/targets"}>
                 <IconBtn
-                  icon={faBullseyeArrow}
+                  icon={"sports_score"}
                   text={"All Targets"}
                   btnProps={{
                     className: bs.btnOutlineDark,
@@ -151,7 +150,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
             </div>
             <div className={bs.col6}>
               <IconBtn
-                icon={faRedoAlt}
+                icon={"refresh"}
                 text={"Add Another"}
                 onClick={this.resetEditor}
                 btnProps={{
@@ -281,7 +280,7 @@ class UCEditTargetPage extends PureComponent<IEditTargetPageProps, IEditTargetPa
               <div className={bs.row}>
                 <div className={combine(bs.col12, bs.mb3)}>
                   <IconBtn
-                    icon={editorBusy ? faCircleNotch : faSave}
+                    icon={editorBusy ? "hourglass_empty" : "save"}
                     text={"Save"}
                     onClick={this.handleSubmit}
                     btnProps={{

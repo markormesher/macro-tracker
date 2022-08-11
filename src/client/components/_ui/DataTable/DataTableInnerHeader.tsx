@@ -1,8 +1,7 @@
-import { faExchange, faSortAmountDown, faSortAmountUp } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { PureComponent, ReactNode } from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
 import { combine } from "../../../helpers/style-helpers";
+import { MaterialIcon } from "../MaterialIcon/MaterialIcon";
 import { IColumn, IColumnSortEntry, SortDirection } from "./DataTable";
 import * as styles from "./DataTable.scss";
 
@@ -47,9 +46,7 @@ class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
       const sortEntry: IColumnSortEntry = sortedColumns.find((sc) => sc.column.title === col.title);
       const sorted = sortEntry !== undefined;
 
-      const sortIcon = sorted ? (sortEntry.dir === "ASC" ? faSortAmountUp : faSortAmountDown) : faExchange;
-      const sortIconFlip = sorted && sortEntry.dir === "ASC" ? "vertical" : undefined;
-      const sortIconRotate = sortIcon === faExchange ? 90 : undefined;
+      const sortIcon = sorted ? (sortEntry.dir === "ASC" ? "arrow_downward" : "arrow_upward") : "swap_vert";
       const sortIconClasses = combine(bs.me1, !sorted && styles.sortInactive);
 
       const clickHandler = sortable ? (): void => this.toggleColumnSortOrder(col) : undefined;
@@ -57,15 +54,7 @@ class DataTableInnerHeader extends PureComponent<IDataTableInnerHeaderProps> {
 
       return (
         <th key={col.title} className={className} onClick={clickHandler}>
-          {sortable && (
-            <FontAwesomeIcon
-              icon={sortIcon}
-              fixedWidth={true}
-              flip={sortIconFlip}
-              rotation={sortIconRotate}
-              className={sortIconClasses}
-            />
-          )}
+          {sortable && <MaterialIcon icon={sortIcon} className={sortIconClasses} />}
           {col.title}
         </th>
       );

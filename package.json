@@ -29,14 +29,10 @@
     "lint-style": "prettier -c \"src/**/*.{css,scss}\"",
     "lint-style-fix": "prettier --write \"src/**/*.{css,scss}\"",
     "// misc": "//",
-    "clean": "rimraf ./build ./coverage ./.nyc_output",
-    "get-private-packages": "./.scripts/get-private-packages.sh"
+    "clean": "rimraf ./build ./coverage ./.nyc_output"
   },
   "dependencies": {
     "@dragonlabs/redux-cache-key-util": "^0.0.13",
-    "@fortawesome/fontawesome-svg-core": "^1.2.6",
-    "@fortawesome/pro-light-svg-icons": "./private-packages/fortawesome-pro-light-svg-icons-5.14.0.tgz",
-    "@fortawesome/react-fontawesome": "^0.1.4",
     "@zxing/library": "^0.12.3",
     "async": "^2.6.4",
     "axios": "^0.21.2",
@@ -82,7 +78,6 @@
     "@types/qs": "^6.5.1",
     "@types/react": "^16.4.13",
     "@types/react-dom": "^16.0.7",
-    "@types/react-fontawesome": "^1.6.4",
     "@types/react-redux": "^6.0.11",
     "@types/react-router": "^5.0.0",
     "@types/react-router-dom": "^5.0.0",
