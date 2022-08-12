@@ -12,20 +12,14 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            # components are ordered least- to most-often updated
-            - dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}-{{ checksum "yarn.lock" }}
-            - dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}
+            - dependency-cache-{{ checksum "yarn.lock" }}
             - dependency-cache
-      - run:
-          name: Download private packages
-          command: ./.scripts/get-private-packages.sh
       - run:
           name: Install dependencies
           command: yarn install
       - save_cache:
-          key: dependency-cache-{{ checksum ".scripts/get-private-packages.sh" }}-{{ checksum "yarn.lock" }}
+          key: dependency-cache-{{ checksum "yarn.lock" }}
           paths:
-            - private-packages
             - node_modules
       - persist_to_workspace:
           root: .
@@ -67,8 +61,6 @@ workflows:
   build:
     jobs:
       - setup:
-          context:
-            - Private NPM Packages
           filters:
             tags:
               only: /.*/
