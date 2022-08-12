@@ -264,7 +264,7 @@ class UCFoodItemSearchPage extends PureComponent<IFoodItemSearchPageProps, IFood
                 icon={"today"}
                 text={"Add to Diary"}
                 btnProps={{
-                  className: combine(bs.btnOutlineDark),
+                  className: bs.btnOutlineDark,
                 }}
               />
             </Link>
@@ -278,7 +278,7 @@ class UCFoodItemSearchPage extends PureComponent<IFoodItemSearchPageProps, IFood
               payload={fi}
               onClick={this.createFoodItem}
               btnProps={{
-                className: combine(bs.btnOutlineDark),
+                className: bs.btnOutlineDark,
               }}
             />
           );

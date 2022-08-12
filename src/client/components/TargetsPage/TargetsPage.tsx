@@ -190,14 +190,14 @@ class UCTargetsPage extends PureComponent<ITargetsPageProps> {
           payload={target}
           onClick={UCTargetsPage.startEditTarget}
           btnProps={{
-            className: combine(bs.btnOutlineDark),
+            className: bs.btnOutlineDark,
           }}
         />
         <DeleteBtn
           payload={target}
           onConfirmedClick={this.props.actions.deleteTarget}
           btnProps={{
-            className: combine(bs.btnOutlineDark),
+            className: bs.btnOutlineDark,
           }}
         />
       </div>

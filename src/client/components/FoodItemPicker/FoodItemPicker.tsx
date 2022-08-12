@@ -140,7 +140,7 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps, IFoodItemPick
                 style: {
                   width: "100%",
                 },
-                className: combine(bs.btnOutlineDark),
+                className: bs.btnOutlineDark,
                 disabled,
               }}
             />
@@ -154,7 +154,7 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps, IFoodItemPick
                 style: {
                   width: "100%",
                 },
-                className: combine(bs.btnOutlineDark),
+                className: bs.btnOutlineDark,
                 disabled,
               }}
             />

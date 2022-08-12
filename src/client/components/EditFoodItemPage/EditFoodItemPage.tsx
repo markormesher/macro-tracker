@@ -269,7 +269,7 @@ class UCEditFoodItemPage extends PureComponent<IEditFoodItemPageProps, IEditFood
                         onClick={this.handleRemoveUpc}
                         btnProps={{
                           disabled: editorBusy,
-                          className: combine(bs.btnOutlineDark),
+                          className: bs.btnOutlineDark,
                         }}
                       />
                     </span>

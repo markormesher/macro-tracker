@@ -291,7 +291,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
               payload={index}
               onClick={this.handleToggleEditFoodItem}
               btnProps={{
-                className: combine(bs.btnOutlineDark),
+                className: bs.btnOutlineDark,
               }}
             />
           </div>
@@ -313,7 +313,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
               payload={index}
               onClick={this.handleToggleEditFoodItem}
               btnProps={{
-                className: combine(bs.btnOutlineDark),
+                className: bs.btnOutlineDark,
                 disabled: multiSaveEditorBusy,
               }}
             />
@@ -321,7 +321,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
               payload={index}
               onConfirmedClick={this.handleDeleteFoodItem}
               btnProps={{
-                className: combine(bs.btnOutlineDark),
+                className: bs.btnOutlineDark,
                 disabled: multiSaveEditorBusy,
               }}
             />

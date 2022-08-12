@@ -233,7 +233,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
               payload={currentDate}
               onClick={UCDiaryPage.startAddExerciseEntry}
               btnProps={{
-                className: combine(bs.btnOutlineDark),
+                className: bs.btnOutlineDark,
               }}
             />
           </div>
@@ -282,7 +282,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
               payload={{ date: currentDate, meal }}
               onClick={UCDiaryPage.startAddDiaryEntry}
               btnProps={{
-                className: combine(bs.btnOutlineDark),
+                className: bs.btnOutlineDark,
               }}
             />
             <IconBtn
@@ -291,7 +291,7 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
               payload={{ date: currentDate, meal }}
               onClick={UCDiaryPage.startCloneMeal}
               btnProps={{
-                className: combine(bs.btnOutlineDark),
+                className: bs.btnOutlineDark,
               }}
             />
           </div>
@@ -321,14 +321,14 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
             payload={entry}
             onClick={UCDiaryPage.startEditExerciseEntry}
             btnProps={{
-              className: combine(bs.btnOutlineDark),
+              className: bs.btnOutlineDark,
             }}
           />
           <DeleteBtn
             payload={entry}
             onConfirmedClick={this.props.actions.deleteExerciseEntry}
             btnProps={{
-              className: combine(bs.btnOutlineDark),
+              className: bs.btnOutlineDark,
             }}
           />
         </div>
@@ -352,14 +352,14 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
             payload={entry}
             onClick={UCDiaryPage.startEditDiaryEntry}
             btnProps={{
-              className: combine(bs.btnOutlineDark),
+              className: bs.btnOutlineDark,
             }}
           />
           <DeleteBtn
             payload={entry}
             onConfirmedClick={this.props.actions.deleteDiaryEntry}
             btnProps={{
-              className: combine(bs.btnOutlineDark),
+              className: bs.btnOutlineDark,
             }}
           />
         </div>

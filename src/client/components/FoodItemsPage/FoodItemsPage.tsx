@@ -191,14 +191,14 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
           payload={foodItem}
           onClick={UCFoodItemsPage.startEditFoodItem}
           btnProps={{
-            className: combine(bs.btnOutlineDark),
+            className: bs.btnOutlineDark,
           }}
         />
         <DeleteBtn
           payload={foodItem}
           onConfirmedClick={this.props.actions.deleteFoodItem}
           btnProps={{
-            className: combine(bs.btnOutlineDark),
+            className: bs.btnOutlineDark,
           }}
         />
       </div>
