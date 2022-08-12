@@ -10,7 +10,7 @@ class LoadingSpinner extends PureComponent<ILoadingSpinnerProps> {
   public render(): ReactNode {
     const spinner = (
       <span style={{ fontSize: "2rem" }}>
-        <MaterialIcon icon={"hourglass_empty"} spin={true} scale={2} />
+        <MaterialIcon icon={"hourglass_empty"} spin={true} />
       </span>
     );
 
