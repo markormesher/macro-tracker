@@ -1,4 +1,3 @@
-import { faBarcodeScan, faTimes } from "@fortawesome/pro-light-svg-icons";
 import { BrowserBarcodeReader } from "@zxing/library";
 import React, { PureComponent, ReactNode } from "react";
 import * as bs from "../../../global-styles/Bootstrap.scss";
@@ -34,7 +33,7 @@ class BarcodeScannerBtn extends PureComponent<IControlledBarcodeInputProps, ICon
     return (
       <>
         {this.renderScanner()}
-        <IconBtn icon={faBarcodeScan} text={"Scan Food"} onClick={this.openScanner} btnProps={btnProps} />
+        <IconBtn icon={"barcode"} text={"Scan Food"} onClick={this.openScanner} btnProps={btnProps} />
       </>
     );
   }
@@ -70,7 +69,7 @@ class BarcodeScannerBtn extends PureComponent<IControlledBarcodeInputProps, ICon
           <video id={"barcode-scanner-video"} />
           <p className={bs.mt2}>
             <IconBtn
-              icon={faTimes}
+              icon={"close"}
               text={"Cancel"}
               onClick={this.closeScanner}
               btnProps={{

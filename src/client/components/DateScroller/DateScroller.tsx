@@ -1,10 +1,9 @@
-import { faAngleLeft, faAngleRight } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { addDays, endOfDay, isBefore, subDays } from "date-fns";
 import React, { PureComponent, ReactNode } from "react";
 import { fixedDate } from "../../../utils/dates";
 import { formatDate } from "../../../utils/formatters";
 import { combine } from "../../helpers/style-helpers";
+import { MaterialIcon } from "../_ui/MaterialIcon/MaterialIcon";
 import * as style from "./DateScroller.scss";
 
 interface IDateScrollerProps {
@@ -29,14 +28,14 @@ class DateScroller extends PureComponent<IDateScrollerProps> {
     return (
       <div className={style.wrapper}>
         <div className={style.btn} onClick={this.handlePrevBtnClick}>
-          <FontAwesomeIcon icon={faAngleLeft} fixedWidth={true} />
+          <MaterialIcon icon={"arrow_back"} />
         </div>
         <div className={style.display}>{formatDate(currentDate, "title")}</div>
         <div
           className={combine(style.btn, !nextBtnEnabled && style.disabled)}
           onClick={nextBtnEnabled ? this.handleNextBtnClick : null}
         >
-          <FontAwesomeIcon icon={faAngleRight} fixedWidth={true} />
+          <MaterialIcon icon={"arrow_forward"} />
         </div>
       </div>
     );

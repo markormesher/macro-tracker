@@ -1,4 +1,3 @@
-import { faCalendarDay, faCircleNotch, faPencil, faPlus, faSearch } from "@fortawesome/pro-light-svg-icons";
 import React, { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -6,7 +5,6 @@ import { Dispatch } from "redux";
 import { IFoodItem } from "../../../models/IFoodItem";
 import { formatLargeNumber, formatMeasurement, formatNutritionBaseSize } from "../../../utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
 import { setEditorResult, startSaveFoodItem } from "../../redux/food-items";
 import { startSearchFoodItemByKeyword, startSearchFoodItemByUpc } from "../../redux/food-search-api";
@@ -110,7 +108,7 @@ class UCFoodItemSearchPage extends PureComponent<IFoodItemSearchPageProps, IFood
             <div className={bs.col6}>
               <Link to={`/food-items/edit/${lastFoodItemSaved.id}`}>
                 <IconBtn
-                  icon={faPencil}
+                  icon={"edit"}
                   text={"Edit Details"}
                   btnProps={{
                     className: bs.btnOutlineDark,
@@ -124,7 +122,7 @@ class UCFoodItemSearchPage extends PureComponent<IFoodItemSearchPageProps, IFood
             <div className={bs.col6}>
               <Link to={`/diary-entries/edit?initFood=${lastFoodItemSaved.id}`}>
                 <IconBtn
-                  icon={faCalendarDay}
+                  icon={"today"}
                   text={"Add to Diary"}
                   btnProps={{
                     className: bs.btnOutlineDark,
@@ -185,7 +183,7 @@ class UCFoodItemSearchPage extends PureComponent<IFoodItemSearchPageProps, IFood
         <div className={bs.row}>
           <div className={combine(bs.col12, bs.mb3)}>
             <IconBtn
-              icon={searchBusy ? faCircleNotch : faSearch}
+              icon={searchBusy ? "hourglass_empty" : "search"}
               text={"Search"}
               onClick={this.handleSearch}
               btnProps={{
@@ -263,10 +261,10 @@ class UCFoodItemSearchPage extends PureComponent<IFoodItemSearchPageProps, IFood
           btn = (
             <Link to={`/diary-entries/edit?initFood=${fi.id}`}>
               <IconBtn
-                icon={faCalendarDay}
+                icon={"today"}
                 text={"Add to Diary"}
                 btnProps={{
-                  className: combine(bs.btnOutlineDark, gs.btnMini),
+                  className: bs.btnOutlineDark,
                 }}
               />
             </Link>
@@ -275,12 +273,12 @@ class UCFoodItemSearchPage extends PureComponent<IFoodItemSearchPageProps, IFood
           // item came from remote API and has nutrition data already
           btn = (
             <IconBtn
-              icon={faPlus}
+              icon={"add"}
               text={"Add"}
               payload={fi}
               onClick={this.createFoodItem}
               btnProps={{
-                className: combine(bs.btnOutlineDark, gs.btnMini),
+                className: bs.btnOutlineDark,
               }}
             />
           );

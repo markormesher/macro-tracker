@@ -1,9 +1,8 @@
-import { faExclamationTriangle } from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { PureComponent, ReactNode } from "react";
 import * as bs from "../../global-styles/Bootstrap.scss";
 import { DetailedError } from "../../helpers/errors/DetailedError";
 import { combine } from "../../helpers/style-helpers";
+import { MaterialIcon } from "../_ui/MaterialIcon/MaterialIcon";
 
 interface IErrorPageProps {
   readonly error: DetailedError;
@@ -37,7 +36,7 @@ class ErrorPage extends PureComponent<IErrorPageProps> {
         </div>
 
         <h1 className={bs.h2}>
-          <FontAwesomeIcon icon={faExclamationTriangle} className={combine(bs.me2, bs.textMuted)} />
+          <MaterialIcon icon={"warning"} className={combine(bs.me2, bs.textMuted)} />
           {errorMessage}
         </h1>
 

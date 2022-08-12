@@ -1,4 +1,3 @@
-import { faAppleAlt, faCalendarDay, faCheck, faCircleNotch, faPencil, faSave } from "@fortawesome/pro-light-svg-icons";
 import React, { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -11,7 +10,6 @@ import { IServingSize } from "../../../models/IServingSize";
 import { getDefaultTarget } from "../../../models/ITarget";
 import { formatLargeNumber, formatMeasurement, getMealTitle } from "../../../utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
 import { combine } from "../../helpers/style-helpers";
 import { startMultiSaveDiaryEntries } from "../../redux/diary-entries";
 import { ActionResult } from "../../redux/helpers/ActionResult";
@@ -158,7 +156,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
               <div className={bs.col6}>
                 <Link to={"/food-items"}>
                   <IconBtn
-                    icon={faAppleAlt}
+                    icon={"lunch_dining"}
                     text={"All Food Items"}
                     btnProps={{
                       className: bs.btnOutlineDark,
@@ -172,7 +170,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
               <div className={bs.col6}>
                 <Link to={"/diary-entries"}>
                   <IconBtn
-                    icon={faCalendarDay}
+                    icon={"today"}
                     text={"Back to the Diary"}
                     btnProps={{
                       className: bs.btnOutlineDark,
@@ -225,7 +223,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
               </div>
               <div className={bs.col6}>
                 <IconBtn
-                  icon={multiSaveEditorBusy ? faCircleNotch : faSave}
+                  icon={multiSaveEditorBusy ? "hourglass_empty" : "save"}
                   text={"Add to Diary"}
                   onClick={this.handleSaveEntries}
                   btnProps={{
@@ -288,12 +286,12 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
           </div>
           <div className={combine(bs.dInlineBlock, bs.flexGrow0, bs.myAuto)}>
             <IconBtn
-              icon={faCheck}
+              icon={"done"}
               text={"Done"}
               payload={index}
               onClick={this.handleToggleEditFoodItem}
               btnProps={{
-                className: combine(bs.btnOutlineDark, gs.btnMini),
+                className: bs.btnOutlineDark,
               }}
             />
           </div>
@@ -310,12 +308,12 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
             style={{ whiteSpace: "nowrap" }}
           >
             <IconBtn
-              icon={faPencil}
+              icon={"edit"}
               text={"Edit"}
               payload={index}
               onClick={this.handleToggleEditFoodItem}
               btnProps={{
-                className: combine(bs.btnOutlineDark, gs.btnMini),
+                className: bs.btnOutlineDark,
                 disabled: multiSaveEditorBusy,
               }}
             />
@@ -323,7 +321,7 @@ class UCMealSketchPage extends PureComponent<IMealSketchPageProps, IMealSketchPa
               payload={index}
               onConfirmedClick={this.handleDeleteFoodItem}
               btnProps={{
-                className: combine(bs.btnOutlineDark, gs.btnMini),
+                className: bs.btnOutlineDark,
                 disabled: multiSaveEditorBusy,
               }}
             />

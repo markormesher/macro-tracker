@@ -1,4 +1,3 @@
-import { faCopy, faPencil, faPlus } from "@fortawesome/pro-light-svg-icons";
 import { isSameDay } from "date-fns";
 import React, { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
@@ -12,7 +11,6 @@ import { IMacroSummary } from "../../../models/IMacroSummary";
 import { dateToDateKey, dateToUrlString, fixedDate, urlStringToDate } from "../../../utils/dates";
 import { formatLargeNumber, getMealTitle } from "../../../utils/formatters";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
 import { renderMacroSummary } from "../../helpers/rendering";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
@@ -230,12 +228,12 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
             style={{ whiteSpace: "nowrap" }}
           >
             <IconBtn
-              icon={faPlus}
+              icon={"add"}
               text={"Add"}
               payload={currentDate}
               onClick={UCDiaryPage.startAddExerciseEntry}
               btnProps={{
-                className: combine(bs.btnOutlineDark, gs.btnMini),
+                className: bs.btnOutlineDark,
               }}
             />
           </div>
@@ -279,21 +277,21 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
             style={{ whiteSpace: "nowrap" }}
           >
             <IconBtn
-              icon={faPlus}
+              icon={"add"}
               text={"Add"}
               payload={{ date: currentDate, meal }}
               onClick={UCDiaryPage.startAddDiaryEntry}
               btnProps={{
-                className: combine(bs.btnOutlineDark, gs.btnMini),
+                className: bs.btnOutlineDark,
               }}
             />
             <IconBtn
-              icon={faCopy}
+              icon={"content_copy"}
               text={"Clone"}
               payload={{ date: currentDate, meal }}
               onClick={UCDiaryPage.startCloneMeal}
               btnProps={{
-                className: combine(bs.btnOutlineDark, gs.btnMini),
+                className: bs.btnOutlineDark,
               }}
             />
           </div>
@@ -318,19 +316,19 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
           style={{ whiteSpace: "nowrap" }}
         >
           <IconBtn
-            icon={faPencil}
+            icon={"edit"}
             text={"Edit"}
             payload={entry}
             onClick={UCDiaryPage.startEditExerciseEntry}
             btnProps={{
-              className: combine(bs.btnOutlineDark, gs.btnMini),
+              className: bs.btnOutlineDark,
             }}
           />
           <DeleteBtn
             payload={entry}
             onConfirmedClick={this.props.actions.deleteExerciseEntry}
             btnProps={{
-              className: combine(bs.btnOutlineDark, gs.btnMini),
+              className: bs.btnOutlineDark,
             }}
           />
         </div>
@@ -349,19 +347,19 @@ class UCDiaryPage extends PureComponent<IDiaryPageProps> {
           style={{ whiteSpace: "nowrap" }}
         >
           <IconBtn
-            icon={faPencil}
+            icon={"edit"}
             text={"Edit"}
             payload={entry}
             onClick={UCDiaryPage.startEditDiaryEntry}
             btnProps={{
-              className: combine(bs.btnOutlineDark, gs.btnMini),
+              className: bs.btnOutlineDark,
             }}
           />
           <DeleteBtn
             payload={entry}
             onConfirmedClick={this.props.actions.deleteDiaryEntry}
             btnProps={{
-              className: combine(bs.btnOutlineDark, gs.btnMini),
+              className: bs.btnOutlineDark,
             }}
           />
         </div>

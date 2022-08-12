@@ -1,12 +1,3 @@
-import {
-  faBarcodeAlt,
-  faExclamationTriangle,
-  faLink,
-  faPencil,
-  faPlug,
-  faPlus,
-} from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { PureComponent, ReactElement, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -17,7 +8,6 @@ import { servingSizeComparator } from "../../../models/IServingSize";
 import { formatMeasurement } from "../../../utils/formatters";
 import { getFoodItemDataWarnings } from "../../../utils/helpers";
 import * as bs from "../../global-styles/Bootstrap.scss";
-import * as gs from "../../global-styles/Global.scss";
 import { history } from "../../helpers/single-history";
 import { combine } from "../../helpers/style-helpers";
 import { foodItemsCacheKeys, startDeleteFoodItem } from "../../redux/food-items";
@@ -28,6 +18,7 @@ import { ApiDataTableDataProvider } from "../_ui/DataTable/DataProvider/ApiDataT
 import { DataTable, IColumn } from "../_ui/DataTable/DataTable";
 import { DeleteBtn } from "../_ui/DeleteBtn/DeleteBtn";
 import { IconBtn } from "../_ui/IconBtn/IconBtn";
+import { MaterialIcon } from "../_ui/MaterialIcon/MaterialIcon";
 
 interface IFoodItemsPageProps {
   readonly updateTime?: number;
@@ -92,7 +83,7 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
             <p>
               <Link to={"/food-items/entry-chooser"}>
                 <IconBtn
-                  icon={faPlus}
+                  icon={"add"}
                   text={"Create Food Item"}
                   btnProps={{
                     className: bs.btnOutlineSuccess,
@@ -138,7 +129,7 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
     if ((foodItem.upcs || []).length > 0) {
       infoChunks.push(
         <span key={`info-chunk-upc`}>
-          <FontAwesomeIcon icon={faBarcodeAlt} />
+          <MaterialIcon icon={"barcode"} />
         </span>,
       );
     }
@@ -146,14 +137,14 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
     if (foodItem.apiSource === "tesco") {
       infoChunks.push(
         <span key={`info-chunk-api`}>
-          <FontAwesomeIcon icon={faLink} className={bs.me1} />
+          <MaterialIcon icon={"link"} className={bs.me1} />
           Tesco
         </span>,
       );
     } else if (foodItem.apiSource === "nutritionix") {
       infoChunks.push(
         <span key={`info-chunk-api`}>
-          <FontAwesomeIcon icon={faPlug} className={bs.me1} />
+          <MaterialIcon icon={"link"} className={bs.me1} />
           Nutritionix
         </span>,
       );
@@ -163,7 +154,7 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
     if (warnings.length > 0) {
       infoChunks.push(
         <span key={`info-chunk-warning`} className={bs.textDanger}>
-          <FontAwesomeIcon icon={faExclamationTriangle} className={bs.me1} />
+          <MaterialIcon icon={"warning"} className={bs.me1} />
           {warnings.length} warning{warnings.length > 1 ? "s" : ""}
         </span>,
       );
@@ -195,19 +186,19 @@ class UCFoodItemsPage extends PureComponent<IFoodItemsPageProps> {
     return (
       <div className={combine(bs.btnGroup, bs.btnGroupSm)}>
         <IconBtn
-          icon={faPencil}
+          icon={"edit"}
           text={"Edit"}
           payload={foodItem}
           onClick={UCFoodItemsPage.startEditFoodItem}
           btnProps={{
-            className: combine(bs.btnOutlineDark, gs.btnMini),
+            className: bs.btnOutlineDark,
           }}
         />
         <DeleteBtn
           payload={foodItem}
           onConfirmedClick={this.props.actions.deleteFoodItem}
           btnProps={{
-            className: combine(bs.btnOutlineDark, gs.btnMini),
+            className: bs.btnOutlineDark,
           }}
         />
       </div>

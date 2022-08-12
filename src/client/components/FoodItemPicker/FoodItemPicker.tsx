@@ -1,4 +1,3 @@
-import { faSearch, faTimes } from "@fortawesome/pro-light-svg-icons";
 import React, { MouseEvent, PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
@@ -141,21 +140,21 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps, IFoodItemPick
                 style: {
                   width: "100%",
                 },
-                className: combine(bs.btnOutlineDark),
+                className: bs.btnOutlineDark,
                 disabled,
               }}
             />
           </div>
           <div className={bs.col6}>
             <IconBtn
-              icon={faSearch}
+              icon={"search"}
               text={"Search Food"}
               onClick={this.openSearch}
               btnProps={{
                 style: {
                   width: "100%",
                 },
-                className: combine(bs.btnOutlineDark),
+                className: bs.btnOutlineDark,
                 disabled,
               }}
             />
@@ -211,7 +210,7 @@ class UCFoodItemPicker extends PureComponent<IFoodItemPickerProps, IFoodItemPick
           </div>
           <div className={bs.flexGrow0}>
             <IconBtn
-              icon={faTimes}
+              icon={"close"}
               text={"Cancel"}
               onClick={this.closeSearch}
               btnProps={{

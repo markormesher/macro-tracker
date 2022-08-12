@@ -3,10 +3,7 @@ FROM node:16.14.2
 WORKDIR /macro-tracker
 
 # dependencies
-ARG PRIVATE_PACKAGE_REPO PRIVATE_PACKAGE_REPO_TOKEN
-COPY ./.scripts/get-private-packages.sh ./.scripts/
 COPY package.json yarn.lock ./
-RUN yarn get-private-packages
 RUN yarn install && yarn cache clean
 
 # source

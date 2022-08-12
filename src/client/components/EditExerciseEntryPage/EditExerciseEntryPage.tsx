@@ -1,4 +1,3 @@
-import { faCalendarDay, faCircleNotch, faRedoAlt, faSave } from "@fortawesome/pro-light-svg-icons";
 import React, { PureComponent, ReactNode } from "react";
 import { connect } from "react-redux";
 import { match as Match } from "react-router";
@@ -146,7 +145,7 @@ class UCEditExerciseEntryPage extends PureComponent<IEditExerciseEntryPageProps,
             <div className={bs.col6}>
               <Link to={`/diary-entries/${dateToUrlString(currentValue.date)}`}>
                 <IconBtn
-                  icon={faCalendarDay}
+                  icon={"today"}
                   text={"Back to the Diary"}
                   btnProps={{
                     className: bs.btnOutlineDark,
@@ -159,7 +158,7 @@ class UCEditExerciseEntryPage extends PureComponent<IEditExerciseEntryPageProps,
             </div>
             <div className={bs.col6}>
               <IconBtn
-                icon={faRedoAlt}
+                icon={"refresh"}
                 text={"Add Another"}
                 onClick={this.resetEditor}
                 btnProps={{
@@ -233,7 +232,7 @@ class UCEditExerciseEntryPage extends PureComponent<IEditExerciseEntryPageProps,
               <div className={bs.row}>
                 <div className={combine(bs.col12, bs.mb3)}>
                   <IconBtn
-                    icon={editorBusy ? faCircleNotch : faSave}
+                    icon={editorBusy ? "hourglass_empty" : "save"}
                     text={"Save"}
                     onClick={this.handleSubmit}
                     btnProps={{

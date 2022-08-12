@@ -1,13 +1,6 @@
-import {
-  faAppleAlt,
-  faBullseyeArrow,
-  faCalendarDay,
-  faChartPie,
-  faDraftingCompass,
-} from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { PureComponent, ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { MaterialIcon } from "../_ui/MaterialIcon/MaterialIcon";
 import * as style from "./Nav.scss";
 
 class Nav extends PureComponent {
@@ -15,19 +8,19 @@ class Nav extends PureComponent {
     return (
       <div className={style.nav}>
         <Link to={"/"} className={style.navItem}>
-          <FontAwesomeIcon icon={faChartPie} fixedWidth={true} />
+          <MaterialIcon icon={"pie_chart"} />
         </Link>
         <Link to={"/diary-entries"} className={style.navItem}>
-          <FontAwesomeIcon icon={faCalendarDay} fixedWidth={true} />
+          <MaterialIcon icon={"today"} />
         </Link>
         <Link to={"/food-items"} className={style.navItem}>
-          <FontAwesomeIcon icon={faAppleAlt} fixedWidth={true} />
+          <MaterialIcon icon={"lunch_dining"} />
         </Link>
         <Link to={"/meal-sketch"} className={style.navItem}>
-          <FontAwesomeIcon icon={faDraftingCompass} fixedWidth={true} />
+          <MaterialIcon icon={"architecture"} />
         </Link>
         <Link to={"/targets"} className={style.navItem}>
-          <FontAwesomeIcon icon={faBullseyeArrow} fixedWidth={true} />
+          <MaterialIcon icon={"sports_score"} />
         </Link>
       </div>
     );
